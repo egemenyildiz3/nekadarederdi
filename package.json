@@ -1,0 +1,14 @@
+{
+  "name": "nekadarederdi",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "build": "dotnet build backend/NekadarEderdi.Api.csproj && npm run build -w frontend",
+    "dev:backend": "dotnet run --project backend/NekadarEderdi.Api.csproj",
+    "dev:frontend": "npm run dev -w frontend",
+    "preview:frontend": "npm run preview -w frontend"
+  }
+}

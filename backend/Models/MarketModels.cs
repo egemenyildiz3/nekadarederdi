@@ -1,0 +1,61 @@
+using System.Text.Json.Serialization;
+
+namespace NekadarEderdi.Api.Models;
+
+[JsonConverter(typeof(JsonStringEnumConverter<SeriesKey>))]
+public enum SeriesKey
+{
+    // Temel Makro Göstergeler
+    Cpi,            // Enflasyon / TÜFE (TL Alım Gücü)
+    MinimumWage,    // Asgari Ücret Oranı
+
+    // Döviz
+    Usd,            // Amerikan Doları
+    Eur,            // Euro
+
+    // Emtia
+    Gold,           // Gram Altın
+    Silver,         // Gram Gümüş
+    // Fuel,           // Benzin / Motorin (Opsiyonel)
+
+     // Yatırım Araçları
+    // Bist100,        // Borsa İstanbul (Opsiyonel)
+    // Housing,        // Konut Fiyat Endeksi (Opsiyonel)
+    // DepositInterest // Mevduat Faizi (Opsiyonel)
+}
+
+public sealed record MarketCatalog(
+    DateOnly UpdatedAt,
+    IReadOnlyList<MarketSeries> Series);
+
+public sealed record MarketSeries(
+    SeriesKey Key,
+    string Name,
+    string ShortName,
+    string Description,
+    string Unit,
+    string SourceNote,
+    IReadOnlyList<MarketObservation> Observations);
+
+public sealed record MarketObservation(
+    DateOnly Date,
+    decimal Value);
+
+public sealed record CalculatorRequest(
+    decimal Amount,
+    string StartMonth,
+    string EndMonth,
+    IReadOnlyList<SeriesKey> Criteria);
+
+public sealed record CalculationResponse(
+    IReadOnlyList<CalculationResult> Results);
+
+public sealed record CalculationResult(
+    MarketSeries Series,
+    decimal OriginalAmount,
+    decimal NormalizedAmount,
+    decimal ResultAmount,
+    decimal Multiplier,
+    MarketObservation StartObservation,
+    MarketObservation EndObservation,
+    bool AppliedPre2005Conversion);
