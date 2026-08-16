@@ -23,8 +23,8 @@ public sealed partial class ValueCalculator : IValueCalculator
         var criteria = request.Criteria is { Count: > 0 } ? request.Criteria.Distinct().ToArray() : DefaultCriteria;
         var startDate = ParseMonth(request.StartMonth);
         var endDate = ParseMonth(request.EndMonth);
-        var appliedPre2005Conversion = startDate < TlCutover;
-        var normalizedAmount = appliedPre2005Conversion ? request.Amount / 1_000_000m : request.Amount;
+        var appliedPre2005Conversion = request.InputUnit == InputUnit.Try && startDate < TlCutover;
+        var normalizedAmount = InputAmountToTry(request.Amount, request.InputUnit, startDate, catalog, appliedPre2005Conversion);
 
         return criteria.Select(key =>
         {
@@ -50,6 +50,34 @@ public sealed partial class ValueCalculator : IValueCalculator
                 endObservation,
                 appliedPre2005Conversion);
         }).ToList();
+    }
+
+    private static decimal InputAmountToTry(
+        decimal amount,
+        InputUnit inputUnit,
+        DateOnly startDate,
+        MarketCatalog catalog,
+        bool appliedPre2005Conversion)
+    {
+        if (inputUnit == InputUnit.Try)
+        {
+            return appliedPre2005Conversion ? amount / 1_000_000m : amount;
+        }
+
+        var seriesKey = inputUnit switch
+        {
+            InputUnit.Usd => SeriesKey.Usd,
+            InputUnit.Eur => SeriesKey.Eur,
+            InputUnit.Gold => SeriesKey.Gold,
+            InputUnit.Silver => SeriesKey.Silver,
+            _ => throw new ArgumentException("Girdi birimi desteklenmiyor.")
+        };
+
+        var series = catalog.Series.FirstOrDefault(item => item.Key == seriesKey)
+            ?? throw new ArgumentException($"'{inputUnit}' için veri serisi bulunamadı.");
+        var startObservation = PickObservation(series.Observations, startDate);
+
+        return amount * startObservation.Value;
     }
 
     private static MarketObservation PickObservation(IReadOnlyList<MarketObservation> observations, DateOnly month)

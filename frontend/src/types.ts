@@ -1,4 +1,5 @@
 export type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+export type InputUnit = 'try' | 'usd' | 'eur' | 'gold' | 'silver';
 
 export type Observation = {
   date: string;
@@ -24,6 +25,7 @@ export type MarketCatalog = {
 
 export type CalculatorState = {
   amount: number;
+  inputUnit: InputUnit;
   startMonth: string;
   endMonth: string;
   criteria: SeriesKey[];

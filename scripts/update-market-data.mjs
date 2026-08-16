@@ -253,7 +253,7 @@ async function fetchMinimumWage() {
       const endMonth = toMonth(endDate);
 
       if (!startMonth || !endMonth || !Number.isFinite(value)) {
-        return [];
+        return [];r
       }
 
       return listMonths(startMonth, endMonth).map((month) => ({

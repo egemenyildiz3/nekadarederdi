@@ -6,8 +6,8 @@ import { MonthSelect } from './components/MonthSelect';
 import { ResultCard } from './components/ResultCard';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
-import { formatMoney, formatMonth } from './lib/format';
-import type { CalculationResult, CalculatorState, MarketCatalog, SeriesKey } from './types';
+import { formatInputAmount, formatMoney, formatMonth } from './lib/format';
+import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü' },
@@ -16,6 +16,14 @@ const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
   { key: 'gold', label: 'Altın', hint: 'Gram' },
   { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net' },
   { key: 'silver', label: 'Gümüş', hint: 'Gram' },
+];
+
+const INPUT_UNITS: { key: InputUnit; label: string }[] = [
+  { key: 'try', label: 'TL' },
+  { key: 'usd', label: 'USD' },
+  { key: 'eur', label: 'EUR' },
+  { key: 'gold', label: 'Gram altın' },
+  { key: 'silver', label: 'Gram gümüş' },
 ];
 
 type LandingPageContent = {
@@ -224,7 +232,8 @@ function App() {
     };
   }, [catalog]);
 
-  const shareText = `Ne Kadar Ederdi? ${formatMoney(state.amount)}: ${formatMonth(state.startMonth)} → ${formatMonth(state.endMonth)}`;
+  const inputTryAmount = results[0]?.normalizedAmount;
+  const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(state.endMonth)}`;
   const shareUrl = window.location.href;
 
   function updateState(partial: Partial<CalculatorState>) {
@@ -263,17 +272,33 @@ function App() {
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-5">
-              <label className="grid gap-2">
-                <span className="text-sm font-semibold text-ink-800">Miktar</span>
-                <input
-                  className="h-12 rounded-md border border-ink-200 bg-paper-50 px-4 font-data text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
-                  inputMode="decimal"
-                  min="1"
-                  type="number"
-                  value={state.amount || ''}
-                  onChange={(event) => updateState({ amount: Number(event.target.value) })}
-                />
-              </label>
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_150px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_150px]">
+                <label className="grid gap-2">
+                  <span className="text-sm font-semibold text-ink-800">Miktar</span>
+                  <input
+                    className="h-12 rounded-md border border-ink-200 bg-paper-50 px-4 font-data text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
+                    inputMode="decimal"
+                    min="1"
+                    type="number"
+                    value={state.amount || ''}
+                    onChange={(event) => updateState({ amount: Number(event.target.value) })}
+                  />
+                </label>
+                <label className="grid gap-2">
+                  <span className="text-sm font-semibold text-ink-800">Birim</span>
+                  <select
+                    className="h-12 rounded-md border border-ink-200 bg-paper-50 px-3 text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
+                    value={state.inputUnit}
+                    onChange={(event) => updateState({ inputUnit: event.target.value as InputUnit })}
+                  >
+                    {INPUT_UNITS.map((unit) => (
+                      <option key={unit.key} value={unit.key}>
+                        {unit.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 <MonthSelect
@@ -346,11 +371,16 @@ function App() {
                 <div>
                   <p className="font-data text-xs font-semibold uppercase text-oxide-700">Hesaplama özeti</p>
                   <h1 className="currency-value mt-2 font-data font-bold tracking-normal text-ink-950">
-                    {formatMoney(state.amount || 0)}
+                    {formatInputAmount(state.amount || 0, state.inputUnit)}
                   </h1>
                   <p className="mt-2 text-sm leading-6 text-ink-600">
                     {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
                   </p>
+                  {state.inputUnit !== 'try' && inputTryAmount ? (
+                    <p className="mt-1 text-sm leading-6 text-ink-500">
+                      Başlangıç ayındaki yaklaşık TL karşılığı: {formatMoney(inputTryAmount)}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex gap-2">
                   <a

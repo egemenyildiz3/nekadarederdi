@@ -1,6 +1,7 @@
 import catalog from '../../backend/Data/market-series.json';
 
 type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+type InputUnit = 'try' | 'usd' | 'eur' | 'gold' | 'silver';
 
 type Observation = {
   date: string;
@@ -19,6 +20,7 @@ type MarketSeries = {
 
 type CalculatorRequest = {
   amount: number;
+  inputUnit: InputUnit;
   startMonth: string;
   endMonth: string;
   criteria: SeriesKey[];
@@ -30,6 +32,7 @@ type Env = {
 
 const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
 const VALID_CRITERIA = new Set<SeriesKey>(['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
+const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silver']);
 const TL_CUTOVER = '2005-01';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *
@@ -145,11 +148,12 @@ function calculate(request: Partial<CalculatorRequest>) {
   validate(request);
 
   const amount = request.amount!;
+  const inputUnit = request.inputUnit ?? 'try';
   const startMonth = request.startMonth!;
   const endMonth = request.endMonth!;
   const criteria = request.criteria?.length ? [...new Set(request.criteria)] : DEFAULT_CRITERIA;
-  const appliedPre2005Conversion = startMonth < TL_CUTOVER;
-  const normalizedAmount = appliedPre2005Conversion ? amount / 1_000_000 : amount;
+  const appliedPre2005Conversion = inputUnit === 'try' && startMonth < TL_CUTOVER;
+  const normalizedAmount = inputAmountToTry(amount, inputUnit, startMonth, appliedPre2005Conversion);
 
   return criteria.map((key) => {
     if (!VALID_CRITERIA.has(key)) {
@@ -186,9 +190,31 @@ function calculate(request: Partial<CalculatorRequest>) {
   });
 }
 
+function inputAmountToTry(amount: number, inputUnit: InputUnit, startMonth: string, appliedPre2005Conversion: boolean) {
+  if (inputUnit === 'try') {
+    return appliedPre2005Conversion ? amount / 1_000_000 : amount;
+  }
+
+  if (!VALID_INPUT_UNITS.has(inputUnit)) {
+    throw new Error('Girdi birimi desteklenmiyor.');
+  }
+
+  const series = (catalog.series as MarketSeries[]).find((item) => item.key === inputUnit);
+
+  if (!series) {
+    throw new Error(`'${inputUnit}' için veri serisi bulunamadı.`);
+  }
+
+  return amount * pickObservation(series.observations, startMonth).value;
+}
+
 function validate(request: Partial<CalculatorRequest>) {
   if (!Number.isFinite(request.amount) || !request.amount || request.amount <= 0) {
     throw new Error("Miktar 0'dan büyük olmalı.");
+  }
+
+  if (request.inputUnit && !VALID_INPUT_UNITS.has(request.inputUnit)) {
+    throw new Error('Girdi birimi desteklenmiyor.');
   }
 
   if (!isMonth(request.startMonth) || !isMonth(request.endMonth)) {

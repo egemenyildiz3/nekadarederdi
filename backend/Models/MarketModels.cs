@@ -24,6 +24,16 @@ public enum SeriesKey
     // DepositInterest // Mevduat Faizi (Opsiyonel)
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter<InputUnit>))]
+public enum InputUnit
+{
+    Try,
+    Usd,
+    Eur,
+    Gold,
+    Silver
+}
+
 public sealed record MarketCatalog(
     DateOnly UpdatedAt,
     IReadOnlyList<MarketSeries> Series);
@@ -51,6 +61,7 @@ public sealed record CalculationSeries(
 
 public sealed record CalculatorRequest(
     decimal Amount,
+    InputUnit InputUnit,
     string StartMonth,
     string EndMonth,
     IReadOnlyList<SeriesKey> Criteria);

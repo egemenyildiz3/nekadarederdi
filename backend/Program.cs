@@ -51,6 +51,7 @@ builder.Services.AddSingleton<IValueCalculator, ValueCalculator>();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<SeriesKey>(JsonNamingPolicy.CamelCase));
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<InputUnit>(JsonNamingPolicy.CamelCase));
 });
 builder.Services.AddOpenApi();
 
