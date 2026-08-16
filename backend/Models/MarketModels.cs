@@ -16,12 +16,13 @@ public enum SeriesKey
     // Emtia
     Gold,           // Gram Altın
     Silver,         // Gram Gümüş
-    // Fuel,           // Benzin / Motorin (Opsiyonel)
+    Gasoline,       // Benzin / yakıt endeksi
 
-     // Yatırım Araçları
-    // Bist100,        // Borsa İstanbul (Opsiyonel)
-    // Housing,        // Konut Fiyat Endeksi (Opsiyonel)
-    // DepositInterest // Mevduat Faizi (Opsiyonel)
+    // Yatırım ve varlık göstergeleri
+    Bist100,        // Borsa İstanbul
+    Bitcoin,        // Bitcoin
+    Housing,        // Konut Fiyat Endeksi
+    Deposit         // TL mevduat bileşik getiri endeksi
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<InputUnit>))]

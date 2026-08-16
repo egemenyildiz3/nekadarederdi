@@ -20,13 +20,16 @@ public sealed partial class ValueCalculator : IValueCalculator
         Validate(request);
 
         var catalog = _marketDataStore.GetCatalog();
-        var criteria = request.Criteria is { Count: > 0 } ? request.Criteria.Distinct().ToArray() : DefaultCriteria;
+        var availableKeys = catalog.Series.Select(item => item.Key).ToHashSet();
+        var requestedCriteria = request.Criteria is { Count: > 0 } ? request.Criteria.Distinct().ToArray() : DefaultCriteria;
+        var criteria = requestedCriteria.Where(availableKeys.Contains).ToArray();
+        var selectedCriteria = criteria.Length > 0 ? criteria : DefaultCriteria.Where(availableKeys.Contains).ToArray();
         var startDate = ParseMonth(request.StartMonth);
         var endDate = ParseMonth(request.EndMonth);
         var appliedPre2005Conversion = request.InputUnit == InputUnit.Try && startDate < TlCutover;
         var normalizedAmount = InputAmountToTry(request.Amount, request.InputUnit, startDate, catalog, appliedPre2005Conversion);
 
-        return criteria.Select(key =>
+        return selectedCriteria.Select(key =>
         {
             var series = catalog.Series.FirstOrDefault(item => item.Key == key)
                 ?? throw new ArgumentException($"'{key}' için veri serisi bulunamadı.");

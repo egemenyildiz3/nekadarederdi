@@ -1,4 +1,15 @@
-export type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+export type SeriesKey =
+  | 'cpi'
+  | 'usd'
+  | 'eur'
+  | 'gold'
+  | 'minimumWage'
+  | 'silver'
+  | 'bist100'
+  | 'bitcoin'
+  | 'housing'
+  | 'gasoline'
+  | 'deposit';
 export type InputUnit = 'try' | 'usd' | 'eur' | 'gold' | 'silver';
 
 export type Observation = {

@@ -49,6 +49,16 @@ npm run data:update
 
 Bu komut `backend/Data/market-series.json` dosyasını günceller.
 
+Opsiyonel veri secret'ları:
+
+```text
+EVDS_API_KEY = TCMB EVDS API anahtarı
+EVDS_DEPOSIT_SERIES = TL mevduat faiz seri kodu
+GASOLINE_CSV_URL = date,value kolonlu alternatif benzin/yakıt CSV adresi
+```
+
+BIST 100, Bitcoin, konut fiyat endeksi ve yakıt endeksi otomatik kaynaklardan çekilir. Mevduat serisi için EVDS bilgileri eklenirse aylık bileşik endeks üretilir.
+
 ## Cloudflare
 
 Cloudflare sürümünde tek Worker hem frontend dosyalarını hem `/api` endpointlerini servis eder.

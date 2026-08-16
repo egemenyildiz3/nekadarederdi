@@ -18,16 +18,29 @@ const sources = {
   silver:
     'Eco3min / World Bank Pink Sheet gümüş ons USD aylık fiyatı ve TCMB USD/TL ortalamasından türetilen gram TL',
   minimumWage: 'Ocal Hukuk dönemsel asgari ücret tablosu; Resmi Gazete referanslı net ücret satırları',
+  bist100: 'Yahoo Finance XU100.IS aylık kapanış verileri',
+  bitcoin: 'Yahoo Finance BTC-USD aylık kapanış verileri ve TCMB USD/TL ortalamasından türetilen TL fiyatı',
+  housing: 'TCMB EVDS Konut Fiyat Endeksi; Altınla üzerinde yayımlanan gömülü TCMB/EVDS tarihsel seri',
+  gasoline:
+    'FRED / Eurostat Türkiye yakıt ve yağlayıcılar HICP endeksi; veri yoksa konfigüre edilen benzin fiyatı CSV kaynağı',
+  deposit:
+    'TCMB EVDS TL mevduat faiz oranı serisinden aylık bileşik getiri endeksi; EVDS_API_KEY ve EVDS_DEPOSIT_SERIES ile güncellenir',
 };
 
 const catalog = JSON.parse(await readFile(dataPath, 'utf8'));
-const [cpi, rates, goldUsd, silverUsd, minimumWage] = await Promise.all([
+const [cpi, rates, goldUsd, silverUsd, minimumWage, bist100, btcUsd, housing, gasoline, deposit] = await Promise.all([
   fetchCpi(),
   fetchTcmbRates(),
   fetchGoldUsd(),
   fetchSilverUsd(),
   fetchMinimumWage(),
+  fetchYahooMonthly('XU100.IS', `${startYear}-01`),
+  fetchYahooMonthly('BTC-USD', '2014-09'),
+  fetchHousingIndex(),
+  fetchGasolineIndex(),
+  fetchDepositIndex(),
 ]);
+const bitcoin = deriveBitcoinTry(btcUsd, rates.usd);
 
 setSeries('cpi', {
   name: 'Reel TL',
@@ -77,6 +90,52 @@ setSeries('minimumWage', {
   sourceNote: sources.minimumWage,
   observations: minimumWage,
 });
+setSeries('bist100', {
+  name: 'BIST 100',
+  shortName: 'BIST 100',
+  description: 'Borsa İstanbul BIST 100 endeksine göre yaklaşık karşılık.',
+  unit: 'endeks puanı',
+  sourceNote: sources.bist100,
+  observations: bist100,
+});
+setSeries('bitcoin', {
+  name: 'Bitcoin',
+  shortName: 'BTC',
+  description: 'Bitcoin fiyatının TL karşılığına göre yaklaşık karşılık.',
+  unit: 'TL/BTC',
+  sourceNote: sources.bitcoin,
+  observations: bitcoin,
+});
+setSeries('housing', {
+  name: 'Konut Fiyat Endeksi',
+  shortName: 'Konut',
+  description: 'Türkiye konut fiyat endeksine göre yaklaşık karşılık.',
+  unit: 'KFE endeksi',
+  sourceNote: sources.housing,
+  observations: housing,
+});
+
+if (gasoline.length > 0) {
+  setSeries('gasoline', {
+    name: 'Benzin',
+    shortName: 'Benzin',
+    description: 'Yakıt fiyat endeksi ya da benzin fiyatı serisine göre yaklaşık karşılık.',
+    unit: 'yakıt endeksi',
+    sourceNote: sources.gasoline,
+    observations: gasoline,
+  });
+}
+
+if (deposit.length > 0) {
+  setSeries('deposit', {
+    name: 'TL Mevduat',
+    shortName: 'Mevduat',
+    description: 'TL mevduat faizinin aylık bileşik getiri endeksine göre yaklaşık karşılık.',
+    unit: 'bileşik endeks',
+    sourceNote: sources.deposit,
+    observations: deposit,
+  });
+}
 
 catalog.updatedAt = new Date().toISOString().slice(0, 10);
 catalog.meta = {
@@ -243,6 +302,112 @@ async function fetchSilverUsd() {
     .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value));
 }
 
+async function fetchYahooMonthly(symbol, startMonth) {
+  const period1 = Math.floor(Date.parse(`${startMonth}-01T00:00:00Z`) / 1000);
+  const period2 = Math.floor(Date.parse(`${end}-28T00:00:00Z`) / 1000);
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?period1=${period1}&period2=${period2}&interval=1mo`;
+  const payload = JSON.parse(await fetchText(url));
+  const result = payload.chart?.result?.[0];
+  const timestamps = result?.timestamp ?? [];
+  const close = result?.indicators?.quote?.[0]?.close ?? [];
+
+  const rows = timestamps
+    .map((timestamp, index) => {
+      const date = new Date(timestamp * 1000);
+      const month = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+      const value = Number(close[index]);
+
+      return Number.isFinite(value) ? { date: `${month}-01`, value: round(value, 6) } : null;
+    })
+    .filter(Boolean)
+    .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01`)
+    .sort((first, second) => first.date.localeCompare(second.date));
+
+  if (rows.length === 0) {
+    throw new Error(`${symbol} için Yahoo Finance verisi alınamadı.`);
+  }
+
+  return dedupeByMonth(rows);
+}
+
+function deriveBitcoinTry(btcUsd, usdTryRows) {
+  const usdTry = new Map(usdTryRows.map((item) => [item.date.slice(0, 7), item.value]));
+
+  return btcUsd
+    .map((item) => {
+      const rate = usdTry.get(item.date.slice(0, 7));
+      return rate ? { date: item.date, value: round(item.value * rate, 6) } : null;
+    })
+    .filter(Boolean);
+}
+
+async function fetchHousingIndex() {
+  const html = await fetchText('https://altinla.com/tr/konut/fiyat-endeksi');
+  const rows = [...html.matchAll(/\{\\"date\\":\\"(\d{4}-\d{2}-\d{2})\\",\\"value\\":([0-9.]+)\}/g)]
+    .map((match) => ({ date: match[1], value: Number(match[2]) }))
+    .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value));
+
+  if (rows.length === 0) {
+    throw new Error('Konut fiyat endeksi serisi çıkarılamadı.');
+  }
+
+  return dedupeByMonth(rows).map((item) => ({ date: item.date, value: round(item.value, 6) }));
+}
+
+async function fetchGasolineIndex() {
+  const configuredUrl = process.env.GASOLINE_CSV_URL;
+
+  if (configuredUrl) {
+    const csv = await fetchText(configuredUrl);
+    return parseCsv(csv)
+      .slice(1)
+      .map(([date, value]) => ({ date: normalizeDate(date), value: parseTrNumber(value) }))
+      .filter((item) => item.date && item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value))
+      .map((item) => ({ date: item.date, value: round(item.value, 6) }));
+  }
+
+  try {
+    const csv = await fetchText('https://fred.stlouisfed.org/graph/fredgraph.csv?id=CP0722TRM086NEST');
+    return parseCsv(csv)
+      .slice(1)
+      .map(([date, value]) => ({ date: normalizeDate(date), value: Number(value) }))
+      .filter((item) => item.date && item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value))
+      .map((item) => ({ date: item.date, value: round(item.value, 6) }));
+  } catch (error) {
+    console.warn(`Benzin/yakıt endeksi alınamadı: ${error.message}`);
+    return [];
+  }
+}
+
+async function fetchDepositIndex() {
+  const apiKey = process.env.EVDS_API_KEY;
+  const seriesCode = process.env.EVDS_DEPOSIT_SERIES;
+
+  if (!apiKey || !seriesCode) {
+    console.warn('EVDS_API_KEY veya EVDS_DEPOSIT_SERIES yok; mevduat serisi atlandı.');
+    return [];
+  }
+
+  const startDate = `01-01-${startYear}`;
+  const endDate = `28-${end.slice(5, 7)}-${end.slice(0, 4)}`;
+  const url = `https://evds2.tcmb.gov.tr/service/evds/series=${encodeURIComponent(seriesCode)}&startDate=${startDate}&endDate=${endDate}&type=json&key=${encodeURIComponent(apiKey)}`;
+  const payload = JSON.parse(await fetchText(url));
+  const rows = (payload.items ?? [])
+    .map((item) => {
+      const date = normalizeDate(item.Tarih ?? item.tarih ?? item.DATE);
+      const rawValue = item[seriesCode] ?? item[seriesCode.replace(/\./g, '_')];
+      return { date, rate: parseTrNumber(String(rawValue ?? '')) };
+    })
+    .filter((item) => item.date && Number.isFinite(item.rate))
+    .sort((first, second) => first.date.localeCompare(second.date));
+
+  let index = 1;
+  return rows.map((item) => {
+    index *= 1 + item.rate / 100 / 12;
+    return { date: item.date, value: round(index, 8) };
+  });
+}
+
 async function fetchMinimumWage() {
   const html = await fetchText('https://www.ocalhukuk.com/yillara-gore-net-ve-brut-asgari-ucret-tablosu/');
   const rows = [...html.matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/g)]
@@ -253,7 +418,7 @@ async function fetchMinimumWage() {
       const endMonth = toMonth(endDate);
 
       if (!startMonth || !endMonth || !Number.isFinite(value)) {
-        return [];r
+        return [];
       }
 
       return listMonths(startMonth, endMonth).map((month) => ({
@@ -346,6 +511,27 @@ function toMonth(value) {
   return parts ? `${parts[3]}-${parts[2]}` : null;
 }
 
+function normalizeDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const raw = String(value).trim();
+  const iso = raw.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?$/);
+
+  if (iso) {
+    return `${iso[1]}-${iso[2]}-01`;
+  }
+
+  const tr = raw.match(/^(\d{2})[./](\d{2})[./](\d{4})$/);
+
+  if (tr) {
+    return `${tr[3]}-${tr[2]}-01`;
+  }
+
+  return null;
+}
+
 function toTurkishMonth(value) {
   const months = {
     Ocak: '01',
@@ -390,6 +576,17 @@ function average(values) {
 
 function round(value, digits) {
   return Number(value.toFixed(digits));
+}
+
+function dedupeByMonth(rows) {
+  return [
+    ...new Map(
+      rows
+        .filter((item) => item.date && Number.isFinite(item.value))
+        .sort((first, second) => first.date.localeCompare(second.date))
+        .map((item) => [item.date.slice(0, 7), { date: `${item.date.slice(0, 7)}-01`, value: item.value }]),
+    ).values(),
+  ];
 }
 
 function parseCsv(csv) {

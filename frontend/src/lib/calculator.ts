@@ -1,6 +1,18 @@
 import type { CalculatorState, InputUnit, SeriesKey } from '../types';
 
-const VALID_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver'];
+const VALID_CRITERIA: SeriesKey[] = [
+  'cpi',
+  'usd',
+  'eur',
+  'gold',
+  'minimumWage',
+  'silver',
+  'bist100',
+  'bitcoin',
+  'housing',
+  'gasoline',
+  'deposit',
+];
 const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
 const VALID_INPUT_UNITS: InputUnit[] = ['try', 'usd', 'eur', 'gold', 'silver'];
 

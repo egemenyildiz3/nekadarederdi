@@ -16,6 +16,11 @@ const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
   { key: 'gold', label: 'Altın', hint: 'Gram' },
   { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net' },
   { key: 'silver', label: 'Gümüş', hint: 'Gram' },
+  { key: 'bist100', label: 'BIST 100', hint: 'Endeks' },
+  { key: 'bitcoin', label: 'Bitcoin', hint: 'BTC' },
+  { key: 'housing', label: 'Konut', hint: 'KFE' },
+  { key: 'gasoline', label: 'Benzin', hint: 'Yakıt' },
+  { key: 'deposit', label: 'Mevduat', hint: 'Bileşik' },
 ];
 
 const INPUT_UNITS: { key: InputUnit; label: string }[] = [
@@ -196,6 +201,18 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!catalog) {
+      return;
+    }
+
+    const available = new Set(catalog.series.map((series) => series.key));
+    setState((current) => {
+      const criteria = current.criteria.filter((key) => available.has(key));
+      return criteria.length === current.criteria.length ? current : { ...current, criteria: criteria.length ? criteria : ['cpi'] };
+    });
+  }, [catalog]);
+
+  useEffect(() => {
     const query = isDefaultState(state) ? '' : `?${stateToSearchParams(state)}`;
     const nextUrl = `${window.location.pathname}${query}`;
     window.history.replaceState(null, '', nextUrl);
@@ -230,6 +247,10 @@ function App() {
       min: years.length ? Math.min(...years) : 2000,
       max: Math.max(currentYear, years.length ? Math.max(...years) : currentYear),
     };
+  }, [catalog]);
+  const availableCriteria = useMemo(() => {
+    const available = new Set(catalog?.series.map((series) => series.key) ?? defaultState().criteria);
+    return CRITERIA.filter((criterion) => available.has(criterion.key));
   }, [catalog]);
 
   const inputTryAmount = results[0]?.normalizedAmount;
@@ -272,22 +293,30 @@ function App() {
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-5">
-              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_150px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_150px]">
-                <label className="grid gap-2">
+              <div className="grid gap-2">
+                <div className="grid grid-cols-[minmax(0,1fr)_150px] gap-3">
                   <span className="text-sm font-semibold text-ink-800">Miktar</span>
+                  <span className="text-sm font-semibold text-ink-800">Birim</span>
+                </div>
+                <div className="grid overflow-hidden rounded-md border border-ink-200 bg-paper-50 transition focus-within:border-oxide-700 focus-within:ring-4 focus-within:ring-oxide-100 sm:grid-cols-[minmax(0,1fr)_150px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_150px]">
+                  <label className="sr-only" htmlFor="amount">
+                    Miktar
+                  </label>
                   <input
-                    className="h-12 rounded-md border border-ink-200 bg-paper-50 px-4 font-data text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
+                    id="amount"
+                    className="h-12 min-w-0 border-0 bg-transparent px-4 font-data text-base text-ink-950 outline-none"
                     inputMode="decimal"
                     min="1"
                     type="number"
                     value={state.amount || ''}
                     onChange={(event) => updateState({ amount: Number(event.target.value) })}
                   />
-                </label>
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold text-ink-800">Birim</span>
+                  <label className="sr-only" htmlFor="input-unit">
+                    Birim
+                  </label>
                   <select
-                    className="h-12 rounded-md border border-ink-200 bg-paper-50 px-3 text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
+                    id="input-unit"
+                    className="h-12 min-w-0 border-0 border-t border-ink-200 bg-transparent px-3 text-base text-ink-950 outline-none sm:border-l sm:border-t-0 lg:border-l-0 lg:border-t xl:border-l xl:border-t-0"
                     value={state.inputUnit}
                     onChange={(event) => updateState({ inputUnit: event.target.value as InputUnit })}
                   >
@@ -297,7 +326,7 @@ function App() {
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
@@ -320,7 +349,7 @@ function App() {
               <fieldset className="grid gap-3">
                 <legend className="text-sm font-semibold text-ink-800">Karşılaştırma</legend>
                 <div className="grid grid-cols-2 gap-2">
-                  {CRITERIA.map((criterion) => {
+                  {availableCriteria.map((criterion) => {
                     const selected = state.criteria.includes(criterion.key);
 
                     return (

@@ -1,6 +1,17 @@
 import catalog from '../../backend/Data/market-series.json';
 
-type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+type SeriesKey =
+  | 'cpi'
+  | 'usd'
+  | 'eur'
+  | 'gold'
+  | 'minimumWage'
+  | 'silver'
+  | 'bist100'
+  | 'bitcoin'
+  | 'housing'
+  | 'gasoline'
+  | 'deposit';
 type InputUnit = 'try' | 'usd' | 'eur' | 'gold' | 'silver';
 
 type Observation = {
@@ -31,7 +42,19 @@ type Env = {
 };
 
 const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
-const VALID_CRITERIA = new Set<SeriesKey>(['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
+const VALID_CRITERIA = new Set<SeriesKey>([
+  'cpi',
+  'usd',
+  'eur',
+  'gold',
+  'minimumWage',
+  'silver',
+  'bist100',
+  'bitcoin',
+  'housing',
+  'gasoline',
+  'deposit',
+]);
 const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silver']);
 const TL_CUTOVER = '2005-01';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
@@ -151,11 +174,14 @@ function calculate(request: Partial<CalculatorRequest>) {
   const inputUnit = request.inputUnit ?? 'try';
   const startMonth = request.startMonth!;
   const endMonth = request.endMonth!;
-  const criteria = request.criteria?.length ? [...new Set(request.criteria)] : DEFAULT_CRITERIA;
+  const availableKeys = new Set((catalog.series as MarketSeries[]).map((item) => item.key));
+  const requestedCriteria = request.criteria?.length ? [...new Set(request.criteria)] : DEFAULT_CRITERIA;
+  const criteria = requestedCriteria.filter((key) => VALID_CRITERIA.has(key) && availableKeys.has(key));
+  const selectedCriteria = criteria.length ? criteria : DEFAULT_CRITERIA.filter((key) => availableKeys.has(key));
   const appliedPre2005Conversion = inputUnit === 'try' && startMonth < TL_CUTOVER;
   const normalizedAmount = inputAmountToTry(amount, inputUnit, startMonth, appliedPre2005Conversion);
 
-  return criteria.map((key) => {
+  return selectedCriteria.map((key) => {
     if (!VALID_CRITERIA.has(key)) {
       throw new Error(`'${key}' için veri serisi bulunamadı.`);
     }
