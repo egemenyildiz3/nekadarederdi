@@ -253,6 +253,35 @@ function App() {
             </p>
           </section>
         </section>
+
+        <section
+          aria-labelledby="seo-heading"
+          className="grid gap-4 border-t border-ink-100 pt-6 text-sm leading-6 text-ink-600 md:grid-cols-3"
+        >
+          <div className="md:col-span-3">
+            <h2 id="seo-heading" className="font-display text-xl font-black leading-tight text-ink-950">
+              Geçmişteki para değerini karşılaştırma
+            </h2>
+          </div>
+          <article className="rounded-md border border-ink-100 bg-white p-4">
+            <h3 className="font-semibold text-ink-900">Enflasyona göre TL değeri</h3>
+            <p className="mt-2">
+              TÜFE serisi, geçmişteki bir TL tutarının bugünkü yaklaşık satın alma gücünü görmek için kullanılır.
+            </p>
+          </article>
+          <article className="rounded-md border border-ink-100 bg-white p-4">
+            <h3 className="font-semibold text-ink-900">Döviz ve değerli maden kıyası</h3>
+            <p className="mt-2">
+              Dolar, euro, gram altın ve gümüş karşılaştırmaları aylık veri serileri üzerinden yaklaşık çarpan üretir.
+            </p>
+          </article>
+          <article className="rounded-md border border-ink-100 bg-white p-4">
+            <h3 className="font-semibold text-ink-900">Asgari ücretle karşılaştırma</h3>
+            <p className="mt-2">
+              Net asgari ücret serisi, belirli bir tutarın dönemsel gelir düzeyleriyle kıyaslanmasına yardımcı olur.
+            </p>
+          </article>
+        </section>
       </div>
     </main>
   );

@@ -1,0 +1,19 @@
+{
+  "name": "Ne Kadar Ederdi?",
+  "short_name": "Ne Kadar?",
+  "description": "Geçmiş TL tutarlarını TÜFE, döviz, altın, gümüş ve asgari ücret verileriyle karşılaştırın.",
+  "lang": "tr-TR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ed",
+  "theme_color": "#e8bc46",
+  "icons": [
+    {
+      "src": "/og-image.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

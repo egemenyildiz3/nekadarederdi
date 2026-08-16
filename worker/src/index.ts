@@ -32,6 +32,19 @@ const DEFAULT_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'gold'];
 const VALID_CRITERIA = new Set<SeriesKey>(['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
 const TL_CUTOVER = '2005-01';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
+const ROBOTS_TXT = `User-agent: *
+Allow: /
+
+Sitemap: https://nekadarederdi.com/sitemap.xml`;
+const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://nekadarederdi.com/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
 const rateLimits = new Map<string, { resetAt: number; count: number }>();
 
 export default {
@@ -46,6 +59,24 @@ export default {
       return new Response(`${ADS_TXT}\n`, {
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
+    }
+
+    if (url.pathname === '/robots.txt') {
+      return new Response(`${ROBOTS_TXT}\n`, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
+    }
+
+    if (url.pathname === '/sitemap.xml') {
+      return new Response(`${SITEMAP_XML}\n`, {
+        headers: {
+          'Content-Type': 'application/xml; charset=utf-8',
           'Cache-Control': 'public, max-age=3600',
         },
       });
