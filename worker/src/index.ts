@@ -28,7 +28,7 @@ type Env = {
   ASSETS: Fetcher;
 };
 
-const DEFAULT_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'gold'];
+const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
 const VALID_CRITERIA = new Set<SeriesKey>(['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
 const TL_CUTOVER = '2005-01';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';

@@ -1,7 +1,7 @@
 import type { CalculatorState, SeriesKey } from '../types';
 
 const VALID_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver'];
-const DEFAULT_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'gold'];
+const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
 
 export function currentMonth(): string {
   return new Date().toISOString().slice(0, 7);

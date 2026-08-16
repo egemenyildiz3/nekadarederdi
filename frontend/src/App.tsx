@@ -10,8 +10,7 @@ import { formatMoney, formatMonth } from './lib/format';
 import type { CalculationResult, CalculatorState, MarketCatalog, SeriesKey } from './types';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
-  { key: 'tl', label: 'TL', hint: 'Nominal' },
-  { key: 'cpi', label: 'TÜFE', hint: 'Alım gücü' },
+  { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü' },
   { key: 'usd', label: 'USD', hint: 'Dolar' },
   { key: 'eur', label: 'EUR', hint: 'Euro' },
   { key: 'gold', label: 'Altın', hint: 'Gram' },
@@ -68,9 +67,9 @@ const LANDING_PAGES: LandingPageContent[] = [
     calculatorHref: '/',
     sections: [
       {
-        title: 'Nominal TL ile reel değer farklıdır',
+        title: 'Sabit TL ile reel değer farklıdır',
         body:
-          'Nominal TL, tutarın kağıt üzerindeki sayısını korur. Reel değer ise fiyat düzeyi, döviz kuru veya gelir serileriyle karşılaştırıldığında ortaya çıkar.',
+          'Sabit TL, tutarın kağıt üzerindeki sayısını korur. Reel değer ise fiyat düzeyi, döviz kuru veya gelir serileriyle karşılaştırıldığında ortaya çıkar.',
       },
       {
         title: 'Tek ölçüt yerine çoklu kıyas',
@@ -92,7 +91,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Eski bir fiyatın, maaşın veya borcun bugünün parasıyla yaklaşık karşılığını hesaplayın.',
     intro:
       '“Bugünün parasıyla ne kadar?” sorusu, geçmişteki bir tutarı bugünkü fiyat ortamına taşır. Hesaplayıcı, seçilen başlangıç ve bitiş ayına göre yaklaşık karşılığı üretir.',
-    calculatorHref: '/?criteria=tl%2Ccpi%2CminimumWage',
+    calculatorHref: '/?criteria=cpi%2CminimumWage',
     sections: [
       {
         title: 'Fiyatları bugüne taşımak',
@@ -119,7 +118,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki TL tutarını dolar kuru değişimine göre bugünkü yaklaşık TL karşılığıyla kıyaslayın.',
     intro:
       'Dolar bazında karşılaştırma, TL’nin ABD doları karşısındaki değişimini görmek için kullanılır. Bu yaklaşım alım gücünden farklıdır; kur hareketine odaklanır.',
-    calculatorHref: '/?criteria=tl%2Cusd',
+    calculatorHref: '/?criteria=usd',
     sections: [
       {
         title: 'Kur bazlı karşılaştırma nedir?',
@@ -146,7 +145,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki TL tutarını gram altın fiyatı değişimine göre bugünkü yaklaşık karşılığıyla hesaplayın.',
     intro:
       'Altın bazında karşılaştırma, belirli bir TL tutarının gram altın fiyatındaki değişimle nasıl farklılaşacağını gösterir. Bu sonuç yatırım getirisi değil, tarihsel fiyat kıyasıdır.',
-    calculatorHref: '/?criteria=tl%2Cgold%2Csilver',
+    calculatorHref: '/?criteria=gold%2Csilver',
     sections: [
       {
         title: 'Gram altın çarpanı',
@@ -236,7 +235,7 @@ function App() {
     setState((current) => {
       const exists = current.criteria.includes(key);
       const criteria = exists ? current.criteria.filter((item) => item !== key) : [...current.criteria, key];
-      return { ...current, criteria: criteria.length ? criteria : ['tl'] };
+      return { ...current, criteria: criteria.length ? criteria : ['cpi'] };
     });
   }
 
