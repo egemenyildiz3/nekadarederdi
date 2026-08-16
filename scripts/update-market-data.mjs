@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
-const dataPath = resolve(root, 'backend', 'Data', 'market-series.json');
+const dataPath = resolve(root, 'data', 'market-series.json');
 const troyOunceGram = 31.1034768;
 const startYear = Number(process.env.DATA_START_YEAR ?? 2005);
 const end = process.env.DATA_END_MONTH ?? new Date().toISOString().slice(0, 7);

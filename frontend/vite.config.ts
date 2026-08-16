@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     port: 7573,
     proxy: {
-      '/api': 'http://localhost:7400',
+      '/api': 'http://localhost:8787',
     },
   },
 });

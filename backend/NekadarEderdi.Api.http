@@ -1,6 +1,0 @@
-@NekadarEderdi.Api_HostAddress = http://localhost:7400
-
-GET {{NekadarEderdi.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

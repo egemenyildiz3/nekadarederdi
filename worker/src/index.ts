@@ -1,4 +1,4 @@
-import catalog from '../../backend/Data/market-series.json';
+import catalog from '../../data/market-series.json';
 
 type SeriesKey =
   | 'cpi'
