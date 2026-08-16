@@ -6,7 +6,7 @@ import { MonthSelect } from './components/MonthSelect';
 import { ResultCard } from './components/ResultCard';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
-import { formatInputAmount, formatMoney, formatMonth } from './lib/format';
+import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
@@ -190,6 +190,7 @@ function App() {
   const [results, setResults] = useState<CalculationResult[]>([]);
   const [catalog, setCatalog] = useState<MarketCatalog | null>(null);
   const [debouncedState, setDebouncedState] = useState(state);
+  const [amountText, setAmountText] = useState(() => formatEditableNumber(state.amount));
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -261,6 +262,19 @@ function App() {
     setState((current) => ({ ...current, ...partial }));
   }
 
+  function updateAmount(value: string) {
+    setAmountText(value);
+    const amount = parseLocalizedNumber(value);
+
+    if (Number.isFinite(amount) && amount > 0) {
+      updateState({ amount });
+    }
+  }
+
+  function formatAmountInput() {
+    setAmountText(formatEditableNumber(state.amount));
+  }
+
   function toggleCriterion(key: SeriesKey) {
     setState((current) => {
       const exists = current.criteria.includes(key);
@@ -280,9 +294,15 @@ function App() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
           <Logo />
-          <p className="max-w-2xl text-sm leading-6 text-ink-600 sm:justify-self-end sm:text-right">
-            Geçmişteki ya da bugünkü bir TL tutarını TÜFE, döviz, altın, gümüş ve asgari ücretle ay bazında kıyaslayın.
-          </p>
+          <div className="max-w-2xl border-l-4 border-coin-500 pl-4 sm:justify-self-end sm:text-right sm:border-l-0 sm:border-r-4 sm:pl-0 sm:pr-4">
+            <p className="font-data text-xs font-semibold uppercase text-oxide-700">Ay ay değer hesabı</p>
+            <p className="mt-1 text-base font-semibold leading-6 text-ink-800">
+              Geçmiş para, bugünün hesabıyla.
+            </p>
+            <p className="mt-1 text-sm leading-6 text-ink-500">
+              TÜFE, döviz, altın, gümüş, gelir ve piyasa verileriyle kıyaslayın.
+            </p>
+          </div>
         </header>
 
         <AdSlot label="Reklam alanı" placement="top" />
@@ -306,10 +326,10 @@ function App() {
                     id="amount"
                     className="h-12 min-w-0 border-0 bg-transparent px-4 font-data text-base text-ink-950 outline-none"
                     inputMode="decimal"
-                    min="1"
-                    type="number"
-                    value={state.amount || ''}
-                    onChange={(event) => updateState({ amount: Number(event.target.value) })}
+                    type="text"
+                    value={amountText}
+                    onBlur={formatAmountInput}
+                    onChange={(event) => updateAmount(event.target.value)}
                   />
                   <label className="sr-only" htmlFor="input-unit">
                     Birim

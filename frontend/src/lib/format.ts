@@ -14,6 +14,10 @@ export const numberFormatter = new Intl.NumberFormat('tr-TR', {
   maximumFractionDigits: 2,
 });
 
+export const editableNumberFormatter = new Intl.NumberFormat('tr-TR', {
+  maximumFractionDigits: 8,
+});
+
 const usdFormatter = new Intl.NumberFormat('tr-TR', {
   style: 'currency',
   currency: 'USD',
@@ -49,6 +53,37 @@ export function formatInputAmount(value: number, inputUnit: 'try' | 'usd' | 'eur
 
   const unitLabel = inputUnit === 'gold' ? 'gr altın' : 'gr gümüş';
   return `${numberFormatter.format(value)} ${unitLabel}`;
+}
+
+export function formatEditableNumber(value: number): string {
+  return Number.isFinite(value) && value > 0 ? editableNumberFormatter.format(value) : '';
+}
+
+export function parseLocalizedNumber(value: string): number {
+  const normalized = value.trim().replace(/\s/g, '');
+
+  if (!normalized) {
+    return Number.NaN;
+  }
+
+  const lastComma = normalized.lastIndexOf(',');
+  const lastDot = normalized.lastIndexOf('.');
+  let numeric = normalized;
+
+  if (lastComma >= 0 && lastDot >= 0) {
+    numeric =
+      lastDot > lastComma
+        ? normalized.replace(/,/g, '')
+        : normalized.replace(/\./g, '').replace(',', '.');
+  } else if (lastComma >= 0) {
+    numeric = normalized.replace(/\./g, '').replace(',', '.');
+  } else if (lastDot >= 0) {
+    const groups = normalized.split('.');
+    const looksGrouped = groups.length > 1 && groups.slice(1).every((group) => group.length === 3);
+    numeric = looksGrouped ? groups.join('') : normalized;
+  }
+
+  return Number(numeric);
 }
 
 export function formatMonth(value: string): string {
