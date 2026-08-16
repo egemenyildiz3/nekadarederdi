@@ -1,6 +1,7 @@
 import type { CalculatorState, SeriesKey } from '../types';
 
-const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold'];
+const VALID_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver'];
+const DEFAULT_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'gold'];
 
 export function currentMonth(): string {
   return new Date().toISOString().slice(0, 7);
@@ -22,7 +23,7 @@ export function parseStateFromUrl(search: string): CalculatorState {
   const criteria = params
     .get('criteria')
     ?.split(',')
-    .filter(Boolean) as SeriesKey[] | undefined;
+    .filter((key): key is SeriesKey => VALID_CRITERIA.includes(key as SeriesKey));
 
   return {
     amount: Number.isFinite(amount) && amount > 0 ? amount : fallback.amount,
@@ -46,5 +47,6 @@ function normalizeMonth(value: string | null): string | null {
     return null;
   }
 
-  return value;
+  const month = Number(value.slice(5, 7));
+  return month >= 1 && month <= 12 ? value : null;
 }

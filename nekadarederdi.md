@@ -44,7 +44,7 @@ Site; mobil öncelikli, hızlı açılan, paylaşılabilir ve SEO açısından t
 - **SEO:** Statik HTML meta etiketleri, açıklayıcı başlıklar ve semantic route desteği planlanmalıdır.
 - **Erişilebilirlik:** Form etiketleri, klavye kullanımı, kontrast ve odak durumları dikkatle ele alınmalıdır.
 - **Reklam yerleşimi:** Header altı ve sonuç kartları altı için sabit yükseklikte reklam placeholder alanları ayrılmalıdır.
-- **Dağıtım:** Vite build çıktısı Docker içinde Nginx ile 8080 portundan sunulmalıdır. 3000 portu geliştirme dışında kullanılmayacaktır.
+- **Dağıtım:** Vite build çıktısı Docker içinde Nginx ile 7180 portundan sunulmalıdır. 3000 portu geliştirme dışında kullanılmayacaktır.
 
 ---
 
@@ -70,7 +70,7 @@ Site; mobil öncelikli, hızlı açılan, paylaşılabilir ve SEO açısından t
 4. **Hesaplama motoru:** Tarih seçimi, en yakın önceki veri noktasını bulma, çarpan hesabı ve 2005 öncesi TL dönüşümünü backend'de uygula.
 5. **Arayüz:** Sade, mobil öncelikli hesaplama formu, çoklu seçim kontrolleri, sonuç kartları ve reklam placeholder alanlarını inşa et.
 6. **Paylaşım:** Query string senkronizasyonu, X/WhatsApp linkleri ve panoya kopyalama ekle.
-7. **Dağıtım:** Docker Compose ile ASP.NET backend'i 4000, frontend'i 8080 portundan çalıştır.
+7. **Dağıtım:** Docker Compose ile ASP.NET backend'i 7400, frontend'i 7180 portundan çalıştır.
 8. **Doğrulama:** Root `npm run build` ile hem backend hem frontend build'ini kontrol et.
 
 

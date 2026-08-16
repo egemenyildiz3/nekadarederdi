@@ -5,6 +5,8 @@ namespace NekadarEderdi.Api.Models;
 [JsonConverter(typeof(JsonStringEnumConverter<SeriesKey>))]
 public enum SeriesKey
 {
+    Tl,             // Nominal Türk lirası
+
     // Temel Makro Göstergeler
     Cpi,            // Enflasyon / TÜFE (TL Alım Gücü)
     MinimumWage,    // Asgari Ücret Oranı
@@ -41,6 +43,14 @@ public sealed record MarketObservation(
     DateOnly Date,
     decimal Value);
 
+public sealed record CalculationSeries(
+    SeriesKey Key,
+    string Name,
+    string ShortName,
+    string Description,
+    string Unit,
+    string SourceNote);
+
 public sealed record CalculatorRequest(
     decimal Amount,
     string StartMonth,
@@ -51,7 +61,7 @@ public sealed record CalculationResponse(
     IReadOnlyList<CalculationResult> Results);
 
 public sealed record CalculationResult(
-    MarketSeries Series,
+    CalculationSeries Series,
     decimal OriginalAmount,
     decimal NormalizedAmount,
     decimal ResultAmount,

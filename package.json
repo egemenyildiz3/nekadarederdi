@@ -7,8 +7,9 @@
   ],
   "scripts": {
     "build": "dotnet build backend/NekadarEderdi.Api.csproj && npm run build -w frontend",
-    "dev:backend": "dotnet run --project backend/NekadarEderdi.Api.csproj",
-    "dev:frontend": "npm run dev -w frontend",
-    "preview:frontend": "npm run preview -w frontend"
+    "data:update": "node scripts/update-market-data.mjs",
+    "dev:backend": "dotnet run --project backend/NekadarEderdi.Api.csproj --urls http://localhost:7400",
+    "dev:frontend": "npm run dev -w frontend -- --port 7573",
+    "preview:frontend": "npm run preview -w frontend -- --port 7180"
   }
 }

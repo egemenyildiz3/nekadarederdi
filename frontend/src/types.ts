@@ -1,4 +1,4 @@
-export type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+export type SeriesKey = 'tl' | 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
 
 export type Observation = {
   date: string;
@@ -15,6 +15,8 @@ export type MarketSeries = {
   observations: Observation[];
 };
 
+export type CalculationSeries = Omit<MarketSeries, 'observations'>;
+
 export type MarketCatalog = {
   updatedAt: string;
   series: MarketSeries[];
@@ -28,7 +30,7 @@ export type CalculatorState = {
 };
 
 export type CalculationResult = {
-  series: MarketSeries;
+  series: CalculationSeries;
   originalAmount: number;
   normalizedAmount: number;
   resultAmount: number;

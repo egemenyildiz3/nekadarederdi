@@ -3,14 +3,14 @@ services:
     build:
       context: ./backend
     environment:
-      - ASPNETCORE_URLS=http://+:4000
+      - ASPNETCORE_URLS=http://+:7400
     ports:
-      - "4000:4000"
+      - "7400:7400"
 
   frontend:
     build:
       context: ./frontend
     ports:
-      - "8080:8080"
+      - "7180:7180"
     depends_on:
       - backend

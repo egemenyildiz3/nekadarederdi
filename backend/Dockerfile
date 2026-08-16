@@ -7,7 +7,7 @@ RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:4000
+ENV ASPNETCORE_URLS=http://+:7400
 COPY --from=build /app/publish .
-EXPOSE 4000
+EXPOSE 7400
 ENTRYPOINT ["dotnet", "NekadarEderdi.Api.dll"]

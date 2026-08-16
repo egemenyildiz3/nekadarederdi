@@ -6,7 +6,7 @@ namespace NekadarEderdi.Api.Services;
 public sealed partial class ValueCalculator : IValueCalculator
 {
     private static readonly DateOnly TlCutover = new(2005, 1, 1);
-    private static readonly SeriesKey[] DefaultCriteria = [SeriesKey.Cpi, SeriesKey.Usd, SeriesKey.Gold];
+    private static readonly SeriesKey[] DefaultCriteria = [SeriesKey.Tl, SeriesKey.Cpi, SeriesKey.Usd, SeriesKey.Gold];
     private readonly IMarketDataStore _marketDataStore;
 
     public ValueCalculator(IMarketDataStore marketDataStore)
@@ -19,7 +19,7 @@ public sealed partial class ValueCalculator : IValueCalculator
         Validate(request);
 
         var catalog = _marketDataStore.GetCatalog();
-        var criteria = request.Criteria.Count > 0 ? request.Criteria.Distinct().ToArray() : DefaultCriteria;
+        var criteria = request.Criteria is { Count: > 0 } ? request.Criteria.Distinct().ToArray() : DefaultCriteria;
         var startDate = ParseMonth(request.StartMonth);
         var endDate = ParseMonth(request.EndMonth);
         var appliedPre2005Conversion = startDate < TlCutover;
@@ -27,13 +27,20 @@ public sealed partial class ValueCalculator : IValueCalculator
 
         return criteria.Select(key =>
         {
-            var series = catalog.Series.First(item => item.Key == key);
+            var series = catalog.Series.FirstOrDefault(item => item.Key == key)
+                ?? throw new ArgumentException($"'{key}' için veri serisi bulunamadı.");
             var startObservation = PickObservation(series.Observations, startDate);
             var endObservation = PickObservation(series.Observations, endDate);
             var multiplier = endObservation.Value / startObservation.Value;
 
             return new CalculationResult(
-                series,
+                new CalculationSeries(
+                    series.Key,
+                    series.Name,
+                    series.ShortName,
+                    series.Description,
+                    series.Unit,
+                    series.SourceNote),
                 request.Amount,
                 normalizedAmount,
                 normalizedAmount * multiplier,
@@ -60,21 +67,36 @@ public sealed partial class ValueCalculator : IValueCalculator
             throw new ArgumentException("Miktar 0'dan büyük olmalı.");
         }
 
-        if (!MonthRegex().IsMatch(request.StartMonth) || !MonthRegex().IsMatch(request.EndMonth))
+        if (!TryParseMonth(request.StartMonth, out _) || !TryParseMonth(request.EndMonth, out _))
         {
-            throw new ArgumentException("Tarih formatı YYYY-MM olmalı.");
-        }
-
-        if (ParseMonth(request.EndMonth) < ParseMonth(request.StartMonth))
-        {
-            throw new ArgumentException("Bitiş tarihi başlangıç tarihinden önce olamaz.");
+            throw new ArgumentException("Tarih formatı YYYY-MM olmalı ve ay 01-12 aralığında olmalı.");
         }
     }
 
     private static DateOnly ParseMonth(string value)
     {
+        if (TryParseMonth(value, out var month))
+        {
+            return month;
+        }
+
+        throw new ArgumentException("Tarih formatı YYYY-MM olmalı ve ay 01-12 aralığında olmalı.");
+    }
+
+    private static bool TryParseMonth(string value, out DateOnly month)
+    {
+        month = default;
+
+        if (!MonthRegex().IsMatch(value))
+        {
+            return false;
+        }
+
         var parts = value.Split('-');
-        return new DateOnly(int.Parse(parts[0]), int.Parse(parts[1]), 1);
+        return int.TryParse(parts[0], out var year)
+            && int.TryParse(parts[1], out var monthNumber)
+            && monthNumber is >= 1 and <= 12
+            && DateOnly.TryParse($"{year:D4}-{monthNumber:D2}-01", out month);
     }
 
     [GeneratedRegex("^\\d{4}-\\d{2}$")]
