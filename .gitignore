@@ -5,6 +5,7 @@ backend/dist/
 backend/bin/
 backend/obj/
 .vite/
+.wrangler/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts

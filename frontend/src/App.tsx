@@ -5,7 +5,7 @@ import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
 import { ResultCard } from './components/ResultCard';
 import { calculateOnBackend, fetchSeries } from './lib/api';
-import { defaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
+import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
 import { formatMoney, formatMonth } from './lib/format';
 import type { CalculationResult, CalculatorState, MarketCatalog, SeriesKey } from './types';
 
@@ -35,7 +35,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const nextUrl = `${window.location.pathname}?${stateToSearchParams(state)}`;
+    const query = isDefaultState(state) ? '' : `?${stateToSearchParams(state)}`;
+    const nextUrl = `${window.location.pathname}${query}`;
     window.history.replaceState(null, '', nextUrl);
   }, [state]);
 

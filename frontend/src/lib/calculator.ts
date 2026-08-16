@@ -42,6 +42,20 @@ export function stateToSearchParams(state: CalculatorState): string {
   return params.toString();
 }
 
+export function isDefaultState(state: CalculatorState): boolean {
+  const fallback = defaultState();
+  return (
+    state.amount === fallback.amount &&
+    state.startMonth === fallback.startMonth &&
+    state.endMonth === fallback.endMonth &&
+    sameCriteria(state.criteria, fallback.criteria)
+  );
+}
+
+function sameCriteria(first: SeriesKey[], second: SeriesKey[]): boolean {
+  return first.length === second.length && first.every((item, index) => item === second[index]);
+}
+
 function normalizeMonth(value: string | null): string | null {
   if (!value || !/^\d{4}-\d{2}$/.test(value)) {
     return null;

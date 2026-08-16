@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nekadarederdi",
+  "main": "worker/src/index.ts",
+  "compatibility_date": "2026-08-16",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "frontend/dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

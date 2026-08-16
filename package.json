@@ -7,9 +7,15 @@
   ],
   "scripts": {
     "build": "dotnet build backend/NekadarEderdi.Api.csproj && npm run build -w frontend",
+    "build:cloudflare": "npm run build -w frontend",
+    "cf:dev": "npm run build:cloudflare && wrangler dev",
+    "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "data:update": "node scripts/update-market-data.mjs",
     "dev:backend": "dotnet run --project backend/NekadarEderdi.Api.csproj --urls http://localhost:7400",
     "dev:frontend": "npm run dev -w frontend -- --port 7573",
     "preview:frontend": "npm run preview -w frontend -- --port 7180"
+  },
+  "devDependencies": {
+    "wrangler": "^4.29.1"
   }
 }
