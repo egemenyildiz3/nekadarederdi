@@ -31,11 +31,15 @@ const eurFormatter = new Intl.NumberFormat('tr-TR', {
 });
 
 export function formatMoney(value: number): string {
-  if (Math.abs(value) < 1000) {
+  if (hasFraction(value) || Math.abs(value) < 1000) {
     return preciseMoneyFormatter.format(value);
   }
 
   return moneyFormatter.format(value);
+}
+
+function hasFraction(value: number): boolean {
+  return Math.abs(value - Math.round(value)) >= 0.005;
 }
 
 export function formatInputAmount(value: number, inputUnit: 'try' | 'usd' | 'eur' | 'gold' | 'silver'): string {

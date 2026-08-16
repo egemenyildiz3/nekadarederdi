@@ -71,6 +71,7 @@ jobs:
           VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
           VITE_ADSENSE_TOP_SLOT: ${{ secrets.VITE_ADSENSE_TOP_SLOT }}
           VITE_ADSENSE_RESULTS_SLOT: ${{ secrets.VITE_ADSENSE_RESULTS_SLOT }}
+          VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN: ${{ secrets.VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN }}
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3
