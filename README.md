@@ -77,6 +77,33 @@ Deploy:
 npm run cf:deploy
 ```
 
+## GitHub CI/CD
+
+Push ve pull request kontrolleri:
+
+```text
+.github/workflows/deploy-cloudflare.yml
+```
+
+Workflow şunları yapar:
+
+```text
+npm audit --omit=dev
+Worker TypeScript kontrolü
+ASP.NET backend build
+React frontend build
+main branch push ise Cloudflare deploy
+```
+
+GitHub repo secrets:
+
+```text
+CLOUDFLARE_ACCOUNT_ID = cd4dca0755176b5015a23e6d3c60f683
+CLOUDFLARE_API_TOKEN  = Cloudflare API token
+```
+
+Token için Cloudflare'da `Edit Cloudflare Workers` yetkili API token oluştur.
+
 Deploy sonrası Wrangler bir `*.workers.dev` adresi verir.
 
 Domain bağlama:

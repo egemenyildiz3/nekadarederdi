@@ -8,6 +8,8 @@
   "scripts": {
     "build": "dotnet build backend/NekadarEderdi.Api.csproj && npm run build -w frontend",
     "build:cloudflare": "npm run build -w frontend",
+    "check": "npm audit --omit=dev && npm run check:worker && npm run build",
+    "check:worker": "tsc -p worker/tsconfig.json --noEmit",
     "cf:dev": "npm run build:cloudflare && wrangler dev",
     "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "data:update": "node scripts/update-market-data.mjs",
@@ -16,6 +18,7 @@
     "preview:frontend": "npm run preview -w frontend -- --port 7180"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260816.1",
     "wrangler": "^4.29.1"
   }
 }
