@@ -64,6 +64,10 @@ jobs:
 
       - name: Build Cloudflare assets
         run: npm run build:cloudflare
+        env:
+          VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
+          VITE_ADSENSE_TOP_SLOT: ${{ secrets.VITE_ADSENSE_TOP_SLOT }}
+          VITE_ADSENSE_RESULTS_SLOT: ${{ secrets.VITE_ADSENSE_RESULTS_SLOT }}
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3

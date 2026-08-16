@@ -100,9 +100,34 @@ GitHub repo secrets:
 ```text
 CLOUDFLARE_ACCOUNT_ID = cd4dca0755176b5015a23e6d3c60f683
 CLOUDFLARE_API_TOKEN  = Cloudflare API token
+VITE_ADSENSE_CLIENT   = ca-pub-...
+VITE_ADSENSE_TOP_SLOT = üst reklam slot id
+VITE_ADSENSE_RESULTS_SLOT = sonuç altı reklam slot id, boşsa üst slot kullanılır
 ```
 
 Token için Cloudflare'da `Edit Cloudflare Workers` yetkili API token oluştur.
+
+## AdSense
+
+AdSense değerleri yoksa uygulama reklam placeholder gösterir.
+
+Gerekli değerler:
+
+```text
+VITE_ADSENSE_CLIENT
+VITE_ADSENSE_TOP_SLOT
+VITE_ADSENSE_RESULTS_SLOT, opsiyonel
+```
+
+Yerel örnek:
+
+```bash
+cp frontend/.env.example frontend/.env
+```
+
+Sonra `frontend/.env` içindeki değerleri AdSense panelinden gelen gerçek değerlerle değiştir.
+
+Canlı deploy için aynı değerleri GitHub Actions secret olarak ekle.
 
 Deploy sonrası Wrangler bir `*.workers.dev` adresi verir.
 
