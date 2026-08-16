@@ -1,4 +1,4 @@
-export type SeriesKey = 'tl' | 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+export type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
 
 export type Observation = {
   date: string;

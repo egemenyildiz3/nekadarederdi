@@ -5,8 +5,6 @@ namespace NekadarEderdi.Api.Models;
 [JsonConverter(typeof(JsonStringEnumConverter<SeriesKey>))]
 public enum SeriesKey
 {
-    Tl,             // Nominal Türk lirası
-
     // Temel Makro Göstergeler
     Cpi,            // Enflasyon / TÜFE (TL Alım Gücü)
     MinimumWage,    // Asgari Ücret Oranı

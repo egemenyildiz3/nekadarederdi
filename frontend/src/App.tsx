@@ -67,9 +67,9 @@ const LANDING_PAGES: LandingPageContent[] = [
     calculatorHref: '/',
     sections: [
       {
-        title: 'Sabit TL ile reel değer farklıdır',
+        title: 'Reel değer fiyat düzeyine bağlıdır',
         body:
-          'Sabit TL, tutarın kağıt üzerindeki sayısını korur. Reel değer ise fiyat düzeyi, döviz kuru veya gelir serileriyle karşılaştırıldığında ortaya çıkar.',
+          'Reel değer, tutarın kağıt üzerindeki sayısını değil, fiyat düzeyi karşısındaki yaklaşık alım gücünü gösterir.',
       },
       {
         title: 'Tek ölçüt yerine çoklu kıyas',

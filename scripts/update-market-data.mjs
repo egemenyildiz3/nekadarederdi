@@ -29,14 +29,6 @@ const [cpi, rates, goldUsd, silverUsd, minimumWage] = await Promise.all([
   fetchMinimumWage(),
 ]);
 
-setSeries('tl', {
-  name: 'Sabit TL',
-  shortName: 'TL',
-  description: 'Tutarın endeks, kur ya da varlık fiyatına bağlanmadan aynı TL değeriyle kalan hali.',
-  unit: 'TL',
-  sourceNote: 'Sabit TL referans serisi. Satın alma gücü ya da yatırım getirisi içermez.',
-  observations: rates.usd.map((item) => ({ date: item.date, value: 1 })),
-});
 setSeries('cpi', {
   name: 'Reel TL',
   shortName: 'TÜFE',

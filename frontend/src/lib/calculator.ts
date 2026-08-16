@@ -1,6 +1,6 @@
 import type { CalculatorState, SeriesKey } from '../types';
 
-const VALID_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver'];
+const VALID_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver'];
 const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
 
 export function currentMonth(): string {

@@ -1,6 +1,6 @@
 import catalog from '../../backend/Data/market-series.json';
 
-type SeriesKey = 'tl' | 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
+type SeriesKey = 'cpi' | 'usd' | 'eur' | 'gold' | 'minimumWage' | 'silver';
 
 type Observation = {
   date: string;
@@ -29,7 +29,7 @@ type Env = {
 };
 
 const DEFAULT_CRITERIA: SeriesKey[] = ['cpi', 'usd', 'gold', 'minimumWage'];
-const VALID_CRITERIA = new Set<SeriesKey>(['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
+const VALID_CRITERIA = new Set<SeriesKey>(['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
 const TL_CUTOVER = '2005-01';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *

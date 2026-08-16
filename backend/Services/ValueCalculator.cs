@@ -6,7 +6,8 @@ namespace NekadarEderdi.Api.Services;
 public sealed partial class ValueCalculator : IValueCalculator
 {
     private static readonly DateOnly TlCutover = new(2005, 1, 1);
-    private static readonly SeriesKey[] DefaultCriteria = [SeriesKey.Tl, SeriesKey.Cpi, SeriesKey.Usd, SeriesKey.Gold];
+    private static readonly SeriesKey[] DefaultCriteria =
+        [SeriesKey.Cpi, SeriesKey.Usd, SeriesKey.Gold, SeriesKey.MinimumWage];
     private readonly IMarketDataStore _marketDataStore;
 
     public ValueCalculator(IMarketDataStore marketDataStore)
