@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, Loader2, RotateCcw } from 'lucide-react';
+import { Check, Copy, Loader2 } from 'lucide-react';
 import { AdSlot } from './components/AdSlot';
 import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
@@ -383,14 +383,6 @@ function App() {
                 </p>
               )}
 
-              <button
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-ink-950 px-4 text-base font-bold text-white transition hover:bg-ink-800"
-                type="button"
-                onClick={() => setState(defaultState())}
-              >
-                <RotateCcw aria-hidden="true" size={18} />
-                Varsayılana dön
-              </button>
             </div>
           </form>
 
