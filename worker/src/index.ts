@@ -31,6 +31,7 @@ type Env = {
 const DEFAULT_CRITERIA: SeriesKey[] = ['tl', 'cpi', 'usd', 'gold'];
 const VALID_CRITERIA = new Set<SeriesKey>(['tl', 'cpi', 'usd', 'eur', 'gold', 'minimumWage', 'silver']);
 const TL_CUTOVER = '2005-01';
+const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const rateLimits = new Map<string, { resetAt: number; count: number }>();
 
 export default {
@@ -39,6 +40,15 @@ export default {
 
     if (url.pathname === '/health') {
       return json({ ok: true });
+    }
+
+    if (url.pathname === '/ads.txt') {
+      return new Response(`${ADS_TXT}\n`, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
     }
 
     if (url.pathname === '/api/series' && request.method === 'GET') {
