@@ -13,7 +13,7 @@ export function ResultCard({ result }: ResultCardProps) {
   const detailsId = `result-details-${result.series.key}`;
 
   return (
-    <article className="rounded-md border border-ink-100 bg-white p-5 shadow-soft">
+    <article className="mb-4 break-inside-avoid rounded-md border border-ink-100 bg-white p-5 shadow-soft">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
@@ -26,37 +26,35 @@ export function ResultCard({ result }: ResultCardProps) {
       </div>
 
       <div className="mt-5">
-        <p className="text-sm text-ink-500">Yaklaşık karşılık</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-ink-500">Yaklaşık karşılık</p>
+          <button
+            aria-controls={detailsId}
+            aria-expanded={detailsOpen}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-ink-100 text-ink-700 transition hover:border-oxide-700 hover:text-oxide-800"
+            title={detailsOpen ? 'Detayları gizle' : 'Detayları göster'}
+            type="button"
+            onClick={() => setDetailsOpen((current) => !current)}
+          >
+            <ChevronDown
+              aria-hidden="true"
+              className={`transition-transform ${detailsOpen ? 'rotate-180' : ''}`}
+              size={18}
+            />
+          </button>
+        </div>
         <p className="currency-value mt-1 font-data font-bold tracking-normal text-ink-950">
           {formatMoney(result.resultAmount)}
         </p>
       </div>
 
-      <div className="mt-5 grid gap-3 text-sm">
-        <div className="rounded-md bg-paper-100 p-3">
-          <p className="text-ink-500">Çarpan</p>
-          <p className="mt-1 font-data font-semibold text-ink-900">{numberFormatter.format(result.multiplier)}x</p>
-        </div>
-      </div>
-
-      <button
-        aria-controls={detailsId}
-        aria-expanded={detailsOpen}
-        className="mt-4 flex min-h-10 w-full items-center justify-between rounded-md border border-ink-100 px-3 text-left text-sm font-semibold text-ink-700 transition hover:border-oxide-700 hover:text-oxide-800"
-        type="button"
-        onClick={() => setDetailsOpen((current) => !current)}
-      >
-        Detaylar
-        <ChevronDown
-          aria-hidden="true"
-          className={`transition-transform ${detailsOpen ? 'rotate-180' : ''}`}
-          size={18}
-        />
-      </button>
-
       {detailsOpen && (
-        <div id={detailsId} className="mt-3 grid gap-3 text-sm">
+        <div id={detailsId} className="mt-5 grid gap-3 text-sm">
           <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-md bg-paper-100 p-3">
+              <p className="text-ink-500">Çarpan</p>
+              <p className="mt-1 font-data font-semibold text-ink-900">{numberFormatter.format(result.multiplier)}x</p>
+            </div>
             <div className="rounded-md bg-paper-100 p-3">
               <p className="text-ink-500">Birim</p>
               <p className="mt-1 font-data font-semibold text-ink-900">{result.series.unit}</p>
