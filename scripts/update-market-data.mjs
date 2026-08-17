@@ -333,6 +333,14 @@ async function fetchYahooMonthly(symbol, startMonth) {
     .sort((first, second) => first.date.localeCompare(second.date));
 
   if (rows.length === 0) {
+    const fallbackKey = symbol === 'XU100.IS' ? 'bist100' : symbol === 'BTC-USD' ? 'bitcoin' : null;
+    const existing = fallbackKey ? getExistingSeries(fallbackKey) : [];
+
+    if (existing.length > 0) {
+      console.warn(`${symbol} için Yahoo Finance verisi alınamadı; mevcut ${fallbackKey} serisi korundu.`);
+      return existing;
+    }
+
     throw new Error(`${symbol} için Yahoo Finance verisi alınamadı.`);
   }
 
@@ -351,12 +359,19 @@ function deriveBitcoinTry(btcUsd, usdTryRows) {
 }
 
 async function fetchHousingIndex() {
-  const html = await fetchText('https://altinla.com/tr/konut/fiyat-endeksi');
+  const html = await fetchText('https://altinla.com/tr/konut/fiyat-endeksi', { optional: true });
   const rows = [...html.matchAll(/\{\\"date\\":\\"(\d{4}-\d{2}-\d{2})\\",\\"value\\":([0-9.]+)\}/g)]
     .map((match) => ({ date: match[1], value: Number(match[2]) }))
     .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value));
 
   if (rows.length === 0) {
+    const existing = getExistingSeries('housing');
+
+    if (existing.length > 0) {
+      console.warn('Konut fiyat endeksi kaynağından veri alınamadı; mevcut konut serisi korundu.');
+      return existing;
+    }
+
     throw new Error('Konut fiyat endeksi serisi çıkarılamadı.');
   }
 
