@@ -571,7 +571,7 @@ function App() {
             )}
 
             {!loading && results.length > 0 && (
-              <div className="columns-1 gap-4 md:columns-2">
+              <div className="grid items-start gap-4 md:grid-cols-2">
                 {results.map((result) => (
                   <ResultCard key={result.series.key} result={result} />
                 ))}

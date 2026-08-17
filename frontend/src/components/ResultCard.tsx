@@ -13,7 +13,7 @@ export function ResultCard({ result }: ResultCardProps) {
   const detailsId = `result-details-${result.series.key}`;
 
   return (
-    <article className="mb-4 break-inside-avoid rounded-md border border-ink-100 bg-white p-5 shadow-soft">
+    <article className="rounded-md border border-ink-100 bg-white p-5 shadow-soft">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
