@@ -17,7 +17,7 @@ const sources = {
     'DataHub gold-prices / World Bank Pink Sheet altın ons USD aylık fiyatı ve TCMB USD/TL ortalamasından türetilen gram TL',
   silver:
     'Eco3min / World Bank Pink Sheet gümüş ons USD aylık fiyatı ve TCMB USD/TL ortalamasından türetilen gram TL',
-  minimumWage: 'Ocal Hukuk dönemsel asgari ücret tablosu; Resmi Gazete referanslı net ücret satırları',
+  minimumWage: 'Resmi Gazete referanslı net ücret satırları',
   bist100: 'Yahoo Finance XU100.IS aylık kapanış verileri',
   bitcoin: 'Yahoo Finance BTC-USD aylık kapanış verileri ve TCMB USD/TL ortalamasından türetilen TL fiyatı',
   housing: 'TCMB EVDS Konut Fiyat Endeksi; Altınla üzerinde yayımlanan gömülü TCMB/EVDS tarihsel seri',
