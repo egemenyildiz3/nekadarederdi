@@ -161,8 +161,10 @@ function setSeries(key, nextSeries) {
 
 async function fetchCpi() {
   const [hakedisHtml, oskaHtml] = await Promise.all([
-    fetchText('https://www.hakedis.org/endeksler/tuketici-fiyat-genel-endeksi-ve-degisim-oranlari-2003'),
-    fetchText('https://www.oska.com.tr/tufe-ve-yi-ufe-endeksleri/'),
+    fetchText('https://www.hakedis.org/endeksler/tuketici-fiyat-genel-endeksi-ve-degisim-oranlari-2003', {
+      optional: true,
+    }),
+    fetchText('https://www.oska.com.tr/tufe-ve-yi-ufe-endeksleri/', { optional: true }),
   ]);
   const byMonth = new Map();
 
@@ -197,6 +199,13 @@ async function fetchCpi() {
     .sort((first, second) => first.date.localeCompare(second.date));
 
   if (rows.length === 0) {
+    const existing = getExistingSeries('cpi');
+
+    if (existing.length > 0) {
+      console.warn('TÜFE kaynaklarından veri alınamadı; mevcut veri dosyasındaki TÜFE serisi korundu.');
+      return existing;
+    }
+
     throw new Error('TÜFE tablosundan veri çıkarılamadı.');
   }
 
@@ -409,7 +418,9 @@ async function fetchDepositIndex() {
 }
 
 async function fetchMinimumWage() {
-  const html = await fetchText('https://www.ocalhukuk.com/yillara-gore-net-ve-brut-asgari-ucret-tablosu/');
+  const html = await fetchText('https://www.ocalhukuk.com/yillara-gore-net-ve-brut-asgari-ucret-tablosu/', {
+    optional: true,
+  });
   const rows = [...html.matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/g)]
     .flatMap((match) => {
       const [start, endDate] = match[1].split('-').map((part) => part.trim());
@@ -430,6 +441,13 @@ async function fetchMinimumWage() {
     .sort((first, second) => first.date.localeCompare(second.date));
 
   if (rows.length === 0) {
+    const existing = getExistingSeries('minimumWage');
+
+    if (existing.length > 0) {
+      console.warn('Asgari ücret kaynağından veri alınamadı; mevcut veri dosyasındaki asgari ücret serisi korundu.');
+      return existing;
+    }
+
     throw new Error('Asgari ücret tablosundan veri çıkarılamadı.');
   }
 
@@ -453,21 +471,45 @@ function deriveGramTry(usdPerOunce, usdTry) {
 }
 
 async function fetchText(url, options = {}) {
-  const response = await fetch(url, {
-    headers: {
-      'user-agent': 'nekadarederdi-data-updater/1.0',
-    },
-  });
+  let response;
+
+  try {
+    response = await fetch(url, {
+      headers: {
+        'user-agent': 'nekadarederdi-data-updater/1.0',
+      },
+    });
+  } catch (error) {
+    if (options.optional) {
+      console.warn(`${url} atlandı: ${error.message}`);
+      return '';
+    }
+
+    throw error;
+  }
 
   if (options.allow404 && response.status === 404) {
     return '';
   }
 
   if (!response.ok) {
+    if (options.optional) {
+      console.warn(`${url} atlandı: ${response.status}`);
+      return '';
+    }
+
     throw new Error(`${url} isteği başarısız: ${response.status}`);
   }
 
   return response.text();
+}
+
+function getExistingSeries(key) {
+  return (
+    catalog.series
+      .find((series) => series.key === key)
+      ?.observations?.filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01`) ?? []
+  );
 }
 
 async function runLimited(tasks, limit) {
