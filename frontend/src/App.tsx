@@ -571,10 +571,21 @@ function App() {
             )}
 
             {!loading && results.length > 0 && (
-              <div className="grid items-start gap-4 md:grid-cols-2">
-                {results.map((result) => (
-                  <ResultCard key={result.series.key} result={result} />
-                ))}
+              <div className="grid gap-4 md:grid-cols-2 md:items-start">
+                <div className="grid gap-4">
+                  {results
+                    .filter((_, index) => index % 2 === 0)
+                    .map((result) => (
+                      <ResultCard key={result.series.key} result={result} />
+                    ))}
+                </div>
+                <div className="grid gap-4">
+                  {results
+                    .filter((_, index) => index % 2 === 1)
+                    .map((result) => (
+                      <ResultCard key={result.series.key} result={result} />
+                    ))}
+                </div>
               </div>
             )}
 
