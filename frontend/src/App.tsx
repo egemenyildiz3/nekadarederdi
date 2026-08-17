@@ -177,6 +177,114 @@ const LANDING_PAGES: LandingPageContent[] = [
       },
     ],
   },
+  {
+    path: '/2010da-10000-tl-bugun-ne-kadar',
+    title: '2010’da 10.000 TL bugün ne kadar?',
+    metaTitle: '2010’da 10.000 TL Bugün Ne Kadar? | Enflasyon ve Yatırım Kıyas',
+    description:
+      '2010 yılındaki 10.000 TL tutarını bugünün parasıyla, TÜFE, dolar, altın, BIST 100 ve Bitcoin verileriyle kıyaslayın.',
+    intro:
+      '“2010’da 10.000 TL bugün ne kadar ederdi?” sorusu tek bir cevaba sahip değildir. TÜFE alım gücünü, dolar ve altın kur/fiyat etkisini, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
+    calculatorHref: '/?amount=10000&start=2010-01&criteria=cpi%2Cusd%2Cgold%2Cbist100%2Cbitcoin',
+    sections: [
+      {
+        title: 'TÜFE ile bugünkü karşılık',
+        body:
+          'TÜFE hesabı, 2010’daki 10.000 TL’nin tüketici fiyatları karşısındaki yaklaşık bugünkü alım gücünü gösterir.',
+      },
+      {
+        title: 'Dolar ve altın farklı sonuç verir',
+        body:
+          'Döviz ve gram altın serileri fiyat hareketlerini izlediği için enflasyon hesabından farklı çarpanlar üretir.',
+      },
+      {
+        title: 'Piyasa göstergeleriyle okumak',
+        body:
+          'BIST 100 ve Bitcoin gibi seriler, aynı tutarın yatırım piyasalarıyla kıyaslandığında nasıl değişeceğini yaklaşık olarak gösterir.',
+      },
+    ],
+  },
+  {
+    path: '/eski-maas-bugun-ne-kadar',
+    title: 'Eski maaş bugün ne kadar?',
+    metaTitle: 'Eski Maaş Bugün Ne Kadar? | Maaş Enflasyon Hesaplama',
+    description:
+      'Eski maaşınızı bugünkü alım gücüyle ve asgari ücret, döviz, altın gibi farklı göstergelerle karşılaştırın.',
+    intro:
+      'Eski maaşın bugünkü karşılığını hesaplarken yalnızca nominal tutara bakmak yanıltıcıdır. Enflasyon, asgari ücret, döviz ve altın gibi ölçütler farklı ekonomik bakışlar sağlar.',
+    calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd%2Cgold',
+    sections: [
+      {
+        title: 'Maaşın alım gücü',
+        body:
+          'TÜFE serisi, eski maaşın bugünkü fiyat düzeyindeki yaklaşık alım gücünü hesaplamak için en doğrudan ölçüttür.',
+      },
+      {
+        title: 'Asgari ücretle kıyas',
+        body:
+          'Asgari ücret karşılaştırması, maaşın temel gelir düzeylerine göre tarih içinde nasıl konumlandığını anlamaya yardım eder.',
+      },
+      {
+        title: 'Döviz ve altın perspektifi',
+        body:
+          'Dolar ve altın bazlı sonuçlar gelir alım gücünden çok kur ve değerli maden fiyatı değişimini gösterir.',
+      },
+    ],
+  },
+  {
+    path: '/kira-enflasyon-hesaplama',
+    title: 'Kira enflasyon hesaplama',
+    metaTitle: 'Kira Enflasyon Hesaplama | Eski Kira Bugün Ne Kadar?',
+    description:
+      'Geçmişteki kira tutarını TÜFE ve farklı ekonomik göstergelerle bugünkü yaklaşık değerine taşıyın.',
+    intro:
+      'Eski kira tutarlarını bugünün koşullarıyla okumak için TÜFE iyi bir başlangıç noktasıdır. Aynı tutarı döviz, altın veya asgari ücret gibi ölçütlerle kıyaslamak ise farklı yorumlar sağlar.',
+    calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd',
+    sections: [
+      {
+        title: 'Kira tutarını bugüne taşımak',
+        body:
+          'Başlangıç ayındaki kira, seçilen bitiş ayına TÜFE çarpanıyla taşınarak yaklaşık bugünkü alım gücü bulunur.',
+      },
+      {
+        title: 'Gelire göre kira yükü',
+        body:
+          'Asgari ücret karşılaştırması, bir kira tutarının temel gelir seviyesine göre ne kadar ağırlaştığını veya hafiflediğini gösterir.',
+      },
+      {
+        title: 'Yaklaşık karşılaştırma',
+        body:
+          'Hesaplama kira artış mevzuatı ya da bölgesel konut piyasası yerine genel ekonomik serileri kullanır.',
+      },
+    ],
+  },
+  {
+    path: '/bist-bitcoin-altin-karsilastirma',
+    title: 'BIST, Bitcoin ve altın karşılaştırma',
+    metaTitle: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
+    description:
+      'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
+    intro:
+      'Aynı TL tutarı enflasyon, döviz, altın, BIST 100 ve Bitcoin gibi farklı serilerle bambaşka sonuçlar verebilir. Bu sayfa yatırım tavsiyesi değil, tarihsel kıyaslama çerçevesi sunar.',
+    calculatorHref: '/?criteria=gold%2Csilver%2Cbist100%2Cbitcoin',
+    sections: [
+      {
+        title: 'Fiyat serileri aynı şeyi ölçmez',
+        body:
+          'Altın, BIST 100 ve Bitcoin farklı risk, oynaklık ve piyasa dinamiklerine sahiptir; sonuçlar birlikte okunmalıdır.',
+      },
+      {
+        title: 'Tarih aralığı sonucu belirler',
+        body:
+          'Başlangıç ve bitiş ayı değiştikçe çarpanlar büyük ölçüde farklılaşabilir. Bu yüzden ay bazlı seçim önemlidir.',
+      },
+      {
+        title: 'Yaklaşık ve brüt karşılaştırma',
+        body:
+          'Vergi, işlem maliyeti, temettü, saklama maliyeti veya alım-satım makası gibi detaylar dahil değildir.',
+      },
+    ],
+  },
 ];
 
 function App() {

@@ -96,12 +96,89 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
   </url>
   <url>
     <loc>https://nekadarederdi.com/altin-bazinda-ne-kadar-ederdi</loc>
-    <lastmod>2026-08-16</lastmod>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
+  <url>
+    <loc>https://nekadarederdi.com/2010da-10000-tl-bugun-ne-kadar</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/eski-maas-bugun-ne-kadar</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/kira-enflasyon-hesaplama</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/bist-bitcoin-altin-karsilastirma</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>`;
 const rateLimits = new Map<string, { resetAt: number; count: number }>();
+
+const SEO_PAGES: Record<string, { title: string; description: string }> = {
+  '/': {
+    title: 'Ne Kadar Ederdi? | Geçmiş Para Değeri ve Enflasyon Hesaplama',
+    description:
+      'Geçmişteki bir tutarı TÜFE, dolar, euro, gram altın, gümüş, asgari ücret, BIST 100 ve Bitcoin verileriyle ay bazında karşılaştırın.',
+  },
+  '/enflasyon-hesaplama': {
+    title: 'Enflasyon Hesaplama | TÜFE ile Geçmiş Para Değeri',
+    description:
+      'Geçmişteki bir TL tutarının TÜFE verilerine göre bugünkü yaklaşık satın alma gücünü hesaplayın.',
+  },
+  '/gecmis-para-degeri': {
+    title: 'Geçmiş Para Değeri Hesaplama | Ne Kadar Ederdi?',
+    description:
+      'Geçmişteki TL tutarlarını bugünkü değerle, enflasyon, döviz, altın, gümüş ve asgari ücret üzerinden kıyaslayın.',
+  },
+  '/bugunun-parasiyla-ne-kadar': {
+    title: 'Bugünün Parasıyla Ne Kadar? | TL Alım Gücü Hesaplama',
+    description:
+      'Eski bir fiyatın, maaşın veya borcun bugünün parasıyla yaklaşık karşılığını hesaplayın.',
+  },
+  '/dolar-bazinda-ne-kadar-ederdi': {
+    title: 'Dolar Bazında Ne Kadar Ederdi? | TL USD Karşılaştırma',
+    description:
+      'Geçmişteki TL tutarını dolar kuru değişimine göre bugünkü yaklaşık TL karşılığıyla kıyaslayın.',
+  },
+  '/altin-bazinda-ne-kadar-ederdi': {
+    title: 'Altın Bazında Ne Kadar Ederdi? | Gram Altın Karşılaştırma',
+    description:
+      'Geçmişteki TL tutarını gram altın fiyatı değişimine göre bugünkü yaklaşık karşılığıyla hesaplayın.',
+  },
+  '/2010da-10000-tl-bugun-ne-kadar': {
+    title: '2010’da 10.000 TL Bugün Ne Kadar? | Enflasyon ve Yatırım Kıyas',
+    description:
+      '2010 yılındaki 10.000 TL tutarını bugünün parasıyla, TÜFE, dolar, altın, BIST 100 ve Bitcoin verileriyle kıyaslayın.',
+  },
+  '/eski-maas-bugun-ne-kadar': {
+    title: 'Eski Maaş Bugün Ne Kadar? | Maaş Enflasyon Hesaplama',
+    description:
+      'Eski maaşınızı bugünkü alım gücüyle ve asgari ücret, döviz, altın gibi farklı göstergelerle karşılaştırın.',
+  },
+  '/kira-enflasyon-hesaplama': {
+    title: 'Kira Enflasyon Hesaplama | Eski Kira Bugün Ne Kadar?',
+    description:
+      'Geçmişteki kira tutarını TÜFE ve farklı ekonomik göstergelerle bugünkü yaklaşık değerine taşıyın.',
+  },
+  '/bist-bitcoin-altin-karsilastirma': {
+    title: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
+    description:
+      'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
+  },
+};
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -163,9 +240,41 @@ export default {
       return json({ error: 'Endpoint bulunamadı.' }, 404);
     }
 
-    return env.ASSETS.fetch(request);
+    return rewriteHtmlMetadata(request, await env.ASSETS.fetch(request));
   },
 };
+
+async function rewriteHtmlMetadata(request: Request, response: Response) {
+  const contentType = response.headers.get('Content-Type') ?? '';
+
+  if (!contentType.includes('text/html')) {
+    return response;
+  }
+
+  const url = new URL(request.url);
+  const metadata = SEO_PAGES[url.pathname] ?? SEO_PAGES['/'];
+  const canonical = `https://nekadarederdi.com${url.pathname === '/' ? '/' : url.pathname}`;
+  const html = await response.text();
+  const nextHtml = html
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(metadata.title)}</title>`)
+    .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/, `<meta name="description" content="${escapeHtml(metadata.description)}" />`)
+    .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/, `<link rel="canonical" href="${canonical}" />`)
+    .replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/, `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`)
+    .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`)
+    .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/, `<meta property="og:url" content="${canonical}" />`)
+    .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`)
+    .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`);
+
+  return new Response(nextHtml, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+}
+
+function escapeHtml(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
 function calculate(request: Partial<CalculatorRequest>) {
   validate(request);
