@@ -1,4 +1,5 @@
-import { ArrowDownRight, ArrowUpRight, Info } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, ChevronDown, Info } from 'lucide-react';
+import { useState } from 'react';
 import type { CalculationResult } from '../types';
 import { formatMoney, formatMonth, numberFormatter } from '../lib/format';
 
@@ -8,6 +9,8 @@ type ResultCardProps = {
 
 export function ResultCard({ result }: ResultCardProps) {
   const TrendIcon = result.multiplier >= 1 ? ArrowUpRight : ArrowDownRight;
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const detailsId = `result-details-${result.series.key}`;
 
   return (
     <article className="rounded-md border border-ink-100 bg-white p-5 shadow-soft">
@@ -29,35 +32,57 @@ export function ResultCard({ result }: ResultCardProps) {
         </p>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+      <div className="mt-5 grid gap-3 text-sm">
         <div className="rounded-md bg-paper-100 p-3">
           <p className="text-ink-500">Çarpan</p>
           <p className="mt-1 font-data font-semibold text-ink-900">{numberFormatter.format(result.multiplier)}x</p>
         </div>
-        <div className="rounded-md bg-paper-100 p-3">
-          <p className="text-ink-500">Birim</p>
-          <p className="mt-1 font-data font-semibold text-ink-900">{result.series.unit}</p>
-        </div>
-        <div className="rounded-md bg-paper-100 p-3">
-          <p className="text-ink-500">Başlangıç veri</p>
-          <p className="mt-1 font-data font-semibold text-ink-900">
-            {numberFormatter.format(result.startObservation.value)}
-          </p>
-          <p className="mt-1 text-xs text-ink-500">{formatMonth(result.startObservation.date.slice(0, 7))}</p>
-        </div>
-        <div className="rounded-md bg-paper-100 p-3">
-          <p className="text-ink-500">Bitiş veri</p>
-          <p className="mt-1 font-data font-semibold text-ink-900">
-            {numberFormatter.format(result.endObservation.value)}
-          </p>
-          <p className="mt-1 text-xs text-ink-500">{formatMonth(result.endObservation.date.slice(0, 7))}</p>
-        </div>
       </div>
 
-      <div className="mt-4 flex gap-2 rounded-md bg-coin-50 p-3 text-sm leading-6 text-ink-800">
-        <Info className="mt-0.5 shrink-0" aria-hidden="true" size={16} />
-        <p>{result.series.sourceNote}</p>
-      </div>
+      <button
+        aria-controls={detailsId}
+        aria-expanded={detailsOpen}
+        className="mt-4 flex min-h-10 w-full items-center justify-between rounded-md border border-ink-100 px-3 text-left text-sm font-semibold text-ink-700 transition hover:border-oxide-700 hover:text-oxide-800"
+        type="button"
+        onClick={() => setDetailsOpen((current) => !current)}
+      >
+        Detaylar
+        <ChevronDown
+          aria-hidden="true"
+          className={`transition-transform ${detailsOpen ? 'rotate-180' : ''}`}
+          size={18}
+        />
+      </button>
+
+      {detailsOpen && (
+        <div id={detailsId} className="mt-3 grid gap-3 text-sm">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-md bg-paper-100 p-3">
+              <p className="text-ink-500">Birim</p>
+              <p className="mt-1 font-data font-semibold text-ink-900">{result.series.unit}</p>
+            </div>
+            <div className="rounded-md bg-paper-100 p-3">
+              <p className="text-ink-500">Başlangıç veri</p>
+              <p className="mt-1 font-data font-semibold text-ink-900">
+                {numberFormatter.format(result.startObservation.value)}
+              </p>
+              <p className="mt-1 text-xs text-ink-500">{formatMonth(result.startObservation.date.slice(0, 7))}</p>
+            </div>
+            <div className="rounded-md bg-paper-100 p-3">
+              <p className="text-ink-500">Bitiş veri</p>
+              <p className="mt-1 font-data font-semibold text-ink-900">
+                {numberFormatter.format(result.endObservation.value)}
+              </p>
+              <p className="mt-1 text-xs text-ink-500">{formatMonth(result.endObservation.date.slice(0, 7))}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-2 rounded-md bg-coin-50 p-3 leading-6 text-ink-800">
+            <Info className="mt-0.5 shrink-0" aria-hidden="true" size={16} />
+            <p>{result.series.sourceNote}</p>
+          </div>
+        </div>
+      )}
     </article>
   );
 }
