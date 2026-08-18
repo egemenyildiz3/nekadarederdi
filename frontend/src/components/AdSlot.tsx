@@ -23,6 +23,10 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const clientId = ADSENSE_CLIENT;
   const adSlot = AD_SLOTS[placement];
   const isConfigured = Boolean(clientId && adSlot);
+  const wrapperClassName =
+    placement === 'top'
+      ? 'relative hidden min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3 sm:flex'
+      : 'relative flex min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3';
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
 
@@ -74,7 +78,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
 
   if (!isConfigured) {
     return (
-      <div className="relative flex min-h-24 items-center justify-center rounded-md border border-dashed border-ink-200 bg-white/70 px-4 text-center text-sm text-ink-500">
+      <div className={wrapperClassName}>
         <AdLabel />
         <span>{label}</span>
       </div>
@@ -82,7 +86,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   }
 
   return (
-    <div className="relative flex min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3">
+    <div className={wrapperClassName}>
       {adStatus !== 'filled' ? (
         <>
           <AdLabel />

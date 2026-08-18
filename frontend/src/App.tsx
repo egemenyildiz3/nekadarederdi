@@ -419,13 +419,6 @@ function App() {
           </div>
         </header>
 
-        <div className="grid gap-2 rounded-md border border-ink-100 bg-white/70 p-2 text-[11px] font-semibold uppercase text-ink-600 shadow-soft sm:grid-cols-4">
-          <span className="rounded bg-paper-100 px-3 py-2">TÜFE</span>
-          <span className="rounded bg-paper-100 px-3 py-2">Döviz</span>
-          <span className="rounded bg-paper-100 px-3 py-2">Altın</span>
-          <span className="rounded bg-paper-100 px-3 py-2">Piyasa</span>
-        </div>
-
         <AdSlot label="Reklam alanı" placement="top" />
 
         <section className="grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
