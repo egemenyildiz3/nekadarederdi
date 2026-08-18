@@ -13,14 +13,14 @@ export function ResultCard({ result }: ResultCardProps) {
   const detailsId = `result-details-${result.series.key}`;
 
   return (
-    <article className="rounded-md border border-ink-100 bg-white p-5 shadow-soft">
+    <article className="ledger-card result-card rounded-md border border-ink-100 p-5 shadow-soft">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
           <h3 className="mt-1 text-lg font-bold text-ink-950">{result.series.name}</h3>
           <p className="mt-1 text-sm leading-6 text-ink-600">{result.series.description}</p>
         </div>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-oxide-50 text-oxide-800">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-oxide-100 bg-oxide-50 text-oxide-800">
           <TrendIcon aria-hidden="true" size={20} />
         </div>
       </div>
@@ -43,30 +43,32 @@ export function ResultCard({ result }: ResultCardProps) {
             />
           </button>
         </div>
-        <p className="currency-value mt-1 font-data font-bold tracking-normal text-ink-950">
-          {formatMoney(result.resultAmount)}
-        </p>
+        <div className="value-stripe mt-1 rounded-md px-2 py-1">
+          <p className="currency-value font-data font-bold tracking-normal text-ink-950">
+            {formatMoney(result.resultAmount)}
+          </p>
+        </div>
       </div>
 
       {detailsOpen && (
         <div id={detailsId} className="mt-5 grid gap-3 text-sm">
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md bg-paper-100 p-3">
+            <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Çarpan</p>
               <p className="mt-1 font-data font-semibold text-ink-900">{numberFormatter.format(result.multiplier)}x</p>
             </div>
-            <div className="rounded-md bg-paper-100 p-3">
+            <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Birim</p>
               <p className="mt-1 font-data font-semibold text-ink-900">{result.series.unit}</p>
             </div>
-            <div className="rounded-md bg-paper-100 p-3">
+            <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Başlangıç veri</p>
               <p className="mt-1 font-data font-semibold text-ink-900">
                 {numberFormatter.format(result.startObservation.value)}
               </p>
               <p className="mt-1 text-xs text-ink-500">{formatMonth(result.startObservation.date.slice(0, 7))}</p>
             </div>
-            <div className="rounded-md bg-paper-100 p-3">
+            <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Bitiş veri</p>
               <p className="mt-1 font-data font-semibold text-ink-900">
                 {numberFormatter.format(result.endObservation.value)}

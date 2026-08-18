@@ -12,7 +12,11 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #f7f4ed;
+  background:
+    linear-gradient(90deg, rgba(36, 116, 93, 0.06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(180deg, rgba(20, 18, 15, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+    radial-gradient(circle at 8% 0%, rgba(232, 188, 70, 0.2), transparent 26rem),
+    #f7f4ed;
 }
 
 button,
@@ -28,4 +32,59 @@ select {
   word-break: break-word;
   font-size: clamp(1.45rem, 3vw, 2.25rem);
   line-height: 1.14;
+}
+
+.page-shell {
+  position: relative;
+}
+
+.page-shell::before {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 0;
+  width: 6px;
+  content: '';
+  background: repeating-linear-gradient(
+    180deg,
+    #14120f 0,
+    #14120f 20px,
+    #e8bc46 20px,
+    #e8bc46 28px,
+    #165c4a 28px,
+    #165c4a 42px
+  );
+}
+
+.ledger-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88)),
+    linear-gradient(90deg, rgba(22, 92, 74, 0.05) 1px, transparent 1px) 0 0 / 18px 18px;
+  backdrop-filter: blur(10px);
+}
+
+.ledger-card::before {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  content: '';
+  background: linear-gradient(90deg, #e8bc46, #165c4a, #14120f);
+}
+
+.result-card {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(36, 116, 93, 0.35);
+  box-shadow: 0 22px 60px rgba(20, 18, 15, 0.12);
+}
+
+.value-stripe {
+  background: linear-gradient(90deg, rgba(232, 188, 70, 0.18), transparent);
 }

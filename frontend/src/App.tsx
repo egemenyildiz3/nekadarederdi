@@ -398,8 +398,8 @@ function App() {
   }
 
   return (
-    <main className="min-h-screen bg-paper-50 text-ink-950">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+    <main className="page-shell min-h-screen text-ink-950">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
           <Logo />
           <div className="max-w-2xl border-l-4 border-coin-500 pl-4 sm:justify-self-end sm:text-right sm:border-l-0 sm:border-r-4 sm:pl-0 sm:pr-4">
@@ -413,11 +413,18 @@ function App() {
           </div>
         </header>
 
+        <div className="grid gap-2 rounded-md border border-ink-100 bg-white/70 p-2 text-[11px] font-semibold uppercase text-ink-600 shadow-soft sm:grid-cols-4">
+          <span className="rounded bg-paper-100 px-3 py-2">TÜFE</span>
+          <span className="rounded bg-paper-100 px-3 py-2">Döviz</span>
+          <span className="rounded bg-paper-100 px-3 py-2">Altın</span>
+          <span className="rounded bg-paper-100 px-3 py-2">Piyasa</span>
+        </div>
+
         <AdSlot label="Reklam alanı" placement="top" />
 
         <section className="grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
           <form
-            className="h-fit rounded-md border border-ink-100 bg-white p-5 shadow-soft lg:sticky lg:top-5"
+            className="ledger-card h-fit rounded-md border border-ink-100 p-5 shadow-soft lg:sticky lg:top-5"
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-5">
@@ -515,13 +522,15 @@ function App() {
           </form>
 
           <section className="grid gap-4">
-            <div className="rounded-md border border-ink-100 bg-white p-5 shadow-soft">
+            <div className="ledger-card rounded-md border border-ink-100 p-5 shadow-soft">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-data text-xs font-semibold uppercase text-oxide-700">Hesaplama özeti</p>
-                  <h1 className="currency-value mt-2 font-data font-bold tracking-normal text-ink-950">
-                    {formatInputAmount(state.amount || 0, state.inputUnit)}
-                  </h1>
+                  <div className="value-stripe mt-2 rounded-md px-3 py-2">
+                    <h1 className="currency-value font-data font-bold tracking-normal text-ink-950">
+                      {formatInputAmount(state.amount || 0, state.inputUnit)}
+                    </h1>
+                  </div>
                   <p className="mt-2 text-sm leading-6 text-ink-600">
                     {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
                   </p>
