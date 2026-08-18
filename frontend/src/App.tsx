@@ -9,18 +9,24 @@ import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } 
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
 
-const CRITERIA: { key: SeriesKey; label: string; hint: string }[] = [
-  { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü' },
-  { key: 'usd', label: 'USD', hint: 'Dolar' },
-  { key: 'eur', label: 'EUR', hint: 'Euro' },
-  { key: 'gold', label: 'Altın', hint: 'Gram' },
-  { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net' },
-  { key: 'silver', label: 'Gümüş', hint: 'Gram' },
-  { key: 'bist100', label: 'BIST 100', hint: 'Endeks' },
-  { key: 'bitcoin', label: 'Bitcoin', hint: 'BTC' },
-  { key: 'housing', label: 'Konut', hint: 'KFE' },
-  { key: 'gasoline', label: 'Benzin', hint: 'Yakıt' },
-  { key: 'deposit', label: 'Mevduat', hint: 'Bileşik' },
+const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
+  { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
+  { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net', group: 'purchase' },
+  { key: 'gasoline', label: 'Benzin', hint: 'Yakıt', group: 'purchase' },
+  { key: 'usd', label: 'USD', hint: 'Dolar', group: 'currency' },
+  { key: 'eur', label: 'EUR', hint: 'Euro', group: 'currency' },
+  { key: 'gold', label: 'Altın', hint: 'Gram', group: 'asset' },
+  { key: 'silver', label: 'Gümüş', hint: 'Gram', group: 'asset' },
+  { key: 'bist100', label: 'BIST 100', hint: 'Endeks', group: 'asset' },
+  { key: 'bitcoin', label: 'Bitcoin', hint: 'BTC', group: 'asset' },
+  { key: 'housing', label: 'Konut', hint: 'KFE', group: 'asset' },
+  { key: 'deposit', label: 'Mevduat', hint: 'Bileşik', group: 'asset' },
+];
+
+const CRITERIA_GROUPS: { key: 'purchase' | 'currency' | 'asset'; label: string }[] = [
+  { key: 'purchase', label: 'Alım gücü' },
+  { key: 'currency', label: 'Döviz' },
+  { key: 'asset', label: 'Yatırım' },
 ];
 
 const INPUT_UNITS: { key: InputUnit; label: string }[] = [
@@ -483,30 +489,45 @@ function App() {
 
               <fieldset className="grid gap-3">
                 <legend className="text-sm font-semibold text-ink-800">Karşılaştırma</legend>
-                <div className="grid grid-cols-2 gap-2">
-                  {availableCriteria.map((criterion) => {
-                    const selected = state.criteria.includes(criterion.key);
+                <div className="grid gap-4">
+                  {CRITERIA_GROUPS.map((group) => {
+                    const criteria = availableCriteria.filter((criterion) => criterion.group === group.key);
+
+                    if (criteria.length === 0) {
+                      return null;
+                    }
 
                     return (
-                      <button
-                        aria-pressed={selected}
-                        className={`grid min-h-14 rounded-md border px-3 py-2 text-left transition ${
-                          selected
-                            ? 'border-oxide-800 bg-oxide-800 text-white'
-                            : 'border-ink-200 bg-paper-50 text-ink-800 hover:border-ink-500'
-                        }`}
-                        key={criterion.key}
-                        type="button"
-                        onClick={() => toggleCriterion(criterion.key)}
-                      >
-                        <span className="flex items-center justify-between gap-2 text-sm font-bold">
-                          {criterion.label}
-                          {selected && <Check aria-hidden="true" size={16} />}
-                        </span>
-                        <span className={`text-xs ${selected ? 'text-oxide-50' : 'text-ink-500'}`}>
-                          {criterion.hint}
-                        </span>
-                      </button>
+                      <div className="grid gap-2" key={group.key}>
+                        <p className="font-data text-[11px] font-semibold uppercase text-oxide-700">{group.label}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {criteria.map((criterion) => {
+                            const selected = state.criteria.includes(criterion.key);
+
+                            return (
+                              <button
+                                aria-pressed={selected}
+                                className={`grid min-h-14 rounded-md border px-3 py-2 text-left transition ${
+                                  selected
+                                    ? 'border-oxide-800 bg-oxide-800 text-white'
+                                    : 'border-ink-200 bg-paper-50 text-ink-800 hover:border-ink-500'
+                                }`}
+                                key={criterion.key}
+                                type="button"
+                                onClick={() => toggleCriterion(criterion.key)}
+                              >
+                                <span className="flex items-center justify-between gap-2 text-sm font-bold">
+                                  {criterion.label}
+                                  {selected && <Check aria-hidden="true" size={16} />}
+                                </span>
+                                <span className={`text-xs ${selected ? 'text-oxide-50' : 'text-ink-500'}`}>
+                                  {criterion.hint}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
