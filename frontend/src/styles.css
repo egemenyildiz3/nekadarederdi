@@ -13,10 +13,11 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    linear-gradient(90deg, rgba(36, 116, 93, 0.06) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(180deg, rgba(20, 18, 15, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
-    radial-gradient(circle at 8% 0%, rgba(232, 188, 70, 0.2), transparent 26rem),
-    #f7f4ed;
+    linear-gradient(90deg, rgba(0, 94, 63, 0.07) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(180deg, rgba(10, 20, 16, 0.045) 1px, transparent 1px) 0 0 / 48px 48px,
+    radial-gradient(circle at 8% 0%, rgba(31, 191, 135, 0.22), transparent 27rem),
+    radial-gradient(circle at 96% 10%, rgba(30, 143, 161, 0.14), transparent 25rem),
+    #f3fbf7;
 }
 
 button,
@@ -46,12 +47,14 @@ select {
   content: '';
   background: repeating-linear-gradient(
     180deg,
-    #14120f 0,
-    #14120f 20px,
-    #e8bc46 20px,
-    #e8bc46 28px,
-    #165c4a 28px,
-    #165c4a 42px
+    #0a1410 0,
+    #0a1410 18px,
+    #1fbf87 18px,
+    #1fbf87 30px,
+    #1e8fa1 30px,
+    #1e8fa1 42px,
+    #b2643c 42px,
+    #b2643c 48px
   );
 }
 
@@ -59,8 +62,8 @@ select {
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88)),
-    linear-gradient(90deg, rgba(22, 92, 74, 0.05) 1px, transparent 1px) 0 0 / 18px 18px;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(246, 252, 249, 0.91)),
+    linear-gradient(90deg, rgba(0, 94, 63, 0.055) 1px, transparent 1px) 0 0 / 18px 18px;
   backdrop-filter: blur(10px);
 }
 
@@ -69,7 +72,7 @@ select {
   inset: 0 0 auto 0;
   height: 3px;
   content: '';
-  background: linear-gradient(90deg, #e8bc46, #165c4a, #14120f);
+  background: linear-gradient(90deg, #1fbf87, #005e3f, #1e8fa1, #b2643c);
 }
 
 .result-card {
@@ -81,10 +84,10 @@ select {
 
 .result-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(36, 116, 93, 0.35);
-  box-shadow: 0 22px 60px rgba(20, 18, 15, 0.12);
+  border-color: rgba(0, 94, 63, 0.35);
+  box-shadow: 0 22px 60px rgba(10, 20, 16, 0.13);
 }
 
 .value-stripe {
-  background: linear-gradient(90deg, rgba(232, 188, 70, 0.18), transparent);
+  background: linear-gradient(90deg, rgba(31, 191, 135, 0.18), rgba(30, 143, 161, 0.07), transparent);
 }
