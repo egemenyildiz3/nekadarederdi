@@ -25,7 +25,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const isConfigured = Boolean(clientId && adSlot);
   const wrapperClassName =
     placement === 'top'
-      ? 'relative hidden min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3 sm:flex'
+      ? 'relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-2 sm:min-h-24 sm:py-3'
       : 'relative flex min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3';
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
@@ -98,7 +98,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
       <ins
         ref={adRef}
         className="adsbygoogle"
-        style={{ display: 'block', minHeight: '96px', width: '100%' }}
+        style={{ display: 'block', minHeight: placement === 'top' ? '80px' : '96px', width: '100%' }}
         data-ad-client={clientId}
         data-ad-slot={adSlot}
         data-ad-format="auto"
