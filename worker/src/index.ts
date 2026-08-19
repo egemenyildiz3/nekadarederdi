@@ -57,6 +57,7 @@ const VALID_CRITERIA = new Set<SeriesKey>([
 ]);
 const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silver']);
 const TL_CUTOVER = '2005-01';
+const CANONICAL_HOST = 'nekadarederdi.com';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *
 Allow: /
@@ -223,10 +224,27 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
       "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
   },
 };
+const KNOWN_PAGE_PATHS = new Set(Object.keys(SEO_PAGES));
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (shouldRedirectToCanonicalHost(request, url)) {
+      url.protocol = 'https:';
+      url.hostname = CANONICAL_HOST;
+      url.port = '';
+      return Response.redirect(url.toString(), 301);
+    }
+
+    if (request.method === 'GET' || request.method === 'HEAD') {
+      const normalizedPath = normalizeTrailingSlash(url.pathname);
+
+      if (normalizedPath && KNOWN_PAGE_PATHS.has(normalizedPath)) {
+        url.pathname = normalizedPath;
+        return Response.redirect(url.toString(), 301);
+      }
+    }
 
     if (url.pathname === '/health') {
       return json({ ok: true });
@@ -296,12 +314,24 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
   }
 
   const url = new URL(request.url);
-  const metadata = SEO_PAGES[url.pathname] ?? SEO_PAGES['/'];
-  const canonical = `https://nekadarederdi.com${url.pathname === '/' ? '/' : url.pathname}`;
+  const isKnownPage = KNOWN_PAGE_PATHS.has(url.pathname);
+  const metadata = isKnownPage
+    ? SEO_PAGES[url.pathname]
+    : {
+        title: 'Sayfa bulunamadı | Ne Kadar Ederdi?',
+        description: 'Aradığınız sayfa bulunamadı. Ne Kadar Ederdi hesaplayıcısına dönebilirsiniz.',
+      };
+  const canonical = isKnownPage
+    ? `https://${CANONICAL_HOST}${url.pathname === '/' ? '/' : url.pathname}`
+    : `https://${CANONICAL_HOST}/`;
   const html = await response.text();
   const nextHtml = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(metadata.title)}</title>`)
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/, `<meta name="description" content="${escapeHtml(metadata.description)}" />`)
+    .replace(
+      /<meta\s+name="robots"\s+content="[^"]*"\s*\/>/,
+      `<meta name="robots" content="${isKnownPage ? 'index, follow, max-image-preview:large' : 'noindex, follow'}" />`,
+    )
     .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/, `<link rel="canonical" href="${canonical}" />`)
     .replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/, `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`)
     .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`)
@@ -310,14 +340,44 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
     .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`);
 
   return new Response(nextHtml, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: response.headers,
+    status: isKnownPage ? response.status : 404,
+    statusText: isKnownPage ? response.statusText : 'Not Found',
+    headers: withSeoHeaders(response.headers, isKnownPage),
   });
 }
 
 function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function shouldRedirectToCanonicalHost(request: Request, url: URL) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return false;
+  }
+
+  return !isLocalHost(url.hostname) && url.hostname !== CANONICAL_HOST;
+}
+
+function isLocalHost(hostname: string) {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
+}
+
+function normalizeTrailingSlash(pathname: string) {
+  if (pathname === '/' || !pathname.endsWith('/')) {
+    return null;
+  }
+
+  return pathname.slice(0, -1);
+}
+
+function withSeoHeaders(headers: Headers, isKnownPage: boolean) {
+  const nextHeaders = new Headers(headers);
+
+  if (!isKnownPage) {
+    nextHeaders.set('X-Robots-Tag', 'noindex, follow');
+  }
+
+  return nextHeaders;
 }
 
 function calculate(request: Partial<CalculatorRequest>) {
