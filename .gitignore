@@ -17,3 +17,6 @@ obj/
 *.log
 
 .env
+
+*.md
+!README.md
