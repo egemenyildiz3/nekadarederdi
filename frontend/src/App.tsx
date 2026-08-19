@@ -47,6 +47,15 @@ type LandingPageContent = {
   sections: { title: string; body: string }[];
 };
 
+type InfoPageContent = {
+  path: string;
+  title: string;
+  metaTitle: string;
+  description: string;
+  intro: string;
+  sections: { title: string; body: string; link?: { label: string; href: string } }[];
+};
+
 const LANDING_PAGES: LandingPageContent[] = [
   {
     path: '/enflasyon-hesaplama',
@@ -293,11 +302,141 @@ const LANDING_PAGES: LandingPageContent[] = [
   },
 ];
 
+const INFO_PAGES: InfoPageContent[] = [
+  {
+    path: '/hakkinda',
+    title: 'Hakkında',
+    metaTitle: 'Hakkında | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi'nin amacı, kullandığı veri türleri ve hesaplama yaklaşımı hakkında bilgi.",
+    intro:
+      'Ne Kadar Ederdi, geçmişteki veya bugünkü bir tutarı farklı ekonomik göstergelerle ay bazında karşılaştırmak için hazırlanmış bağımsız bir hesaplama aracıdır.',
+    sections: [
+      {
+        title: 'Ne işe yarar?',
+        body:
+          'Araç; TÜFE, döviz, gram altın, gümüş, asgari ücret, BIST 100, Bitcoin ve benzeri tarihsel serilerle yaklaşık karşılaştırma yapar. Amaç tek bir kesin cevap vermek değil, farklı ölçütleri birlikte okunur hale getirmektir.',
+      },
+      {
+        title: 'Veri yaklaşımı',
+        body:
+          'Hesaplamalar aylık veri noktalarına dayanır. Kaynak notları sonuç kartlarında gösterilir; seri güncellemeleri otomatik veri toplama süreciyle yenilenir ve eksik kaynaklarda mevcut son veri korunur.',
+      },
+      {
+        title: 'Tavsiye değildir',
+        body:
+          'Sonuçlar bilgilendirme amaçlıdır. Yatırım, kredi, kira, maaş veya hukuki kararlar için tek başına kullanılmamalıdır.',
+      },
+    ],
+  },
+  {
+    path: '/iletisim',
+    title: 'İletişim',
+    metaTitle: 'İletişim | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi ile ilgili öneri, veri kaynağı, hata bildirimi ve reklam talepleri için iletişim bilgileri.',
+    intro:
+      'Öneri, hata bildirimi, veri kaynağı düzeltmesi veya reklam ve iş birliği talepleri için iletişim kurabilirsiniz.',
+    sections: [
+      {
+        title: 'E-posta',
+        body:
+          'Siteyle ilgili geri bildirimler için e-posta gönderebilirsiniz. Mümkünse ilgili sayfa adresini, tarih aralığını ve beklediğiniz sonucu da ekleyin.',
+        link: { label: 'egemenyildiz03@gmail.com', href: 'mailto:egemenyildiz03@gmail.com' },
+      },
+      {
+        title: 'Veri ve hata bildirimi',
+        body:
+          'Bir seride eksik, gecikmeli veya hatalı görünen veri fark ederseniz kaynak önerisini ve örnek hesaplamayı paylaşmanız sorunu daha hızlı incelememizi sağlar.',
+      },
+      {
+        title: 'Reklam ve iş birliği',
+        body:
+          'Reklam yerleşimleri kullanıcı deneyimini bozmayacak şekilde sınırlı tutulur. İş birliği taleplerinde marka, kampanya ve hedef sayfa bilgisini belirtmeniz yeterlidir.',
+      },
+    ],
+  },
+  {
+    path: '/gizlilik-politikasi',
+    title: 'Gizlilik Politikası',
+    metaTitle: 'Gizlilik Politikası | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi'nin analitik, reklam, çerez ve kullanıcı verisi yaklaşımı hakkında gizlilik bilgileri.",
+    intro:
+      'Bu sayfa, Ne Kadar Ederdi kullanılırken hangi tür verilerin işlenebileceğini ve üçüncü taraf servislerin nasıl kullanıldığını açıklar.',
+    sections: [
+      {
+        title: 'Toplanan veriler',
+        body:
+          'Sitede hesaplama yapmak için kullanıcı hesabı gerekmez. Miktar, tarih ve karşılaştırma seçimleri hesaplama amacıyla tarayıcınız ile sunucu arasında işlenir; bu bilgiler bireysel profil oluşturmak için kullanılmaz.',
+      },
+      {
+        title: 'Analitik ve reklam',
+        body:
+          'Site performansını ve ziyaret trafiğini anlamak için Cloudflare Web Analytics kullanılabilir. Reklam gösterimi için Google AdSense kullanılır; Google ve iş ortakları çerezler veya benzer teknolojilerle reklam ölçümü yapabilir.',
+      },
+      {
+        title: 'İletişim bilgileri',
+        body:
+          'E-posta ile bize ulaşırsanız, paylaştığınız ad, e-posta adresi ve mesaj içeriği yalnızca talebinize cevap vermek için kullanılır.',
+      },
+      {
+        title: 'Üçüncü taraf bağlantılar',
+        body:
+          'Sitede veri kaynaklarına, sosyal paylaşım servislerine veya reklam ağlarına yönlendiren bağlantılar bulunabilir. Bu servislerin kendi gizlilik politikalarını incelemeniz önerilir.',
+      },
+    ],
+  },
+  {
+    path: '/kullanim-sartlari',
+    title: 'Kullanım Şartları',
+    metaTitle: 'Kullanım Şartları | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
+    intro:
+      'Ne Kadar Ederdi sitesini kullanarak hesaplamaların yaklaşık ve bilgilendirme amaçlı olduğunu kabul etmiş olursunuz.',
+    sections: [
+      {
+        title: 'Yaklaşık hesaplama',
+        body:
+          'Sonuçlar aylık tarihsel serilerden üretilen yaklaşık karşılaştırmalardır. Veri kaynaklarında revizyon, gecikme, eksiklik veya metodoloji farkı olabilir.',
+      },
+      {
+        title: 'Finansal tavsiye değildir',
+        body:
+          'Sitedeki içerikler yatırım, finans, hukuk, vergi veya muhasebe tavsiyesi niteliğinde değildir. Kararlarınız için uzman görüşü almanız önerilir.',
+      },
+      {
+        title: 'Kullanım sorumluluğu',
+        body:
+          'Hesaplama sonuçlarını yorumlama ve kullanma sorumluluğu kullanıcıya aittir. Site kesintisiz, hatasız veya belirli bir amaca uygun sonuç garantisi vermez.',
+      },
+      {
+        title: 'Değişiklikler',
+        body:
+          'Veri serileri, reklam yerleşimleri, sayfa içerikleri ve kullanım şartları zaman içinde güncellenebilir.',
+      },
+    ],
+  },
+];
+
+const FOOTER_LINKS = [
+  { href: '/hakkinda', label: 'Hakkında' },
+  { href: '/iletisim', label: 'İletişim' },
+  { href: '/gizlilik-politikasi', label: 'Gizlilik Politikası' },
+  { href: '/kullanim-sartlari', label: 'Kullanım Şartları' },
+];
+
 function App() {
   const landingPage = LANDING_PAGES.find((page) => page.path === window.location.pathname);
+  const infoPage = INFO_PAGES.find((page) => page.path === window.location.pathname);
 
   if (landingPage) {
     return <LandingPage page={landingPage} />;
+  }
+
+  if (infoPage) {
+    return <InfoPage page={infoPage} />;
   }
 
   const [state, setState] = useState<CalculatorState>(() => parseStateFromUrl(window.location.search));
@@ -659,6 +798,8 @@ function App() {
             ))}
           </nav>
         </section>
+
+        <SiteFooter />
       </div>
     </main>
   );
@@ -755,8 +896,95 @@ function LandingPage({ page }: { page: LandingPageContent }) {
             </div>
           </section>
         </article>
+
+        <SiteFooter />
       </div>
     </main>
+  );
+}
+
+function InfoPage({ page }: { page: InfoPageContent }) {
+  useEffect(() => {
+    document.title = page.metaTitle;
+    setMetaContent('description', page.description);
+    setMetaProperty('og:title', page.metaTitle);
+    setMetaProperty('og:description', page.description);
+    setMetaProperty('og:url', `https://nekadarederdi.com${page.path}`);
+    setMetaContent('twitter:title', page.metaTitle);
+    setMetaContent('twitter:description', page.description);
+    setCanonical(`https://nekadarederdi.com${page.path}`);
+  }, [page]);
+
+  return (
+    <main className="page-shell min-h-screen text-ink-950">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+        <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
+          <a className="w-fit" href="/" aria-label="Ana hesaplayıcıya git">
+            <Logo />
+          </a>
+          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="Site sayfaları">
+            <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/">
+              Hesaplayıcı
+            </a>
+            {LANDING_PAGES.slice(0, 2).map((landingPage) => (
+              <a
+                className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500"
+                href={landingPage.path}
+                key={landingPage.path}
+              >
+                {landingPage.title}
+              </a>
+            ))}
+          </nav>
+        </header>
+
+        <article className="grid gap-6">
+          <section className="grid gap-4 border-b border-ink-100 pb-6">
+            <p className="font-data text-xs font-semibold uppercase text-oxide-700">Site bilgisi</p>
+            <h1 className="max-w-3xl font-display text-4xl font-black leading-tight text-ink-950 sm:text-5xl">
+              {page.title}
+            </h1>
+            <p className="max-w-3xl text-base leading-7 text-ink-600 sm:text-lg">{page.intro}</p>
+          </section>
+
+          <section className="grid gap-4 md:grid-cols-2">
+            {page.sections.map((section) => (
+              <article className="ledger-card rounded-md border border-ink-100 p-5 shadow-soft" key={section.title}>
+                <h2 className="font-display text-xl font-black leading-tight text-ink-950">{section.title}</h2>
+                <p className="mt-3 text-sm leading-6 text-ink-600">{section.body}</p>
+                {section.link ? (
+                  <a
+                    className="mt-4 inline-flex rounded-md border border-oxide-200 bg-oxide-50 px-3 py-2 text-sm font-semibold text-oxide-800 hover:border-oxide-700"
+                    href={section.link.href}
+                  >
+                    {section.link.label}
+                  </a>
+                ) : null}
+              </article>
+            ))}
+          </section>
+        </article>
+
+        <SiteFooter />
+      </div>
+    </main>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="border-t border-ink-100 py-6 text-sm text-ink-500">
+      <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Alt sayfalar">
+        {FOOTER_LINKS.map((link) => (
+          <a className="font-semibold text-ink-700 hover:text-oxide-800" href={link.href} key={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+      <p className="mt-3 text-xs leading-5">
+        Ne Kadar Ederdi tarihsel veri karşılaştırma aracıdır; yatırım tavsiyesi değildir.
+      </p>
+    </footer>
   );
 }
 

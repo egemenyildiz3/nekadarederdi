@@ -124,6 +124,30 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://nekadarederdi.com/hakkinda</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/iletisim</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/gizlilik-politikasi</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/kullanim-sartlari</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
 </urlset>`;
 const rateLimits = new Map<string, { resetAt: number; count: number }>();
 
@@ -177,6 +201,26 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
     title: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
     description:
       'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
+  },
+  '/hakkinda': {
+    title: 'Hakkında | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi'nin amacı, kullandığı veri türleri ve hesaplama yaklaşımı hakkında bilgi.",
+  },
+  '/iletisim': {
+    title: 'İletişim | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi ile ilgili öneri, veri kaynağı, hata bildirimi ve reklam talepleri için iletişim bilgileri.',
+  },
+  '/gizlilik-politikasi': {
+    title: 'Gizlilik Politikası | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi'nin analitik, reklam, çerez ve kullanıcı verisi yaklaşımı hakkında gizlilik bilgileri.",
+  },
+  '/kullanim-sartlari': {
+    title: 'Kullanım Şartları | Ne Kadar Ederdi?',
+    description:
+      "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
   },
 };
 
