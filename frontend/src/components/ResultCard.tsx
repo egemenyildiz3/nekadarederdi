@@ -13,11 +13,11 @@ export function ResultCard({ result }: ResultCardProps) {
   const detailsId = `result-details-${result.series.key}`;
 
   return (
-    <article className="ledger-card result-card rounded-md border border-ink-100 p-5 shadow-soft">
+    <article className="ledger-card result-card rounded-md border border-ink-100 p-4 shadow-soft sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
-          <h3 className="mt-1 text-lg font-bold text-ink-950">{result.series.name}</h3>
+          <h3 className="mt-1 text-base font-bold text-ink-950 sm:text-lg">{result.series.name}</h3>
           <p className="mt-1 text-sm leading-6 text-ink-600">{result.series.description}</p>
         </div>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-oxide-100 bg-oxide-50 text-oxide-800">

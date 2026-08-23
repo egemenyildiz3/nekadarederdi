@@ -4,6 +4,7 @@ import { AdSlot } from './components/AdSlot';
 import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
 import { ResultCard } from './components/ResultCard';
+import { SpotMarketBar } from './components/SpotMarketBar';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
@@ -442,6 +443,7 @@ function App() {
   const [state, setState] = useState<CalculatorState>(() => parseStateFromUrl(window.location.search));
   const [results, setResults] = useState<CalculationResult[]>([]);
   const [catalog, setCatalog] = useState<MarketCatalog | null>(null);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
   const [debouncedState, setDebouncedState] = useState(state);
   const [amountText, setAmountText] = useState(() => formatEditableNumber(state.amount));
   const [copied, setCopied] = useState(false);
@@ -451,7 +453,10 @@ function App() {
   useEffect(() => {
     fetchSeries()
       .then((nextCatalog) => setCatalog(nextCatalog))
-      .catch(() => setError('Veri listesi yüklenemedi. Lütfen daha sonra tekrar deneyin.'));
+      .catch(() => {
+        // The calculator can still work through the backend even if the optional catalog request is blocked.
+      })
+      .finally(() => setCatalogLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -478,6 +483,10 @@ function App() {
   }, [state]);
 
   useEffect(() => {
+    if (!catalog) {
+      return;
+    }
+
     setLoading(true);
     calculateOnBackend(debouncedState)
       .then((nextResults) => {
@@ -490,7 +499,7 @@ function App() {
         setResults([]);
       })
       .finally(() => setLoading(false));
-  }, [debouncedState]);
+  }, [catalogLoaded, debouncedState]);
 
   const yearRange = useMemo(() => {
     const observations = catalog?.series.flatMap((series) => series.observations) ?? [];
@@ -544,7 +553,7 @@ function App() {
 
   return (
     <main className="page-shell min-h-screen text-ink-950">
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-5 px-3 py-4 sm:gap-6 sm:px-6 sm:py-5 lg:px-8">
         <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
           <Logo />
           <div className="max-w-2xl border-l-4 border-coin-500 pl-4 sm:justify-self-end sm:text-right sm:border-l-0 sm:border-r-4 sm:pl-0 sm:pr-4">
@@ -560,17 +569,20 @@ function App() {
 
         <AdSlot label="Reklam alanı" placement="top" />
 
-        <section className="grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
+        <SpotMarketBar />
+
+        <section className="grid items-start gap-5 lg:grid-cols-[minmax(0,380px)_1fr] lg:gap-6">
           <form
-            className="ledger-card h-fit rounded-md border border-ink-100 p-5 shadow-soft lg:sticky lg:top-5"
+            className="ledger-card h-fit rounded-md border border-ink-100 p-4 shadow-soft sm:p-5 lg:sticky lg:top-5"
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-5">
               <div className="grid gap-2">
-                <div className="grid grid-cols-[minmax(0,1fr)_150px] gap-3">
+                <div className="hidden grid-cols-[minmax(0,1fr)_150px] gap-3 sm:grid lg:hidden xl:grid">
                   <span className="text-sm font-semibold text-ink-800">Miktar</span>
                   <span className="text-sm font-semibold text-ink-800">Birim</span>
                 </div>
+                <span className="text-sm font-semibold text-ink-800 sm:hidden lg:block xl:hidden">Miktar ve birim</span>
                 <div className="grid overflow-hidden rounded-md border border-ink-200 bg-paper-50 transition focus-within:border-oxide-700 focus-within:ring-4 focus-within:ring-oxide-100 sm:grid-cols-[minmax(0,1fr)_150px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_150px]">
                   <label className="sr-only" htmlFor="amount">
                     Miktar
@@ -632,7 +644,7 @@ function App() {
                     return (
                       <div className="grid gap-2" key={group.key}>
                         <p className="font-data text-[11px] font-semibold uppercase text-oxide-700">{group.label}</p>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                           {criteria.map((criterion) => {
                             const selected = state.criteria.includes(criterion.key);
 
@@ -675,7 +687,7 @@ function App() {
           </form>
 
           <section className="grid gap-4">
-            <div className="ledger-card rounded-md border border-ink-100 p-5 shadow-soft">
+            <div className="ledger-card rounded-md border border-ink-100 p-4 shadow-soft sm:p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-data text-xs font-semibold uppercase text-oxide-700">Hesaplama özeti</p>

@@ -1,4 +1,4 @@
-import type { CalculationResult, CalculatorState, MarketCatalog } from '../types';
+import type { CalculationResult, CalculatorState, MarketCatalog, SpotMarket } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
@@ -9,6 +9,15 @@ export async function fetchSeries(): Promise<MarketCatalog> {
   }
 
   return response.json() as Promise<MarketCatalog>;
+}
+
+export async function fetchSpotMarket(): Promise<SpotMarket> {
+  const response = await fetch(`${API_BASE_URL}/spot`);
+  if (!response.ok) {
+    throw new Error('Güncel piyasa verileri yüklenemedi.');
+  }
+
+  return response.json() as Promise<SpotMarket>;
 }
 
 export async function calculateOnBackend(state: CalculatorState): Promise<CalculationResult[]> {

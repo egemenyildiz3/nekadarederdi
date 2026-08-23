@@ -1,12 +1,8 @@
 export const moneyFormatter = new Intl.NumberFormat('tr-TR', {
-  style: 'currency',
-  currency: 'TRY',
   maximumFractionDigits: 0,
 });
 
 export const preciseMoneyFormatter = new Intl.NumberFormat('tr-TR', {
-  style: 'currency',
-  currency: 'TRY',
   maximumFractionDigits: 2,
 });
 
@@ -19,18 +15,18 @@ export const editableNumberFormatter = new Intl.NumberFormat('tr-TR', {
 });
 
 const usdFormatter = new Intl.NumberFormat('tr-TR', {
-  style: 'currency',
-  currency: 'USD',
   maximumFractionDigits: 2,
 });
 
 const eurFormatter = new Intl.NumberFormat('tr-TR', {
-  style: 'currency',
-  currency: 'EUR',
   maximumFractionDigits: 2,
 });
 
 export function formatMoney(value: number): string {
+  return `${formatTryNumber(value)}₺`;
+}
+
+export function formatTryNumber(value: number): string {
   if (hasFraction(value) || Math.abs(value) < 1000) {
     return preciseMoneyFormatter.format(value);
   }
@@ -48,11 +44,11 @@ export function formatInputAmount(value: number, inputUnit: 'try' | 'usd' | 'eur
   }
 
   if (inputUnit === 'usd') {
-    return usdFormatter.format(value);
+    return `${usdFormatter.format(value)}$`;
   }
 
   if (inputUnit === 'eur') {
-    return eurFormatter.format(value);
+    return `${eurFormatter.format(value)}€`;
   }
 
   const unitLabel = inputUnit === 'gold' ? 'gr altın' : 'gr gümüş';

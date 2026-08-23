@@ -52,3 +52,17 @@ export type CalculationResult = {
   endObservation: Observation;
   appliedPre2005Conversion: boolean;
 };
+
+export type SpotMarketItem = {
+  key: 'usd' | 'eur' | 'gold' | 'bitcoin';
+  label: string;
+  value: number;
+  unit: string;
+  source: string;
+};
+
+export type SpotMarket = {
+  updatedAt: string;
+  source: string;
+  items: SpotMarketItem[];
+};

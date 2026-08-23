@@ -37,6 +37,14 @@ type CalculatorRequest = {
   criteria: SeriesKey[];
 };
 
+type SpotMarketItem = {
+  key: 'usd' | 'eur' | 'gold' | 'bitcoin';
+  label: string;
+  value: number;
+  unit: string;
+  source: string;
+};
+
 type Env = {
   ASSETS: Fetcher;
 };
@@ -282,6 +290,11 @@ export default {
       return limited ?? json(catalog);
     }
 
+    if (url.pathname === '/api/spot' && request.method === 'GET') {
+      const limited = rateLimit(request, 'spot', 120);
+      return limited ?? json(await getSpotMarket());
+    }
+
     if (url.pathname === '/api/calculate' && request.method === 'POST') {
       const limited = rateLimit(request, 'calculate', 60);
 
@@ -302,9 +315,15 @@ export default {
       return json({ error: 'Endpoint bulunamadı.' }, 404);
     }
 
-    return rewriteHtmlMetadata(request, await env.ASSETS.fetch(request));
+    return rewriteHtmlMetadata(request, await fetchPageAsset(request, env));
   },
 };
+
+function fetchPageAsset(request: Request, env: Env) {
+  const url = new URL(request.url);
+  url.search = '';
+  return env.ASSETS.fetch(new Request(url.toString(), request));
+}
 
 async function rewriteHtmlMetadata(request: Request, response: Response) {
   const contentType = response.headers.get('Content-Type') ?? '';
@@ -324,13 +343,14 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
   const canonical = isKnownPage
     ? `https://${CANONICAL_HOST}${url.pathname === '/' ? '/' : url.pathname}`
     : `https://${CANONICAL_HOST}/`;
+  const isIndexablePage = isKnownPage && request.url === canonical;
   const html = await response.text();
   const nextHtml = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(metadata.title)}</title>`)
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/, `<meta name="description" content="${escapeHtml(metadata.description)}" />`)
     .replace(
       /<meta\s+name="robots"\s+content="[^"]*"\s*\/>/,
-      `<meta name="robots" content="${isKnownPage ? 'index, follow, max-image-preview:large' : 'noindex, follow'}" />`,
+      `<meta name="robots" content="${isIndexablePage ? 'index, follow, max-image-preview:large' : 'noindex, follow'}" />`,
     )
     .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/>/, `<link rel="canonical" href="${canonical}" />`)
     .replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/>/, `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`)
@@ -342,7 +362,7 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
   return new Response(nextHtml, {
     status: isKnownPage ? response.status : 404,
     statusText: isKnownPage ? response.statusText : 'Not Found',
-    headers: withSeoHeaders(response.headers, isKnownPage),
+    headers: withSeoHeaders(response.headers, isIndexablePage),
   });
 }
 
@@ -350,12 +370,79 @@ function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+async function getSpotMarket() {
+  const [usd, eur, goldOunce, btcTryDirect, btcUsd] = await Promise.all([
+    fetchYahooPrice('USDTRY=X'),
+    fetchYahooPrice('EURTRY=X'),
+    fetchYahooPrice('GC=F'),
+    fetchYahooPrice('BTC-TRY'),
+    fetchYahooPrice('BTC-USD'),
+  ]);
+  const fallbackUsd = latestSeriesValue('usd');
+  const fallbackEur = latestSeriesValue('eur');
+  const fallbackGold = latestSeriesValue('gold');
+  const fallbackBitcoin = latestSeriesValue('bitcoin');
+  const usdTry = usd ?? fallbackUsd;
+  const eurTry = eur ?? fallbackEur;
+  const gramGoldTry = goldOunce && usdTry ? (goldOunce * usdTry) / 31.1034768 : fallbackGold;
+  const btcTry = btcTryDirect ?? (btcUsd && usdTry ? btcUsd * usdTry : null);
+  const bitcoinTry = btcTry ?? fallbackBitcoin;
+  const source = usd && eur && goldOunce && btcTry ? 'Yahoo Finance, anlık piyasa verisi' : 'Son mevcut seri verisi';
+  const items: SpotMarketItem[] = [
+    { key: 'usd', label: 'Dolar', value: usdTry, unit: 'TL/USD', source: usd ? 'Yahoo Finance' : 'Son aylık seri' },
+    { key: 'eur', label: 'Euro', value: eurTry, unit: 'TL/EUR', source: eur ? 'Yahoo Finance' : 'Son aylık seri' },
+    { key: 'gold', label: 'Gram altın', value: gramGoldTry, unit: 'TL/gr', source: goldOunce && usd ? 'Yahoo Finance türev' : 'Son aylık seri' },
+    { key: 'bitcoin', label: 'Bitcoin', value: bitcoinTry, unit: 'TL/BTC', source: btcTry ? 'Yahoo Finance' : 'Son aylık seri' },
+  ];
+
+  return {
+    updatedAt: new Date().toISOString(),
+    source,
+    items,
+  };
+}
+
+async function fetchYahooPrice(symbol: string) {
+  try {
+    const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'nekadarederdi/1.0',
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as {
+      chart?: { result?: Array<{ meta?: { regularMarketPrice?: number }; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> };
+    };
+    const result = payload.chart?.result?.[0];
+    const close = result?.indicators?.quote?.[0]?.close?.filter((value): value is number => Number.isFinite(value)) ?? [];
+    const lastClose = close[close.length - 1];
+
+    return Number.isFinite(result?.meta?.regularMarketPrice) ? result!.meta!.regularMarketPrice! : lastClose ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function latestSeriesValue(key: SeriesKey) {
+  const series = (catalog.series as MarketSeries[]).find((item) => item.key === key);
+  const latest = series?.observations
+    .filter((item) => Number.isFinite(item.value))
+    .sort((first, second) => second.date.localeCompare(first.date))[0];
+
+  return latest?.value ?? 0;
+}
+
 function shouldRedirectToCanonicalHost(request: Request, url: URL) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return false;
   }
 
-  return !isLocalHost(url.hostname) && url.hostname !== CANONICAL_HOST;
+  return !isLocalHost(url.hostname) && (url.hostname !== CANONICAL_HOST || url.protocol !== 'https:');
 }
 
 function isLocalHost(hostname: string) {
@@ -370,10 +457,10 @@ function normalizeTrailingSlash(pathname: string) {
   return pathname.slice(0, -1);
 }
 
-function withSeoHeaders(headers: Headers, isKnownPage: boolean) {
+function withSeoHeaders(headers: Headers, isIndexablePage: boolean) {
   const nextHeaders = new Headers(headers);
 
-  if (!isKnownPage) {
+  if (!isIndexablePage) {
     nextHeaders.set('X-Robots-Tag', 'noindex, follow');
   }
 
