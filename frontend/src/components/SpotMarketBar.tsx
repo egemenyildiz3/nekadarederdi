@@ -70,13 +70,7 @@ export function SpotMarketBar() {
           <p className="text-sm font-semibold text-ink-800">Kur, altın ve Bitcoin özeti</p>
         </div>
         <p className="text-xs text-ink-500">
-          {status === 'ready' && market
-            ? new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date(market.updatedAt))
-            : status === 'fallback'
-              ? 'son aylık veri'
-            : status === 'loading'
-              ? 'yükleniyor'
-              : 'şu an alınamadı'}
+          {status === 'fallback' ? 'son aylık veri' : status === 'loading' ? 'yükleniyor' : status === 'error' ? 'şu an alınamadı' : null}
         </p>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">

@@ -15,17 +15,22 @@ export function ResultCard({ result }: ResultCardProps) {
   return (
     <article className="ledger-card result-card rounded-md border border-ink-100 p-4 shadow-soft sm:p-5">
       <div className="flex items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
-          <h3 className="mt-1 text-base font-bold text-ink-950 sm:text-lg">{result.series.name}</h3>
+          <h3 className="mt-1 text-xl font-extrabold leading-tight text-ink-950 sm:text-2xl">{result.series.name}</h3>
         </div>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-oxide-100 bg-oxide-50 text-oxide-800">
           <TrendIcon aria-hidden="true" size={20} />
         </div>
       </div>
 
-      <div className="mt-5">
-        <div className="flex justify-end">
+      <div className="mt-6">
+        <div className="flex items-end justify-between gap-3">
+          <div className="value-stripe min-w-0 rounded-md px-2 py-1">
+            <p className="currency-value font-data font-bold tracking-normal text-ink-950">
+              {formatMoney(result.resultAmount)}
+            </p>
+          </div>
           <button
             aria-controls={detailsId}
             aria-expanded={detailsOpen}
@@ -40,11 +45,6 @@ export function ResultCard({ result }: ResultCardProps) {
               size={18}
             />
           </button>
-        </div>
-        <div className="value-stripe mt-1 rounded-md px-2 py-1">
-          <p className="currency-value font-data font-bold tracking-normal text-ink-950">
-            {formatMoney(result.resultAmount)}
-          </p>
         </div>
       </div>
 

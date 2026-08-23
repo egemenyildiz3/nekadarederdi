@@ -695,6 +695,9 @@ function App() {
                       {formatInputAmount(state.amount || 0, state.inputUnit)}
                     </h1>
                   </div>
+                  <p className="mt-2 text-sm leading-6 text-ink-600">
+                    {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
+                  </p>
                   {state.inputUnit !== 'try' && inputTryAmount ? (
                     <p className="mt-1 text-sm leading-6 text-ink-500">
                       Başlangıç ayındaki yaklaşık TL karşılığı: {formatMoney(inputTryAmount)}
