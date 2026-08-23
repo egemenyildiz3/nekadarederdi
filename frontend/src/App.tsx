@@ -573,9 +573,9 @@ function App() {
 
         <AdSlot label="Reklam alanı" placement="top" />
 
-        <section className="grid items-start gap-5 lg:grid-cols-[minmax(0,380px)_1fr] lg:gap-6">
+        <section className="grid items-start gap-5 [overflow-anchor:none] lg:grid-cols-[minmax(0,380px)_1fr] lg:gap-6">
           <form
-            className="ledger-card h-fit rounded-md border border-ink-100 p-4 shadow-soft sm:p-5 lg:sticky lg:top-5"
+            className="ledger-card h-fit rounded-md border border-ink-100 p-4 shadow-soft [overflow-anchor:none] sm:p-5 lg:sticky lg:top-5 lg:self-start"
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-5">
@@ -685,7 +685,7 @@ function App() {
             </div>
           </form>
 
-          <section className="grid gap-4">
+          <section className="grid gap-4 [overflow-anchor:none]">
             <div className="ledger-card rounded-md border border-ink-100 p-4 shadow-soft sm:p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -744,15 +744,15 @@ function App() {
             )}
 
             {results.length > 0 && (
-              <div className="grid gap-4 md:grid-cols-2 md:items-start">
-                <div className="grid gap-4">
+              <div className="grid gap-4 [overflow-anchor:none] md:grid-cols-2 md:items-start">
+                <div className="grid gap-4 [overflow-anchor:none]">
                   {results
                     .filter((_, index) => index % 2 === 0)
                     .map((result) => (
                       <ResultCard key={result.series.key} result={result} />
                     ))}
                 </div>
-                <div className="grid gap-4">
+                <div className="grid gap-4 [overflow-anchor:none]">
                   {results
                     .filter((_, index) => index % 2 === 1)
                     .map((result) => (

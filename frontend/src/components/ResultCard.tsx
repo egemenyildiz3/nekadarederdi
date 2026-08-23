@@ -37,7 +37,10 @@ export function ResultCard({ result }: ResultCardProps) {
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-ink-100 text-ink-700 transition hover:border-oxide-700 hover:text-oxide-800"
             title={detailsOpen ? 'Detayları gizle' : 'Detayları göster'}
             type="button"
-            onClick={() => setDetailsOpen((current) => !current)}
+            onClick={(event) => {
+              event.currentTarget.blur();
+              setDetailsOpen((current) => !current);
+            }}
           >
             <ChevronDown
               aria-hidden="true"
