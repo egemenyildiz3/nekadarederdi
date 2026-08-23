@@ -18,7 +18,6 @@ export function ResultCard({ result }: ResultCardProps) {
         <div>
           <p className="font-data text-xs font-semibold uppercase text-oxide-700">{result.series.shortName}</p>
           <h3 className="mt-1 text-base font-bold text-ink-950 sm:text-lg">{result.series.name}</h3>
-          <p className="mt-1 text-sm leading-6 text-ink-600">{result.series.description}</p>
         </div>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-oxide-100 bg-oxide-50 text-oxide-800">
           <TrendIcon aria-hidden="true" size={20} />
@@ -26,8 +25,7 @@ export function ResultCard({ result }: ResultCardProps) {
       </div>
 
       <div className="mt-5">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-ink-500">Yaklaşık karşılık</p>
+        <div className="flex justify-end">
           <button
             aria-controls={detailsId}
             aria-expanded={detailsOpen}
@@ -52,6 +50,10 @@ export function ResultCard({ result }: ResultCardProps) {
 
       {detailsOpen && (
         <div id={detailsId} className="mt-5 grid gap-3 text-sm">
+          <p className="rounded-md border border-ink-100 bg-white/70 p-3 leading-6 text-ink-700">
+            {result.series.description}
+          </p>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Çarpan</p>

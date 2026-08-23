@@ -14,8 +14,8 @@ const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase'
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
   { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net', group: 'purchase' },
   { key: 'gasoline', label: 'Benzin', hint: 'Yakıt', group: 'purchase' },
-  { key: 'usd', label: 'USD', hint: 'Dolar', group: 'currency' },
-  { key: 'eur', label: 'EUR', hint: 'Euro', group: 'currency' },
+  { key: 'usd', label: 'Dolar', hint: 'Dolar', group: 'currency' },
+  { key: 'eur', label: 'Euro', hint: 'Euro', group: 'currency' },
   { key: 'gold', label: 'Altın', hint: 'Gram', group: 'asset' },
   { key: 'silver', label: 'Gümüş', hint: 'Gram', group: 'asset' },
   { key: 'bist100', label: 'BIST 100', hint: 'Endeks', group: 'asset' },
@@ -32,8 +32,8 @@ const CRITERIA_GROUPS: { key: 'purchase' | 'currency' | 'asset'; label: string }
 
 const INPUT_UNITS: { key: InputUnit; label: string }[] = [
   { key: 'try', label: 'TL' },
-  { key: 'usd', label: 'USD' },
-  { key: 'eur', label: 'EUR' },
+  { key: 'usd', label: 'Dolar' },
+  { key: 'eur', label: 'Euro' },
   { key: 'gold', label: 'Gram altın' },
   { key: 'silver', label: 'Gram gümüş' },
 ];
@@ -662,12 +662,9 @@ function App() {
                                 type="button"
                                 onClick={() => toggleCriterion(criterion.key)}
                               >
-                                <span className="flex items-center justify-between gap-2 text-sm font-bold">
+                                <span className="flex items-center justify-between gap-2 text-base font-extrabold">
                                   {criterion.label}
                                   {selected && <Check aria-hidden="true" size={16} />}
-                                </span>
-                                <span className={`text-xs ${selected ? 'text-oxide-50' : 'text-ink-500'}`}>
-                                  {criterion.hint}
                                 </span>
                               </button>
                             );
@@ -698,9 +695,6 @@ function App() {
                       {formatInputAmount(state.amount || 0, state.inputUnit)}
                     </h1>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-ink-600">
-                    {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
-                  </p>
                   {state.inputUnit !== 'try' && inputTryAmount ? (
                     <p className="mt-1 text-sm leading-6 text-ink-500">
                       Başlangıç ayındaki yaklaşık TL karşılığı: {formatMoney(inputTryAmount)}
