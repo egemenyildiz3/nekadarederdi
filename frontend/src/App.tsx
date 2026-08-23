@@ -481,7 +481,9 @@ function App() {
   }, [state]);
 
   useEffect(() => {
-    setLoading(true);
+    if (results.length === 0) {
+      setLoading(true);
+    }
     calculateOnBackend(debouncedState)
       .then((nextResults) => {
         setResults(nextResults);
@@ -490,7 +492,9 @@ function App() {
       .catch((apiError: unknown) => {
         const message = apiError instanceof Error ? apiError.message : 'Hesaplama yapılamadı.';
         setError(message);
-        setResults([]);
+        if (results.length === 0) {
+          setResults([]);
+        }
       })
       .finally(() => setLoading(false));
   }, [debouncedState]);
@@ -565,9 +569,9 @@ function App() {
           </div>
         </header>
 
-        <AdSlot label="Reklam alanı" placement="top" />
-
         <SpotMarketBar />
+
+        <AdSlot label="Reklam alanı" placement="top" />
 
         <section className="grid items-start gap-5 lg:grid-cols-[minmax(0,380px)_1fr] lg:gap-6">
           <form
@@ -736,13 +740,13 @@ function App() {
 
             {error && <p className="rounded-md bg-red-50 p-4 text-sm text-red-700">{error}</p>}
 
-            {loading && !error && (
+            {loading && !error && results.length === 0 && (
               <div className="flex min-h-48 items-center justify-center rounded-md border border-ink-100 bg-white">
                 <Loader2 className="animate-spin text-oxide-700" aria-hidden="true" size={28} />
               </div>
             )}
 
-            {!loading && results.length > 0 && (
+            {results.length > 0 && (
               <div className="grid gap-4 md:grid-cols-2 md:items-start">
                 <div className="grid gap-4">
                   {results
@@ -826,7 +830,7 @@ function XIcon() {
 function WhatsAppIcon() {
   return (
     <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.04 2a9.88 9.88 0 0 0-8.5 14.92L2.4 22l5.2-1.08A9.93 9.93 0 1 0 12.04 2Zm0 1.86a8.06 8.06 0 0 1 6.82 12.37 8.06 8.06 0 0 1-10.78 2.8l-.37-.22-3.05.64.65-2.98-.25-.39a8.06 8.06 0 0 1 6.98-12.22Zm-3.1 4.25c-.18 0-.46.07-.7.34-.25.27-.92.9-.92 2.2 0 1.29.94 2.54 1.07 2.72.13.18 1.82 2.91 4.5 3.97 2.23.88 2.68.7 3.16.66.49-.04 1.57-.64 1.8-1.26.22-.62.22-1.15.15-1.26-.06-.11-.24-.18-.5-.31-.27-.13-1.57-.78-1.81-.86-.25-.09-.42-.13-.6.13-.18.27-.69.86-.85 1.04-.16.18-.31.2-.58.07-.27-.13-1.12-.41-2.14-1.31-.79-.7-1.32-1.57-1.47-1.84-.16-.27-.02-.41.12-.54.12-.12.27-.31.4-.47.14-.16.18-.27.27-.45.09-.18.04-.34-.02-.47-.07-.13-.6-1.46-.82-2-.22-.52-.44-.45-.6-.46l-.52-.01Z" />
+      <path d="M20.52 3.48A11.83 11.83 0 0 0 12.1 0C5.54 0 .21 5.33.2 11.89c0 2.1.55 4.15 1.6 5.96L.1 24l6.3-1.65a11.9 11.9 0 0 0 5.69 1.45h.01c6.56 0 11.9-5.33 11.9-11.9 0-3.18-1.24-6.17-3.48-8.42ZM12.1 21.79h-.01a9.88 9.88 0 0 1-5.04-1.38l-.36-.21-3.74.98 1-3.64-.24-.37a9.86 9.86 0 0 1-1.51-5.28c0-5.45 4.44-9.89 9.9-9.89a9.82 9.82 0 0 1 6.99 2.9 9.83 9.83 0 0 1 2.9 7c0 5.46-4.44 9.89-9.89 9.89Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z" />
     </svg>
   );
 }
