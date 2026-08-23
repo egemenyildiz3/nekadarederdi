@@ -238,6 +238,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname.startsWith('/api/') && request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders(),
+      });
+    }
+
     if (shouldRedirectToCanonicalHost(request, url)) {
       url.protocol = 'https:';
       url.hostname = CANONICAL_HOST;
@@ -442,6 +449,10 @@ function shouldRedirectToCanonicalHost(request: Request, url: URL) {
     return false;
   }
 
+  if (url.pathname.startsWith('/api/')) {
+    return false;
+  }
+
   return !isLocalHost(url.hostname) && (url.hostname !== CANONICAL_HOST || url.protocol !== 'https:');
 }
 
@@ -594,7 +605,16 @@ function json(payload: unknown, status = 200, extraHeaders: Record<string, strin
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
+      ...corsHeaders(),
       ...extraHeaders,
     },
   });
+}
+
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 }

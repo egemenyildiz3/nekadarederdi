@@ -765,13 +765,14 @@ function App() {
               </div>
             )}
 
-            {results.length > 0 && <AdSlot label="Sonuç altı reklam alanı" placement="results" />}
-
-            <p className="rounded-md border border-ink-100 bg-white p-4 text-xs leading-5 text-ink-500">
-              Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.
-            </p>
           </section>
         </section>
+
+        {results.length > 0 && <AdSlot label="Sonuç altı reklam alanı" placement="results" />}
+
+        <p className="rounded-md border border-ink-100 bg-white p-4 text-xs leading-5 text-ink-500">
+          Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.
+        </p>
 
         <section
           aria-labelledby="seo-heading"
