@@ -443,7 +443,6 @@ function App() {
   const [state, setState] = useState<CalculatorState>(() => parseStateFromUrl(window.location.search));
   const [results, setResults] = useState<CalculationResult[]>([]);
   const [catalog, setCatalog] = useState<MarketCatalog | null>(null);
-  const [catalogLoaded, setCatalogLoaded] = useState(false);
   const [debouncedState, setDebouncedState] = useState(state);
   const [amountText, setAmountText] = useState(() => formatEditableNumber(state.amount));
   const [copied, setCopied] = useState(false);
@@ -455,8 +454,7 @@ function App() {
       .then((nextCatalog) => setCatalog(nextCatalog))
       .catch(() => {
         // The calculator can still work through the backend even if the optional catalog request is blocked.
-      })
-      .finally(() => setCatalogLoaded(true));
+      });
   }, []);
 
   useEffect(() => {
@@ -483,10 +481,6 @@ function App() {
   }, [state]);
 
   useEffect(() => {
-    if (!catalog) {
-      return;
-    }
-
     setLoading(true);
     calculateOnBackend(debouncedState)
       .then((nextResults) => {
@@ -499,7 +493,7 @@ function App() {
         setResults([]);
       })
       .finally(() => setLoading(false));
-  }, [catalogLoaded, debouncedState]);
+  }, [debouncedState]);
 
   const yearRange = useMemo(() => {
     const observations = catalog?.series.flatMap((series) => series.observations) ?? [];
@@ -512,7 +506,11 @@ function App() {
     };
   }, [catalog]);
   const availableCriteria = useMemo(() => {
-    const available = new Set(catalog?.series.map((series) => series.key) ?? defaultState().criteria);
+    if (!catalog) {
+      return CRITERIA;
+    }
+
+    const available = new Set(catalog.series.map((series) => series.key));
     return CRITERIA.filter((criterion) => available.has(criterion.key));
   }, [catalog]);
 
@@ -644,7 +642,7 @@ function App() {
                     return (
                       <div className="grid gap-2" key={group.key}>
                         <p className="font-data text-[11px] font-semibold uppercase text-oxide-700">{group.label}</p>
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                           {criteria.map((criterion) => {
                             const selected = state.criteria.includes(criterion.key);
 
