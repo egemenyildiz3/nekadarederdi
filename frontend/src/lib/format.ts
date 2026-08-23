@@ -14,6 +14,14 @@ export const editableNumberFormatter = new Intl.NumberFormat('tr-TR', {
   maximumFractionDigits: 8,
 });
 
+const compactMoneyUnits = [
+  { value: 1_000_000_000_000_000_000, label: 'kentilyon' },
+  { value: 1_000_000_000_000_000, label: 'katrilyon' },
+  { value: 1_000_000_000_000, label: 'trilyon' },
+  { value: 1_000_000_000, label: 'milyar' },
+  { value: 1_000_000, label: 'milyon' },
+];
+
 const usdFormatter = new Intl.NumberFormat('tr-TR', {
   maximumFractionDigits: 2,
 });
@@ -24,6 +32,17 @@ const eurFormatter = new Intl.NumberFormat('tr-TR', {
 
 export function formatMoney(value: number): string {
   return `${formatTryNumber(value)}₺`;
+}
+
+export function formatCompactMoney(value: number): string {
+  const absoluteValue = Math.abs(value);
+  const unit = compactMoneyUnits.find((item) => absoluteValue >= item.value);
+
+  if (!unit || absoluteValue < 10_000_000) {
+    return formatMoney(value);
+  }
+
+  return `${preciseMoneyFormatter.format(value / unit.value)} ${unit.label}₺`;
 }
 
 export function formatTryNumber(value: number): string {

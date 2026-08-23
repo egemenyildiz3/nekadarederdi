@@ -1,7 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, ChevronDown, Info } from 'lucide-react';
 import { useState } from 'react';
 import type { CalculationResult } from '../types';
-import { formatMoney, formatMonth, numberFormatter } from '../lib/format';
+import { formatCompactMoney, formatMoney, formatMonth, numberFormatter } from '../lib/format';
 
 type ResultCardProps = {
   result: CalculationResult;
@@ -26,9 +26,9 @@ export function ResultCard({ result }: ResultCardProps) {
 
       <div className="mt-6">
         <div className="flex items-end justify-between gap-3">
-          <div className="value-stripe min-w-0 rounded-md px-2 py-1">
-            <p className="currency-value font-data font-bold tracking-normal text-ink-950">
-              {formatMoney(result.resultAmount)}
+          <div className="value-stripe min-w-0 rounded-md px-2 py-1" title={formatMoney(result.resultAmount)}>
+            <p className="currency-value compact-currency-value font-data font-bold tracking-normal text-ink-950">
+              {formatCompactMoney(result.resultAmount)}
             </p>
           </div>
           <button
@@ -58,6 +58,10 @@ export function ResultCard({ result }: ResultCardProps) {
           </p>
 
           <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2 rounded-md border border-ink-100 bg-paper-100/80 p-3">
+              <p className="text-ink-500">Tam karşılık</p>
+              <p className="mt-1 break-words font-data font-semibold text-ink-900">{formatMoney(result.resultAmount)}</p>
+            </div>
             <div className="rounded-md border border-ink-100 bg-paper-100/80 p-3">
               <p className="text-ink-500">Çarpan</p>
               <p className="mt-1 font-data font-semibold text-ink-900">{numberFormatter.format(result.multiplier)}x</p>

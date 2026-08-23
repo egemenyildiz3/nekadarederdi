@@ -10,6 +10,8 @@ import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } 
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
 
+const MAX_INPUT_AMOUNT = 9_999_000_000_000_000;
+
 const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
   { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net', group: 'purchase' },
@@ -527,12 +529,16 @@ function App() {
   }
 
   function updateAmount(value: string) {
-    setAmountText(value);
     const amount = parseLocalizedNumber(value);
 
     if (Number.isFinite(amount) && amount > 0) {
-      updateState({ amount });
+      const boundedAmount = Math.min(amount, MAX_INPUT_AMOUNT);
+      setAmountText(amount > MAX_INPUT_AMOUNT ? formatEditableNumber(MAX_INPUT_AMOUNT) : value);
+      updateState({ amount: boundedAmount });
+      return;
     }
+
+    setAmountText(value);
   }
 
   function formatAmountInput() {

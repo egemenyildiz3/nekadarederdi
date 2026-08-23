@@ -37,6 +37,12 @@ select {
   line-height: 1.14;
 }
 
+.compact-currency-value {
+  overflow-wrap: normal;
+  word-break: normal;
+  white-space: nowrap;
+}
+
 .page-shell {
   position: relative;
 }

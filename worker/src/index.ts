@@ -65,6 +65,7 @@ const VALID_CRITERIA = new Set<SeriesKey>([
 ]);
 const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silver']);
 const TL_CUTOVER = '2005-01';
+const MAX_INPUT_AMOUNT = 9_999_000_000_000_000;
 const CANONICAL_HOST = 'nekadarederdi.com';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *
@@ -548,6 +549,10 @@ function inputAmountToTry(amount: number, inputUnit: InputUnit, startMonth: stri
 function validate(request: Partial<CalculatorRequest>) {
   if (!Number.isFinite(request.amount) || !request.amount || request.amount <= 0) {
     throw new Error("Miktar 0'dan büyük olmalı.");
+  }
+
+  if (request.amount > MAX_INPUT_AMOUNT) {
+    throw new Error('Miktar en fazla 9.999 trilyon olabilir.');
   }
 
   if (request.inputUnit && !VALID_INPUT_UNITS.has(request.inputUnit)) {
