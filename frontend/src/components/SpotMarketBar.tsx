@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
-import { fetchSpotMarket } from '../lib/api';
-import { formatMoney, numberFormatter } from '../lib/format';
-import type { SpotMarket } from '../types';
+import { fetchSeries, fetchSpotMarket } from '../lib/api';
+import { formatMoney, formatMonth } from '../lib/format';
+import type { MarketCatalog, SpotMarket, SpotMarketItem } from '../types';
 
 const REFRESH_MS = 5 * 60 * 1000;
+const SPOT_DEFINITIONS: Record<SpotMarketItem['key'], Pick<SpotMarketItem, 'label' | 'unit'>> = {
+  usd: { label: 'Dolar', unit: 'TL/USD' },
+  eur: { label: 'Euro', unit: 'TL/EUR' },
+  gold: { label: 'Gram altın', unit: 'TL/gr' },
+  bitcoin: { label: 'Bitcoin', unit: 'TL/BTC' },
+};
+const SPOT_KEYS = Object.keys(SPOT_DEFINITIONS) as SpotMarketItem['key'][];
 const FALLBACK_ITEMS: SpotMarket['items'] = [
   { key: 'usd', label: 'Dolar', value: Number.NaN, unit: 'TL/USD', source: 'Yükleniyor' },
   { key: 'eur', label: 'Euro', value: Number.NaN, unit: 'TL/EUR', source: 'Yükleniyor' },
@@ -13,7 +20,7 @@ const FALLBACK_ITEMS: SpotMarket['items'] = [
 
 export function SpotMarketBar() {
   const [market, setMarket] = useState<SpotMarket | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'ready' | 'fallback' | 'error'>('loading');
 
   useEffect(() => {
     let cancelled = false;
@@ -27,9 +34,19 @@ export function SpotMarketBar() {
           setStatus('ready');
         }
       } catch {
-        if (!cancelled) {
-          setMarket(null);
-          setStatus('error');
+        try {
+          const catalog = await fetchSeries();
+          const fallbackMarket = buildFallbackMarket(catalog);
+
+          if (!cancelled) {
+            setMarket(fallbackMarket);
+            setStatus('fallback');
+          }
+        } catch {
+          if (!cancelled) {
+            setMarket(null);
+            setStatus('error');
+          }
         }
       }
     }
@@ -55,6 +72,8 @@ export function SpotMarketBar() {
         <p className="text-xs text-ink-500">
           {status === 'ready' && market
             ? new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date(market.updatedAt))
+            : status === 'fallback'
+              ? 'son aylık veri'
             : status === 'loading'
               ? 'yükleniyor'
               : 'şu an alınamadı'}
@@ -78,9 +97,27 @@ function formatSpotValue(item: SpotMarket['items'][number]) {
     return '—';
   }
 
-  if (item.key === 'usd' || item.key === 'eur' || item.key === 'gold' || item.key === 'bitcoin') {
-    return formatMoney(item.value);
-  }
+  return formatMoney(item.value);
+}
 
-  return numberFormatter.format(item.value);
+function buildFallbackMarket(catalog: MarketCatalog): SpotMarket {
+  return {
+    updatedAt: catalog.updatedAt,
+    source: 'Son aylık seri',
+    items: SPOT_KEYS.map((key) => {
+      const series = catalog.series.find((item) => item.key === key);
+      const latest = [...(series?.observations ?? [])]
+        .filter((observation) => Number.isFinite(observation.value))
+        .sort((first, second) => second.date.localeCompare(first.date))[0];
+      const definition = SPOT_DEFINITIONS[key];
+
+      return {
+        key,
+        label: definition.label,
+        value: latest?.value ?? Number.NaN,
+        unit: series?.unit ?? definition.unit,
+        source: latest ? `Son aylık seri: ${formatMonth(latest.date.slice(0, 7))}` : 'Veri yok',
+      };
+    }),
+  };
 }
