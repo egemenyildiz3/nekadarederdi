@@ -3,6 +3,7 @@ import { Check, Copy, Loader2 } from 'lucide-react';
 import { AdSlot } from './components/AdSlot';
 import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
+import { MoneyValue } from './components/MoneyValue';
 import { ResultCard } from './components/ResultCard';
 import { SpotMarketBar } from './components/SpotMarketBar';
 import { calculateOnBackend, fetchSeries } from './lib/api';
@@ -725,8 +726,8 @@ function App() {
                 <div>
                   <p className="font-data text-xs font-semibold uppercase text-oxide-700">Hesaplama özeti</p>
                   <div className="value-stripe mt-2 rounded-md px-3 py-2">
-                    <h1 className="currency-value font-data font-bold tracking-normal text-ink-950">
-                      {formatInputAmount(state.amount || 0, state.inputUnit)}
+                    <h1>
+                      <MoneyValue inputUnit={state.inputUnit} size="summary" value={state.amount || 0} />
                     </h1>
                   </div>
                   <p className="mt-2 text-sm leading-6 text-ink-600">

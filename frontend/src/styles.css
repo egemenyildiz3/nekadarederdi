@@ -28,6 +28,48 @@ select {
   font: inherit;
 }
 
+.money-value {
+  display: flex;
+  max-width: 100%;
+  align-items: baseline;
+  gap: 0.4rem;
+  line-height: 1;
+}
+
+.money-value__amount {
+  min-width: 0;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-weight: 800;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.money-value__unit {
+  flex: 0 0 auto;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.money-value--summary .money-value__amount,
+.money-value--card .money-value__amount {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+}
+
+.money-value--summary .money-value__unit,
+.money-value--card .money-value__unit {
+  font-size: clamp(0.82rem, 1.35vw, 1.08rem);
+}
+
+@media (max-width: 420px) {
+  .money-value {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+}
+
 .currency-value {
   display: block;
   max-width: 100%;
@@ -35,14 +77,6 @@ select {
   word-break: break-word;
   font-size: clamp(1.45rem, 3vw, 2.25rem);
   line-height: 1.14;
-}
-
-.compact-currency-value {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow-wrap: normal;
-  word-break: normal;
-  white-space: nowrap;
 }
 
 .page-shell {

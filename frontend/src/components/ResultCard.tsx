@@ -1,7 +1,8 @@
 import { ArrowDownRight, ArrowUpRight, ChevronDown, Info } from 'lucide-react';
 import { useState } from 'react';
 import type { CalculationResult } from '../types';
-import { formatCompactMoney, formatMoney, formatMonth, numberFormatter } from '../lib/format';
+import { MoneyValue } from './MoneyValue';
+import { formatMoney, formatMonth, numberFormatter } from '../lib/format';
 
 type ResultCardProps = {
   result: CalculationResult;
@@ -26,10 +27,8 @@ export function ResultCard({ result }: ResultCardProps) {
 
       <div className="mt-6">
         <div className="flex items-end justify-between gap-3">
-          <div className="value-stripe min-w-0 max-w-[calc(100%-2.75rem)] rounded-md px-2 py-1" title={formatMoney(result.resultAmount)}>
-            <p className="currency-value compact-currency-value font-data font-bold tracking-normal text-ink-950">
-              {formatCompactMoney(result.resultAmount)}
-            </p>
+          <div className="value-stripe min-w-0 max-w-[calc(100%-2.75rem)] rounded-md px-2 py-1">
+            <MoneyValue value={result.resultAmount} />
           </div>
           <button
             aria-controls={detailsId}
