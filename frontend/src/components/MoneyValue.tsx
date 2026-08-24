@@ -9,12 +9,16 @@ type MoneyValueProps = {
 
 export function MoneyValue({ inputUnit = 'try', size = 'card', value }: MoneyValueProps) {
   const parts = formatCompactInputAmountParts(value, inputUnit);
-  const unitText = [parts.scale, parts.suffix].filter(Boolean).join(' ');
 
   return (
     <span className={`money-value money-value--${size}`} title={parts.full}>
       <span className="money-value__amount">{parts.amount}</span>
-      {unitText && <span className="money-value__unit">{unitText}</span>}
+      {(parts.scale || parts.suffix) && (
+        <span className="money-value__unit">
+          {parts.scale && <span className="money-value__scale">{parts.scale}</span>}
+          {parts.suffix && <span className="money-value__symbol">{parts.suffix}</span>}
+        </span>
+      )}
     </span>
   );
 }

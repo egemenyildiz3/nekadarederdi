@@ -45,6 +45,9 @@ select {
 }
 
 .money-value__unit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18rem;
   flex: 0 0 auto;
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
@@ -60,6 +63,13 @@ select {
 .money-value--summary .money-value__unit,
 .money-value--card .money-value__unit {
   font-size: clamp(0.82rem, 1.35vw, 1.08rem);
+}
+
+.money-value__symbol {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 1.18em;
+  font-weight: 900;
+  line-height: 0.9;
 }
 
 @media (max-width: 420px) {
