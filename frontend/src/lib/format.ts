@@ -63,7 +63,7 @@ function formatCompactNumberParts(value: number): Pick<CompactAmountParts, 'amou
   const absoluteValue = Math.abs(value);
   const unit = compactMoneyUnits.find((item) => absoluteValue >= item.value);
 
-  if (!unit || absoluteValue < 10_000_000) {
+  if (!unit) {
     return { amount: formatTryNumber(value), scale: '' };
   }
 
