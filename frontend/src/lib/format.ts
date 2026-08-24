@@ -22,27 +22,23 @@ const compactMoneyUnits = [
   { value: 1_000_000, label: 'milyon' },
 ];
 
-const usdFormatter = new Intl.NumberFormat('tr-TR', {
-  maximumFractionDigits: 2,
-});
-
-const eurFormatter = new Intl.NumberFormat('tr-TR', {
-  maximumFractionDigits: 2,
-});
-
 export function formatMoney(value: number): string {
   return `${formatTryNumber(value)}₺`;
 }
 
 export function formatCompactMoney(value: number): string {
+  return `${formatCompactNumber(value)}₺`;
+}
+
+function formatCompactNumber(value: number): string {
   const absoluteValue = Math.abs(value);
   const unit = compactMoneyUnits.find((item) => absoluteValue >= item.value);
 
   if (!unit || absoluteValue < 10_000_000) {
-    return formatMoney(value);
+    return formatTryNumber(value);
   }
 
-  return `${preciseMoneyFormatter.format(value / unit.value)} ${unit.label}₺`;
+  return `${preciseMoneyFormatter.format(value / unit.value)} ${unit.label}`;
 }
 
 export function formatTryNumber(value: number): string {
@@ -59,19 +55,19 @@ function hasFraction(value: number): boolean {
 
 export function formatInputAmount(value: number, inputUnit: 'try' | 'usd' | 'eur' | 'gold' | 'silver'): string {
   if (inputUnit === 'try') {
-    return formatMoney(value);
+    return formatCompactMoney(value);
   }
 
   if (inputUnit === 'usd') {
-    return `${usdFormatter.format(value)}$`;
+    return `${formatCompactNumber(value)}$`;
   }
 
   if (inputUnit === 'eur') {
-    return `${eurFormatter.format(value)}€`;
+    return `${formatCompactNumber(value)}€`;
   }
 
   const unitLabel = inputUnit === 'gold' ? 'gr altın' : 'gr gümüş';
-  return `${numberFormatter.format(value)} ${unitLabel}`;
+  return `${formatCompactNumber(value)} ${unitLabel}`;
 }
 
 export function formatEditableNumber(value: number): string {

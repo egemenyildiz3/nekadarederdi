@@ -26,7 +26,7 @@ export function ResultCard({ result }: ResultCardProps) {
 
       <div className="mt-6">
         <div className="flex items-end justify-between gap-3">
-          <div className="value-stripe min-w-0 rounded-md px-2 py-1" title={formatMoney(result.resultAmount)}>
+          <div className="value-stripe min-w-0 max-w-[calc(100%-2.75rem)] rounded-md px-2 py-1" title={formatMoney(result.resultAmount)}>
             <p className="currency-value compact-currency-value font-data font-bold tracking-normal text-ink-950">
               {formatCompactMoney(result.resultAmount)}
             </p>

@@ -38,6 +38,8 @@ select {
 }
 
 .compact-currency-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
   overflow-wrap: normal;
   word-break: normal;
   white-space: nowrap;

@@ -65,7 +65,7 @@ const VALID_CRITERIA = new Set<SeriesKey>([
 ]);
 const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silver']);
 const TL_CUTOVER = '2005-01';
-const MAX_INPUT_AMOUNT = 9_999_000_000_000_000;
+const MAX_INPUT_AMOUNT = 999_999_999_999;
 const CANONICAL_HOST = 'nekadarederdi.com';
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *
@@ -552,7 +552,7 @@ function validate(request: Partial<CalculatorRequest>) {
   }
 
   if (request.amount > MAX_INPUT_AMOUNT) {
-    throw new Error('Miktar en fazla 9.999 trilyon olabilir.');
+    throw new Error('Miktar en fazla 999.999.999.999 olabilir.');
   }
 
   if (request.inputUnit && !VALID_INPUT_UNITS.has(request.inputUnit)) {

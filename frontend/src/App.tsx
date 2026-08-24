@@ -10,7 +10,8 @@ import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } 
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
 
-const MAX_INPUT_AMOUNT = 9_999_000_000_000_000;
+const MAX_INPUT_AMOUNT = 999_999_999_999;
+const MAX_INPUT_MESSAGE = 'Miktar en fazla 999.999.999.999 olabilir.';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
@@ -442,7 +443,10 @@ function App() {
     return <InfoPage page={infoPage} />;
   }
 
-  const [state, setState] = useState<CalculatorState>(() => parseStateFromUrl(window.location.search));
+  const [state, setState] = useState<CalculatorState>(() => {
+    const initialState = parseStateFromUrl(window.location.search);
+    return { ...initialState, amount: Math.min(initialState.amount, MAX_INPUT_AMOUNT) };
+  });
   const [results, setResults] = useState<CalculationResult[]>([]);
   const [catalog, setCatalog] = useState<MarketCatalog | null>(null);
   const [debouncedState, setDebouncedState] = useState(state);
@@ -450,6 +454,7 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [amountWarning, setAmountWarning] = useState('');
 
   useEffect(() => {
     fetchSeries()
@@ -529,20 +534,38 @@ function App() {
   }
 
   function updateAmount(value: string) {
+    if (!/^[\d.,]*$/.test(value)) {
+      setAmountWarning('Miktar alanına sadece rakam, nokta ve virgül girebilirsiniz.');
+      return;
+    }
+
+    if (!value) {
+      setAmountText(value);
+      setAmountWarning('');
+      return;
+    }
+
     const amount = parseLocalizedNumber(value);
 
     if (Number.isFinite(amount) && amount > 0) {
-      const boundedAmount = Math.min(amount, MAX_INPUT_AMOUNT);
-      setAmountText(amount > MAX_INPUT_AMOUNT ? formatEditableNumber(MAX_INPUT_AMOUNT) : value);
-      updateState({ amount: boundedAmount });
+      if (amount > MAX_INPUT_AMOUNT) {
+        setAmountWarning(MAX_INPUT_MESSAGE);
+        return;
+      }
+
+      setAmountText(value);
+      setAmountWarning('');
+      updateState({ amount });
       return;
     }
 
     setAmountText(value);
+    setAmountWarning('');
   }
 
   function formatAmountInput() {
     setAmountText(formatEditableNumber(state.amount));
+    setAmountWarning('');
   }
 
   function toggleCriterion(key: SeriesKey) {
@@ -620,6 +643,11 @@ function App() {
                     ))}
                   </select>
                 </div>
+                {amountWarning && (
+                  <p className="rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">
+                    {amountWarning}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
