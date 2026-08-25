@@ -133,6 +133,17 @@ select:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 
+.site-header > .brand-mark {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.site-header > .theme-toggle {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
 .site-header__copy {
   grid-column: 1 / -1;
   max-width: 42rem;
@@ -172,62 +183,48 @@ select:focus-visible {
   width: 2.75rem;
   height: 2.75rem;
   overflow: visible;
-  filter: drop-shadow(3px 3px 0 color-mix(in srgb, var(--accent-strong) 16%, transparent));
+  filter: drop-shadow(2px 2px 0 color-mix(in srgb, var(--accent-strong) 18%, transparent));
 }
 
 .brand-mark__tile {
   fill: var(--accent-soft);
   stroke: var(--accent-strong);
-  stroke-width: 2.4;
-}
-
-.brand-mark__glass {
-  fill: var(--surface);
-  stroke: var(--accent-strong);
-  stroke-linejoin: round;
   stroke-width: 2.8;
 }
 
-.brand-mark__rim,
-.brand-mark__stream,
-.brand-mark__spark {
+.brand-mark__loop,
+.brand-mark__trend {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.brand-mark__rim {
+.brand-mark__loop {
   stroke: var(--accent-strong);
-  stroke-width: 3.4;
+  stroke-width: 5;
 }
 
-.brand-mark__stream {
+.brand-mark__loop--future {
+  stroke: var(--blue);
+}
+
+.brand-mark__trend {
   stroke: var(--sun);
-  stroke-width: 3.6;
-}
-
-.brand-mark__spark {
-  stroke: var(--copper);
-  stroke-width: 2.6;
-}
-
-.brand-mark__past {
-  fill: var(--copper);
+  stroke-width: 5.5;
 }
 
 .brand-mark__coin {
   fill: var(--sun);
-  stroke: var(--accent);
-  stroke-width: 2.4;
+  stroke: var(--accent-strong);
+  stroke-width: 2.8;
 }
 
 .brand-mark__currency {
-  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 800;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  fill: var(--accent-strong);
-  font-size: 12px;
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
 }
 
 .brand-mark p {
@@ -682,7 +679,7 @@ select:focus-visible {
 
 .spot-strip {
   display: grid;
-  align-content: center;
+  grid-template-rows: auto 1fr;
   gap: 0.75rem;
   padding: 0.85rem;
   border-top: 4px solid var(--blue);
@@ -716,16 +713,20 @@ select:focus-visible {
 .spot-strip__items {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
   border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
 }
 
 .spot-item {
   min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 0.28rem;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 84%, white);
-  padding: 0.7rem;
+  padding: 0.9rem;
 }
 
 .spot-item p,
@@ -737,10 +738,10 @@ select:focus-visible {
 
 .spot-item strong {
   display: block;
-  margin: 0.2rem 0;
   color: var(--text);
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.5vw, 1.45rem);
+  line-height: 1;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
@@ -1024,7 +1025,7 @@ select:focus-visible {
 
   .market-sponsor-row {
     grid-template-columns: minmax(0, 1fr) minmax(10rem, 12rem);
-    align-items: start;
+    align-items: stretch;
   }
 
   .sponsor-frame--square {
@@ -1089,7 +1090,7 @@ select:focus-visible {
 
   .market-sponsor-row {
     grid-template-columns: minmax(0, 1fr) minmax(15.625rem, 20rem);
-    align-items: start;
+    align-items: stretch;
   }
 
   .sponsor-frame--square {

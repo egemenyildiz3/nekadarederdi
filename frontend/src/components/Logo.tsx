@@ -1,17 +1,13 @@
 export function Logo() {
   return (
     <div className="brand-mark" aria-label="Ne Kadar Ederdi?">
-      <svg className="brand-mark__glyph" aria-hidden="true" viewBox="0 0 56 56" role="img">
-        <rect className="brand-mark__tile" x="5" y="5" width="46" height="46" rx="10" />
-        <path className="brand-mark__glass" d="M17 13h22c0 8.4-7.8 10.4-10.4 15C31.2 32.6 39 34.6 39 43H17c0-8.4 7.8-10.4 10.4-15C24.8 23.4 17 21.4 17 13Z" />
-        <path className="brand-mark__rim" d="M15 13h26M15 43h26" />
-        <path className="brand-mark__stream" d="M28 22v3.2M28 30.8v3.2" />
-        <circle className="brand-mark__past" cx="28" cy="19" r="3.6" />
-        <circle className="brand-mark__coin" cx="28" cy="37" r="6.6" />
-        <text className="brand-mark__currency" x="28" y="37">
-          &#8378;
-        </text>
-        <path className="brand-mark__spark" d="M39 22l4-4M42 24h4M37 17v-4" />
+      <svg className="brand-mark__glyph" aria-hidden="true" viewBox="0 0 64 64" role="img">
+        <rect className="brand-mark__tile" x="6" y="6" width="52" height="52" rx="13" />
+        <path className="brand-mark__loop" d="M20 39.5A15 15 0 0 1 41.8 20" />
+        <path className="brand-mark__loop brand-mark__loop--future" d="M44 24.5A15 15 0 0 1 22.2 44" />
+        <path className="brand-mark__trend" d="M20.5 42.5 30.2 33l7 5.8L47 23" />
+        <circle className="brand-mark__coin" cx="47" cy="23" r="6.5" />
+        <path className="brand-mark__currency" d="M43.7 20.5 50.1 18.7M43.7 23.4 49 21.9M46 18.4v9.5c2.5-.1 4.2-1.2 5.1-3.2" />
       </svg>
       <div>
         <p>Ne Kadar</p>

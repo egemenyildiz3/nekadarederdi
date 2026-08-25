@@ -1,24 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">Ne Kadar Ederdi?</title>
-  <desc id="desc">Ge&#231;mi&#351; TL de&#287;eri, enflasyon, d&#246;viz, alt&#305;n ve asgari &#252;cret kar&#351;&#305;la&#351;t&#305;rma arac&#305;.</desc>
+  <desc id="desc">Gecmis para degeri, enflasyon, doviz ve piyasa verileriyle karsilastirma araci.</desc>
   <rect width="1200" height="630" fill="#F6EFDC"/>
   <path d="M0 0h1200v630H0z" fill="none" stroke="#004A36" stroke-width="12"/>
-  <path d="M0 0h20v630H0z" fill="#004A36"/>
-  <path d="M20 0h14v630H20z" fill="#00875F"/>
-  <path d="M34 0h10v630H34z" fill="#F1BD42"/>
-  <rect x="92" y="70" width="144" height="144" rx="28" fill="#D5F2DD" stroke="#004A36" stroke-width="8"/>
-  <path d="M139 98h50c0 20.5-17.7 25-24.5 37C171.3 147 189 151.5 189 172h-50c0-20.5 17.7-25 24.5-37C156.7 123 139 118.5 139 98Z" fill="#FFFDF7" stroke="#004A36" stroke-linejoin="round" stroke-width="8"/>
-  <path d="M132 98h64M132 172h64" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="10"/>
-  <path d="M164 121v9M164 140v9" fill="none" stroke="#F1BD42" stroke-linecap="round" stroke-width="9"/>
-  <circle cx="164" cy="113" r="10" fill="#B96A39"/>
-  <circle cx="164" cy="161" r="18" fill="#F1BD42" stroke="#00875F" stroke-width="8"/>
-  <text x="164" y="164" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk, Arial, sans-serif" font-size="33" font-weight="800" fill="#004A36">&#8378;</text>
-  <path d="M198 124l11-11M207 130h12M193 112v-12" fill="none" stroke="#B96A39" stroke-linecap="round" stroke-width="7"/>
-  <text x="256" y="130" font-family="Space Grotesk, Arial, sans-serif" font-size="52" font-weight="800" fill="#102018">Ne Kadar Ederdi?</text>
-  <text x="256" y="205" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Ge&#231;mi&#351; TL de&#287;eri ve enflasyon hesaplama</text>
-  <line x1="84" y1="278" x2="1116" y2="278" stroke="#D7C8AA" stroke-width="2"/>
-  <text x="84" y="355" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="700" fill="#004A36">T&#220;FE - Dolar - Euro - Gram alt&#305;n - G&#252;m&#252;&#351; - Asgari &#252;cret</text>
-  <text x="84" y="425" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Bir tutar&#305;n farkl&#305; tarihlerdeki yakla&#351;&#305;k kar&#351;&#305;l&#305;&#287;&#305;n&#305; ay baz&#305;nda k&#305;yaslay&#305;n.</text>
-  <rect x="84" y="492" width="1032" height="70" rx="8" fill="#FFFDF7" stroke="#D7C8AA"/>
-  <text x="120" y="538" font-family="Space Grotesk, Arial, sans-serif" font-size="28" font-weight="700" fill="#102018">nekadarederdi.com</text>
+  <path d="M0 0h18v630H0z" fill="#004A36"/>
+  <path d="M18 0h14v630H18z" fill="#00875F"/>
+  <path d="M32 0h10v630H32z" fill="#F1BD42"/>
+  <rect x="92" y="76" width="150" height="150" rx="32" fill="#D5F2DD" stroke="#004A36" stroke-width="10"/>
+  <path d="M139 160A35 35 0 0 1 190 114" fill="none" stroke="#004A36" stroke-width="14" stroke-linecap="round"/>
+  <path d="M196 126A35 35 0 0 1 145 172" fill="none" stroke="#097B8C" stroke-width="14" stroke-linecap="round"/>
+  <path d="M139 166 161 144l16 13 24-38" fill="none" stroke="#F1BD42" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="202" cy="120" r="20" fill="#F1BD42" stroke="#004A36" stroke-width="9"/>
+  <path d="M191 114.6 211.5 108.8M191 122 208.8 117M198.5 106.5v27.4c7.8-.4 13.2-3.7 15.6-9.5" fill="none" stroke="#004A36" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="270" y="140" font-family="Space Grotesk, Arial, sans-serif" font-size="58" font-weight="800" fill="#102018">Ne Kadar Ederdi?</text>
+  <text x="270" y="205" font-family="Manrope, Arial, sans-serif" font-size="31" font-weight="700" fill="#536459">Gecmis para, bugunun hesabiyla.</text>
+  <line x1="86" y1="284" x2="1114" y2="284" stroke="#D7C8AA" stroke-width="2"/>
+  <text x="86" y="356" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="800" fill="#004A36">TUFE - Dolar - Euro - Altin - BIST - Bitcoin</text>
+  <text x="86" y="424" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Bir tutarin farkli tarihlerdeki yaklasik karsiligini ay bazinda okuyun.</text>
+  <rect x="86" y="496" width="490" height="70" fill="#FFFDF7" stroke="#D7C8AA"/>
+  <text x="122" y="542" font-family="Space Grotesk, Arial, sans-serif" font-size="28" font-weight="800" fill="#102018">nekadarederdi.com</text>
 </svg>
