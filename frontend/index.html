@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#005e3f" />
     <meta name="application-name" content="Ne Kadar Ederdi?" />
@@ -18,6 +19,13 @@
     <link rel="canonical" href="https://nekadarederdi.com/" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = stored || system;
+      })();
+    </script>
     <script
       id="adsense-script"
       async

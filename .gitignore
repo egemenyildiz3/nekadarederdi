@@ -20,3 +20,5 @@ obj/
 
 *.md
 !README.md
+
+.chrome-qa

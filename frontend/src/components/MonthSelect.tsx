@@ -47,15 +47,14 @@ export function MonthSelect({ label, value, minYear, maxYear, maxMonth, onChange
   }
 
   return (
-    <fieldset className="grid gap-2">
-      <legend className="text-sm font-semibold text-ink-800">{label}</legend>
-      <div className="grid grid-cols-[minmax(0,1fr)_108px] gap-2">
+    <fieldset className="month-select">
+      <legend>{label}</legend>
+      <div className="month-select__controls">
         <label className="sr-only" htmlFor={`${label}-month`}>
           Ay
         </label>
         <select
           id={`${label}-month`}
-          className="h-12 rounded-md border border-ink-200 bg-paper-50 px-3 text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
           value={selectedMonth}
           onChange={(event) => setMonth(Number(event.target.value))}
         >
@@ -69,12 +68,7 @@ export function MonthSelect({ label, value, minYear, maxYear, maxMonth, onChange
         <label className="sr-only" htmlFor={`${label}-year`}>
           Yıl
         </label>
-        <select
-          id={`${label}-year`}
-          className="h-12 rounded-md border border-ink-200 bg-paper-50 px-3 font-data text-base text-ink-950 outline-none transition focus:border-oxide-700 focus:ring-4 focus:ring-oxide-100"
-          value={selectedYear}
-          onChange={(event) => setYear(Number(event.target.value))}
-        >
+        <select id={`${label}-year`} value={selectedYear} onChange={(event) => setYear(Number(event.target.value))}>
           {years.map((year) => (
             <option key={year} value={year}>
               {year}

@@ -63,22 +63,28 @@ export function SpotMarketBar() {
   const items = market?.items ?? FALLBACK_ITEMS;
 
   return (
-    <section className="ledger-card rounded-md border border-ink-100 px-4 py-3 shadow-soft" aria-label="Güncel piyasa özeti">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section className="spot-strip" aria-label="Güncel piyasa özeti">
+      <div className="spot-strip__head">
         <div>
-          <p className="font-data text-xs font-semibold uppercase text-oxide-700">Bugün</p>
-          <p className="text-sm font-semibold text-ink-800">Kur, altın ve Bitcoin özeti</p>
+          <p className="eyebrow">Bugün</p>
+          <p>Kur, altın ve Bitcoin özeti</p>
         </div>
-        <p className="text-xs text-ink-500">
-          {status === 'fallback' ? 'son aylık veri' : status === 'loading' ? 'yükleniyor' : status === 'error' ? 'şu an alınamadı' : null}
+        <p>
+          {status === 'fallback'
+            ? 'son aylık veri'
+            : status === 'loading'
+              ? 'yükleniyor'
+              : status === 'error'
+                ? 'şu an alınamadı'
+                : null}
         </p>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+      <div className="spot-strip__items">
         {items.map((item) => (
-          <div className="rounded-md border border-ink-100 bg-white/75 p-3" key={item.key} title={item.source}>
-            <p className="text-xs font-semibold text-ink-500">{item.label}</p>
-            <p className="mt-1 font-data text-base font-extrabold text-ink-950">{formatSpotValue(item)}</p>
-            <p className="mt-1 text-[11px] text-ink-500">{item.unit}</p>
+          <div className="spot-item" key={item.key} title={item.source}>
+            <p>{item.label}</p>
+            <strong>{formatSpotValue(item)}</strong>
+            <span>{item.unit}</span>
           </div>
         ))}
       </div>
@@ -88,7 +94,7 @@ export function SpotMarketBar() {
 
 function formatSpotValue(item: SpotMarket['items'][number]) {
   if (!Number.isFinite(item.value)) {
-    return '—';
+    return '-';
   }
 
   return formatMoney(item.value);

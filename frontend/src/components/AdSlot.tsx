@@ -23,10 +23,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const clientId = ADSENSE_CLIENT;
   const adSlot = AD_SLOTS[placement];
   const isConfigured = Boolean(clientId && adSlot);
-  const wrapperClassName =
-    placement === 'top'
-      ? 'relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-2 sm:min-h-24 sm:py-3'
-      : 'relative flex min-h-24 items-center justify-center overflow-hidden rounded-md border border-dashed border-ink-100 bg-white/70 px-2 py-3';
+  const wrapperClassName = `ad-slot ad-slot--${placement}`;
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
 
@@ -90,7 +87,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
       {adStatus !== 'filled' ? (
         <>
           <AdLabel />
-          <span className="pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 text-center text-sm text-ink-400">
+          <span className="ad-slot__text">
             {label}
           </span>
         </>
@@ -124,9 +121,5 @@ function ensureAdSenseScript(clientId: string) {
 }
 
 function AdLabel() {
-  return (
-    <span className="absolute left-3 top-2 rounded border border-ink-100 bg-white/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-normal text-ink-400">
-      Reklam
-    </span>
-  );
+  return <span className="ad-slot__label">Reklam</span>;
 }
