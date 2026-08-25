@@ -175,47 +175,48 @@ select:focus-visible {
   filter: drop-shadow(3px 3px 0 color-mix(in srgb, var(--accent-strong) 16%, transparent));
 }
 
-.brand-mark__plate {
+.brand-mark__tile {
   fill: var(--accent-soft);
   stroke: var(--accent-strong);
   stroke-width: 2.4;
 }
 
-.brand-mark__fold {
-  fill: var(--surface);
-  stroke: var(--accent-strong);
+.brand-mark__orbit,
+.brand-mark__tick,
+.brand-mark__chart {
+  fill: none;
+  stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.brand-mark__orbit,
+.brand-mark__tick {
+  stroke: var(--accent-strong);
+  stroke-width: 3;
+}
+
+.brand-mark__chart {
+  stroke: var(--sun);
+  stroke-width: 4.2;
+}
+
+.brand-mark__coin {
+  fill: var(--surface);
+  stroke: var(--accent);
   stroke-width: 2.4;
 }
 
-.brand-mark__trace,
-.brand-mark__arrow {
-  fill: none;
-  stroke: var(--sun);
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  stroke-width: 3.4;
-}
-
-.brand-mark__trace--bottom {
-  stroke: var(--accent);
-}
-
-.brand-mark__currency,
-.brand-mark__question {
+.brand-mark__currency {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
+  text-anchor: middle;
   dominant-baseline: middle;
-}
-
-.brand-mark__currency {
   fill: var(--accent-strong);
-  font-size: 22px;
+  font-size: 13px;
 }
 
-.brand-mark__question {
+.brand-mark__dot {
   fill: var(--copper);
-  font-size: 18px;
 }
 
 .brand-mark p {

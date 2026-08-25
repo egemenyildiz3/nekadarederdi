@@ -1,22 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">Ne Kadar Ederdi?</title>
-  <desc id="desc">Geçmiş TL değeri, enflasyon, döviz, altın ve asgari ücret karşılaştırma aracı.</desc>
+  <desc id="desc">Ge&#231;mi&#351; TL de&#287;eri, enflasyon, d&#246;viz, alt&#305;n ve asgari &#252;cret kar&#351;&#305;la&#351;t&#305;rma arac&#305;.</desc>
   <rect width="1200" height="630" fill="#F6EFDC"/>
   <path d="M0 0h1200v630H0z" fill="none" stroke="#004A36" stroke-width="12"/>
   <path d="M0 0h20v630H0z" fill="#004A36"/>
   <path d="M20 0h14v630H20z" fill="#00875F"/>
   <path d="M34 0h10v630H34z" fill="#F1BD42"/>
-  <path d="M92 70h104l14 14v130H92z" fill="#D5F2DD" stroke="#004A36" stroke-width="7"/>
-  <path d="M196 70v28h28" fill="#FFFDF7" stroke="#004A36" stroke-linejoin="round" stroke-width="7"/>
-  <path d="M126 116h52M186 116l13 13-13 13" fill="none" stroke="#F1BD42" stroke-linecap="square" stroke-linejoin="miter" stroke-width="8"/>
-  <path d="M144 180h58" fill="none" stroke="#00875F" stroke-linecap="square" stroke-width="8"/>
-  <text x="132" y="160" font-family="Space Grotesk, Arial, sans-serif" font-size="60" font-weight="800" fill="#004A36">₺</text>
-  <text x="174" y="169" font-family="Space Grotesk, Arial, sans-serif" font-size="42" font-weight="800" fill="#B96A39">?</text>
+  <rect x="92" y="70" width="144" height="144" rx="28" fill="#D5F2DD" stroke="#004A36" stroke-width="8"/>
+  <path d="M164 96a45 45 0 1 1-40 65" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="9"/>
+  <path d="M164 96v24M209 141h-21" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="9"/>
+  <path d="M123 163l25-25 21 15 34-45" fill="none" stroke="#F1BD42" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+  <circle cx="147" cy="153" r="23" fill="#FFFDF7" stroke="#00875F" stroke-width="8"/>
+  <text x="147" y="156" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk, Arial, sans-serif" font-size="42" font-weight="800" fill="#004A36">&#8378;</text>
+  <circle cx="204" cy="110" r="10" fill="#B96A39"/>
   <text x="256" y="130" font-family="Space Grotesk, Arial, sans-serif" font-size="52" font-weight="800" fill="#102018">Ne Kadar Ederdi?</text>
-  <text x="256" y="205" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Geçmiş TL değeri ve enflasyon hesaplama</text>
+  <text x="256" y="205" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Ge&#231;mi&#351; TL de&#287;eri ve enflasyon hesaplama</text>
   <line x1="84" y1="278" x2="1116" y2="278" stroke="#D7C8AA" stroke-width="2"/>
-  <text x="84" y="355" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="700" fill="#004A36">TÜFE · Dolar · Euro · Gram altın · Gümüş · Asgari ücret</text>
-  <text x="84" y="425" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Bir tutarın farklı tarihlerdeki yaklaşık karşılığını ay bazında kıyaslayın.</text>
+  <text x="84" y="355" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="700" fill="#004A36">T&#220;FE - Dolar - Euro - Gram alt&#305;n - G&#252;m&#252;&#351; - Asgari &#252;cret</text>
+  <text x="84" y="425" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Bir tutar&#305;n farkl&#305; tarihlerdeki yakla&#351;&#305;k kar&#351;&#305;l&#305;&#287;&#305;n&#305; ay baz&#305;nda k&#305;yaslay&#305;n.</text>
   <rect x="84" y="492" width="1032" height="70" rx="8" fill="#FFFDF7" stroke="#D7C8AA"/>
   <text x="120" y="538" font-family="Space Grotesk, Arial, sans-serif" font-size="28" font-weight="700" fill="#102018">nekadarederdi.com</text>
 </svg>
