@@ -8,11 +8,12 @@ import { ResultCard } from './components/ResultCard';
 import { SpotMarketBar } from './components/SpotMarketBar';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
-import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
+import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseEditableLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, MarketSeries, SeriesKey } from './types';
 
 const MAX_INPUT_AMOUNT = 999_999_999_999;
 const MAX_INPUT_MESSAGE = 'Miktar en fazla 999.999.999.999 olabilir.';
+const AMOUNT_FORMAT_MESSAGE = 'Örnek: 10000, 10.000 veya 10.000,50.';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
@@ -548,28 +549,32 @@ function App() {
       return;
     }
 
-    if (!value) {
+    const parsed = parseEditableLocalizedNumber(value);
+
+    if (!parsed.ok && parsed.reason === 'empty') {
       setAmountText(value);
       setAmountWarning('');
       return;
     }
 
-    const amount = parseLocalizedNumber(value);
+    if (!parsed.ok) {
+      setAmountWarning(AMOUNT_FORMAT_MESSAGE);
+      return;
+    }
 
-    if (Number.isFinite(amount) && amount > 0) {
-      if (amount > MAX_INPUT_AMOUNT) {
-        setAmountWarning(MAX_INPUT_MESSAGE);
-        return;
-      }
+    if (parsed.value > MAX_INPUT_AMOUNT) {
+      setAmountWarning(MAX_INPUT_MESSAGE);
+      return;
+    }
 
-      setAmountText(value);
-      setAmountWarning('');
-      updateState({ amount });
+    if (parsed.value <= 0) {
+      setAmountWarning("Miktar 0'dan büyük olmalı.");
       return;
     }
 
     setAmountText(value);
     setAmountWarning('');
+    updateState({ amount: parsed.value });
   }
 
   function formatAmountInput() {
@@ -634,6 +639,7 @@ function App() {
                     type="text"
                     value={amountText}
                     onBlur={formatAmountInput}
+                    onFocus={() => setAmountWarning('')}
                     onChange={(event) => updateAmount(event.target.value)}
                   />
                   <label className="sr-only" htmlFor="input-unit">

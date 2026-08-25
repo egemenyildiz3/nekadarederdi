@@ -113,6 +113,32 @@ export function formatEditableNumber(value: number): string {
   return Number.isFinite(value) && value > 0 ? editableNumberFormatter.format(value) : '';
 }
 
+export type LocalizedNumberParseResult =
+  | { ok: true; value: number }
+  | { ok: false; reason: 'empty' | 'invalid-format' };
+
+const MAX_DECIMAL_DIGITS = 8;
+const plainLocalizedNumberPattern = new RegExp(`^\\d+([,.]\\d{0,${MAX_DECIMAL_DIGITS}})?$`);
+const groupedTurkishNumberPattern = new RegExp(`^\\d{1,3}(\\.\\d{3})+(,\\d{0,${MAX_DECIMAL_DIGITS}})?$`);
+
+export function parseEditableLocalizedNumber(value: string): LocalizedNumberParseResult {
+  const normalized = value.trim().replace(/\s/g, '');
+
+  if (!normalized) {
+    return { ok: false, reason: 'empty' };
+  }
+
+  if (groupedTurkishNumberPattern.test(normalized)) {
+    return { ok: true, value: Number(normalized.replace(/\./g, '').replace(',', '.')) };
+  }
+
+  if (plainLocalizedNumberPattern.test(normalized)) {
+    return { ok: true, value: Number(normalized.replace(',', '.')) };
+  }
+
+  return { ok: false, reason: 'invalid-format' };
+}
+
 export function parseLocalizedNumber(value: string): number {
   const normalized = value.trim().replace(/\s/g, '');
 
