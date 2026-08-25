@@ -181,27 +181,42 @@ select:focus-visible {
   stroke-width: 2.4;
 }
 
-.brand-mark__orbit,
-.brand-mark__tick,
-.brand-mark__chart {
+.brand-mark__glass {
+  fill: var(--surface);
+  stroke: var(--accent-strong);
+  stroke-linejoin: round;
+  stroke-width: 2.8;
+}
+
+.brand-mark__rim,
+.brand-mark__stream,
+.brand-mark__spark {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.brand-mark__orbit,
-.brand-mark__tick {
+.brand-mark__rim {
   stroke: var(--accent-strong);
-  stroke-width: 3;
+  stroke-width: 3.4;
 }
 
-.brand-mark__chart {
+.brand-mark__stream {
   stroke: var(--sun);
-  stroke-width: 4.2;
+  stroke-width: 3.6;
+}
+
+.brand-mark__spark {
+  stroke: var(--copper);
+  stroke-width: 2.6;
+}
+
+.brand-mark__past {
+  fill: var(--copper);
 }
 
 .brand-mark__coin {
-  fill: var(--surface);
+  fill: var(--sun);
   stroke: var(--accent);
   stroke-width: 2.4;
 }
@@ -212,11 +227,7 @@ select:focus-visible {
   text-anchor: middle;
   dominant-baseline: middle;
   fill: var(--accent-strong);
-  font-size: 13px;
-}
-
-.brand-mark__dot {
-  fill: var(--copper);
+  font-size: 12px;
 }
 
 .brand-mark p {
@@ -664,7 +675,7 @@ select:focus-visible {
   margin: 0;
 }
 
-.market-ad-row {
+.market-sponsor-row {
   display: grid;
   gap: 0.75rem;
 }
@@ -733,7 +744,7 @@ select:focus-visible {
   overflow-wrap: anywhere;
 }
 
-.ad-slot {
+.sponsor-frame {
   position: relative;
   display: flex;
   min-height: 5rem;
@@ -756,40 +767,39 @@ select:focus-visible {
   font-weight: 800;
 }
 
-.ad-slot--wide {
+.sponsor-frame--wide {
   min-height: 6.25rem;
   border-style: solid;
 }
 
-.ad-slot--square {
-  min-height: 15.625rem;
-  aspect-ratio: 1;
+.sponsor-frame--square {
+  min-height: 8rem;
   width: 100%;
 }
 
-.bottom-ad-stack {
+.sponsor-stack {
   display: grid;
   gap: 0.75rem;
 }
 
-.ad-slot > ins.adsbygoogle {
+.sponsor-frame > ins.adsbygoogle {
   position: absolute;
   inset: 0;
   z-index: 1;
   transition: opacity 140ms ease;
 }
 
-.ad-slot--pending > ins.adsbygoogle,
-.ad-slot--unfilled > ins.adsbygoogle {
+.sponsor-frame--pending > ins.adsbygoogle,
+.sponsor-frame--unfilled > ins.adsbygoogle {
   opacity: 0;
   pointer-events: none;
 }
 
-.ad-slot--filled > ins.adsbygoogle {
+.sponsor-frame--filled > ins.adsbygoogle {
   opacity: 1;
 }
 
-.ad-slot__label {
+.sponsor-frame__label {
   pointer-events: none;
   position: absolute;
   top: 0.45rem;
@@ -801,7 +811,7 @@ select:focus-visible {
   text-transform: uppercase;
 }
 
-.ad-slot__text {
+.sponsor-frame__text {
   pointer-events: none;
   position: absolute;
   inset-inline: 1rem;
@@ -968,6 +978,16 @@ select:focus-visible {
   .spot-strip__items {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+
+  .market-sponsor-row {
+    grid-template-columns: minmax(0, 1fr) minmax(10rem, 12rem);
+    align-items: stretch;
+  }
+
+  .sponsor-frame--square {
+    min-height: 10rem;
+    aspect-ratio: 1;
+  }
 }
 
 @media (min-width: 56rem) {
@@ -1002,6 +1022,7 @@ select:focus-visible {
   .guide-section__items {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
 }
 
 @media (min-width: 64rem) {
@@ -1023,9 +1044,13 @@ select:focus-visible {
     font-size: 3rem;
   }
 
-  .market-ad-row {
+  .market-sponsor-row {
     grid-template-columns: minmax(0, 1fr) minmax(15.625rem, 20rem);
     align-items: stretch;
+  }
+
+  .sponsor-frame--square {
+    min-height: 15.625rem;
   }
 
   .date-grid {

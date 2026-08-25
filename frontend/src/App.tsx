@@ -633,7 +633,7 @@ function App() {
           </button>
         </header>
 
-        <aside className="market-ad-row">
+        <aside className="market-sponsor-row">
           <SpotMarketBar />
           <AdSlot label="Reklam alanı" placement="square" />
         </aside>
@@ -827,7 +827,7 @@ function App() {
           </section>
         </section>
 
-        <section className="bottom-ad-stack" aria-label="Alt reklam alanları">
+        <section className="sponsor-stack" aria-label="Alt reklam alanları">
           <AdSlot label="Sonuç altı reklam alanı" placement="wide" />
           <AdSlot label="Alt reklam alanı" placement="wide" />
         </section>

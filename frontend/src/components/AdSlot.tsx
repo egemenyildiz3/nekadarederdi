@@ -25,7 +25,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const isConfigured = Boolean(clientId && adSlot);
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
-  const wrapperClassName = `ad-slot ad-slot--${placement} ad-slot--${adStatus}`;
+  const wrapperClassName = `sponsor-frame sponsor-frame--${placement} sponsor-frame--${adStatus}`;
 
   useEffect(() => {
     if (!clientId || !adSlot) {
@@ -86,7 +86,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
     <div className={wrapperClassName}>
       {adStatus !== 'filled' ? <AdLabel /> : null}
       {adStatus !== 'filled' ? (
-        <span className="ad-slot__text">{label}</span>
+        <span className="sponsor-frame__text">{label}</span>
       ) : null}
       <ins
         ref={adRef}
@@ -117,5 +117,5 @@ function ensureAdSenseScript(clientId: string) {
 }
 
 function AdLabel() {
-  return <span className="ad-slot__label">Reklam</span>;
+  return <span className="sponsor-frame__label">Reklam</span>;
 }
