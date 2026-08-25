@@ -84,13 +84,9 @@ export function AdSlot({ label, placement }: AdSlotProps) {
 
   return (
     <div className={wrapperClassName}>
+      <AdLabel />
       {adStatus !== 'filled' ? (
-        <>
-          <AdLabel />
-          <span className="ad-slot__text">
-            {label}
-          </span>
-        </>
+        <span className="ad-slot__text">{label}</span>
       ) : null}
       <ins
         ref={adRef}
