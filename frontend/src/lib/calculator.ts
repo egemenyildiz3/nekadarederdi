@@ -24,7 +24,7 @@ export function defaultState(): CalculatorState {
   return {
     amount: 10000,
     inputUnit: 'try',
-    startMonth: '2010-01',
+    startMonth: '2020-01',
     endMonth: currentMonth(),
     criteria: DEFAULT_CRITERIA,
   };
