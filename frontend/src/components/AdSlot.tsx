@@ -13,10 +13,13 @@ type AdSlotProps = {
   placement: AdPlacement;
 };
 
-const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT;
+const DEFAULT_ADSENSE_CLIENT = 'ca-pub-3946058913389575';
+const DEFAULT_SQUARE_SLOT = '6095138583';
+
+const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT || DEFAULT_ADSENSE_CLIENT;
 const AD_SLOTS: Record<AdPlacement, string | undefined> = {
   wide: import.meta.env.VITE_ADSENSE_RESULTS_SLOT || import.meta.env.VITE_ADSENSE_TOP_SLOT,
-  square: import.meta.env.VITE_ADSENSE_TOP_SLOT || import.meta.env.VITE_ADSENSE_RESULTS_SLOT,
+  square: import.meta.env.VITE_ADSENSE_SQUARE_SLOT || DEFAULT_SQUARE_SLOT,
 };
 
 export function AdSlot({ label, placement }: AdSlotProps) {

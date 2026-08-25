@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
 import { Check, Copy, Loader2, Moon, Sun } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { AdSlot } from './components/AdSlot';
 import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
@@ -840,28 +841,34 @@ function App() {
           <div className="guide-section__intro">
             <p className="eyebrow">Okuma rehberi</p>
             <h2 id="seo-heading">Geçmişteki para değerini karşılaştırma</h2>
+            <p>
+              Aynı tutarı tek bir cevapla okumak yanıltıcı olabilir. Bu üç bakış, sonucu daha doğru yorumlamanıza yardımcı olur.
+            </p>
           </div>
           <div className="guide-section__items">
-            <article>
+            <article style={{ '--guide-index': '"01"' } as CSSProperties}>
               <h3>Enflasyona göre TL değeri</h3>
               <p>TÜFE serisi, geçmişteki bir TL tutarının bugünkü yaklaşık satın alma gücünü görmek için kullanılır.</p>
             </article>
-            <article>
+            <article style={{ '--guide-index': '"02"' } as CSSProperties}>
               <h3>Döviz ve değerli maden kıyası</h3>
               <p>Dolar, euro, gram altın ve gümüş karşılaştırmaları aylık veri serileri üzerinden yaklaşık çarpan üretir.</p>
             </article>
-            <article>
+            <article style={{ '--guide-index': '"03"' } as CSSProperties}>
               <h3>Asgari ücretle karşılaştırma</h3>
               <p>Net asgari ücret serisi, belirli bir tutarın dönemsel gelir düzeyleriyle kıyaslanmasına yardımcı olur.</p>
             </article>
           </div>
-          <nav className="guide-links" aria-label="İlgili rehberler">
-            {LANDING_PAGES.map((page) => (
-              <a href={page.path} key={page.path}>
-                {page.title}
-              </a>
-            ))}
-          </nav>
+          <div className="guide-link-panel">
+            <p className="eyebrow">Popüler hesaplamalar</p>
+            <nav className="guide-links" aria-label="İlgili rehberler">
+              {LANDING_PAGES.map((page) => (
+                <a href={page.path} key={page.path}>
+                  {page.title}
+                </a>
+              ))}
+            </nav>
+          </div>
         </section>
 
         <SiteFooter />
