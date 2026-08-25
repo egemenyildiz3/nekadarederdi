@@ -48,11 +48,11 @@ export function formatCompactInputAmountParts(
       ? '₺'
       : inputUnit === 'usd'
         ? '$'
-      : inputUnit === 'eur'
-        ? '€'
-      : inputUnit === 'gold'
-        ? 'gr altın'
-      : 'gr gümüş';
+        : inputUnit === 'eur'
+          ? '€'
+          : inputUnit === 'gold'
+            ? 'gr altın'
+            : 'gr gümüş';
 
   return {
     ...formatCompactNumberParts(value, minCompactValue),

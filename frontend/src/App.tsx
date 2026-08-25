@@ -13,34 +13,34 @@ import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, Mark
 
 const MAX_INPUT_AMOUNT = 999_999_999_999;
 const MAX_INPUT_MESSAGE = 'Miktar en fazla 999.999.999.999 olabilir.';
-const AMOUNT_FORMAT_MESSAGE = 'Ã–rnek: 10000, 10.000 veya 10.000,50.';
+const AMOUNT_FORMAT_MESSAGE = 'Örnek: 10000, 10.000 veya 10.000,50.';
 
 const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
-  { key: 'cpi', label: 'Reel TL', hint: 'AlÄ±m gÃ¼cÃ¼', group: 'purchase' },
-  { key: 'minimumWage', label: 'Asgari Ã¼cret', hint: 'Net', group: 'purchase' },
-  { key: 'gasoline', label: 'Benzin', hint: 'YakÄ±t', group: 'purchase' },
+  { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
+  { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net', group: 'purchase' },
+  { key: 'gasoline', label: 'Benzin', hint: 'Yakıt', group: 'purchase' },
   { key: 'usd', label: 'Dolar', hint: 'Dolar', group: 'currency' },
   { key: 'eur', label: 'Euro', hint: 'Euro', group: 'currency' },
-  { key: 'gold', label: 'AltÄ±n', hint: 'Gram', group: 'asset' },
-  { key: 'silver', label: 'GÃ¼mÃ¼ÅŸ', hint: 'Gram', group: 'asset' },
+  { key: 'gold', label: 'Altın', hint: 'Gram', group: 'asset' },
+  { key: 'silver', label: 'Gümüş', hint: 'Gram', group: 'asset' },
   { key: 'bist100', label: 'BIST 100', hint: 'Endeks', group: 'asset' },
   { key: 'bitcoin', label: 'Bitcoin', hint: 'BTC', group: 'asset' },
   { key: 'housing', label: 'Konut', hint: 'KFE', group: 'asset' },
-  { key: 'deposit', label: 'Mevduat', hint: 'BileÅŸik', group: 'asset' },
+  { key: 'deposit', label: 'Mevduat', hint: 'Bileşik', group: 'asset' },
 ];
 
 const CRITERIA_GROUPS: { key: 'purchase' | 'currency' | 'asset'; label: string }[] = [
-  { key: 'purchase', label: 'AlÄ±m gÃ¼cÃ¼' },
-  { key: 'currency', label: 'DÃ¶viz' },
-  { key: 'asset', label: 'YatÄ±rÄ±m' },
+  { key: 'purchase', label: 'Alım gücü' },
+  { key: 'currency', label: 'Döviz' },
+  { key: 'asset', label: 'Yatırım' },
 ];
 
 const INPUT_UNITS: { key: InputUnit; label: string }[] = [
   { key: 'try', label: 'TL' },
   { key: 'usd', label: 'Dolar' },
   { key: 'eur', label: 'Euro' },
-  { key: 'gold', label: 'Gram altÄ±n' },
-  { key: 'silver', label: 'Gram gÃ¼mÃ¼ÅŸ' },
+  { key: 'gold', label: 'Gram altın' },
+  { key: 'silver', label: 'Gram gümüş' },
 ];
 
 type LandingPageContent = {
@@ -66,243 +66,243 @@ const LANDING_PAGES: LandingPageContent[] = [
   {
     path: '/enflasyon-hesaplama',
     title: 'Enflasyon hesaplama',
-    metaTitle: 'Enflasyon Hesaplama | TÃœFE ile GeÃ§miÅŸ Para DeÄŸeri',
+    metaTitle: 'Enflasyon Hesaplama | TÜFE ile Geçmiş Para Değeri',
     description:
-      'GeÃ§miÅŸteki bir TL tutarÄ±nÄ±n TÃœFE verilerine gÃ¶re bugÃ¼nkÃ¼ yaklaÅŸÄ±k satÄ±n alma gÃ¼cÃ¼nÃ¼ hesaplayÄ±n.',
+      'Geçmişteki bir TL tutarının TÜFE verilerine göre bugünkü yaklaşık satın alma gücünü hesaplayın.',
     intro:
-      'Enflasyon hesaplama, aynÄ± tutarÄ±n farklÄ± tarihlerdeki alÄ±m gÃ¼cÃ¼nÃ¼ karÅŸÄ±laÅŸtÄ±rmak iÃ§in kullanÄ±lÄ±r. Ne Kadar Ederdi, TÃœFE serisiyle geÃ§miÅŸ TL deÄŸerini aylÄ±k dÃ¼zeyde yaklaÅŸÄ±k olarak gÃ¶sterir.',
+      'Enflasyon hesaplama, aynı tutarın farklı tarihlerdeki alım gücünü karşılaştırmak için kullanılır. Ne Kadar Ederdi, TÜFE serisiyle geçmiş TL değerini aylık düzeyde yaklaşık olarak gösterir.',
     calculatorHref: '/?criteria=cpi',
     sections: [
       {
-        title: 'TÃœFE ile para deÄŸeri nasÄ±l okunur?',
+        title: 'TÜFE ile para değeri nasıl okunur?',
         body:
-          'TÃœFE, tÃ¼ketici fiyatlarÄ±ndaki deÄŸiÅŸimi izler. BaÅŸlangÄ±Ã§ ve bitiÅŸ ayÄ± arasÄ±ndaki endeks farkÄ±, geÃ§miÅŸteki tutarÄ±n bugÃ¼nkÃ¼ alÄ±m gÃ¼cÃ¼ne yaklaÅŸÄ±k bir Ã§arpan verir.',
+          'TÜFE, tüketici fiyatlarındaki değişimi izler. Başlangıç ve bitiş ayı arasındaki endeks farkı, geçmişteki tutarın bugünkü alım gücüne yaklaşık bir çarpan verir.',
       },
       {
-        title: 'Hangi sorular iÃ§in kullanÄ±lÄ±r?',
+        title: 'Hangi sorular için kullanılır?',
         body:
-          'â€œ2010 yÄ±lÄ±nda 10.000 TL bugÃ¼n ne kadar ederdi?â€ veya â€œeski maaÅŸÄ±m bugÃ¼nkÃ¼ parayla kaÃ§ TL olurdu?â€ gibi karÅŸÄ±laÅŸtÄ±rmalar iÃ§in uygundur.',
+          '“2010 yılında 10.000 TL bugün ne kadar ederdi?” veya “eski maaşım bugünkü parayla kaç TL olurdu?” gibi karşılaştırmalar için uygundur.',
       },
       {
-        title: 'SonuÃ§ yatÄ±rÄ±m tavsiyesi deÄŸildir',
+        title: 'Sonuç yatırım tavsiyesi değildir',
         body:
-          'Hesaplama tarihsel veri karÅŸÄ±laÅŸtÄ±rmasÄ±dÄ±r. Fiyat, maaÅŸ, kur ve yatÄ±rÄ±m kararlarÄ± iÃ§in tek baÅŸÄ±na kullanÄ±lmamalÄ±dÄ±r.',
+          'Hesaplama tarihsel veri karşılaştırmasıdır. Fiyat, maaş, kur ve yatırım kararları için tek başına kullanılmamalıdır.',
       },
     ],
   },
   {
     path: '/gecmis-para-degeri',
-    title: 'GeÃ§miÅŸ para deÄŸeri',
-    metaTitle: 'GeÃ§miÅŸ Para DeÄŸeri Hesaplama | Ne Kadar Ederdi?',
+    title: 'Geçmiş para değeri',
+    metaTitle: 'Geçmiş Para Değeri Hesaplama | Ne Kadar Ederdi?',
     description:
-      'GeÃ§miÅŸteki TL tutarlarÄ±nÄ± bugÃ¼nkÃ¼ deÄŸerle, enflasyon, dÃ¶viz, altÄ±n, gÃ¼mÃ¼ÅŸ ve asgari Ã¼cret Ã¼zerinden kÄ±yaslayÄ±n.',
+      'Geçmişteki TL tutarlarını bugünkü değerle, enflasyon, döviz, altın, gümüş ve asgari ücret üzerinden kıyaslayın.',
     intro:
-      'GeÃ§miÅŸ para deÄŸeri tek bir cevaba indirgenmez. AynÄ± tutar TÃœFEâ€™ye gÃ¶re baÅŸka, dolara veya altÄ±na gÃ¶re baÅŸka bir karÅŸÄ±lÄ±k verebilir. Bu sayfa farklÄ± Ã¶lÃ§Ã¼tleri birlikte okumak iÃ§in hazÄ±rlanmÄ±ÅŸtÄ±r.',
+      'Geçmiş para değeri tek bir cevaba indirgenmez. Aynı tutar TÜFE’ye göre başka, dolara veya altına göre başka bir karşılık verebilir. Bu sayfa farklı ölçütleri birlikte okumak için hazırlanmıştır.',
     calculatorHref: '/',
     sections: [
       {
-        title: 'Reel deÄŸer fiyat dÃ¼zeyine baÄŸlÄ±dÄ±r',
+        title: 'Reel değer fiyat düzeyine bağlıdır',
         body:
-          'Reel deÄŸer, tutarÄ±n kaÄŸÄ±t Ã¼zerindeki sayÄ±sÄ±nÄ± deÄŸil, fiyat dÃ¼zeyi karÅŸÄ±sÄ±ndaki yaklaÅŸÄ±k alÄ±m gÃ¼cÃ¼nÃ¼ gÃ¶sterir.',
+          'Reel değer, tutarın kağıt üzerindeki sayısını değil, fiyat düzeyi karşısındaki yaklaşık alım gücünü gösterir.',
       },
       {
-        title: 'Tek Ã¶lÃ§Ã¼t yerine Ã§oklu kÄ±yas',
+        title: 'Tek ölçüt yerine çoklu kıyas',
         body:
-          'TÃœFE alÄ±m gÃ¼cÃ¼, dolar ve euro kur etkisi, altÄ±n ve gÃ¼mÃ¼ÅŸ deÄŸerli maden kÄ±yasÄ±, asgari Ã¼cret ise gelir dÃ¼zeyi perspektifi saÄŸlar.',
+          'TÜFE alım gücü, dolar ve euro kur etkisi, altın ve gümüş değerli maden kıyası, asgari ücret ise gelir düzeyi perspektifi sağlar.',
       },
       {
-        title: 'Ay bazÄ±nda hesaplama',
+        title: 'Ay bazında hesaplama',
         body:
-          'Veriler aylÄ±k serilerle iÅŸlendiÄŸi iÃ§in yÄ±l iÃ§indeki bÃ¼yÃ¼k deÄŸiÅŸimler daha gÃ¶rÃ¼nÃ¼r hale gelir.',
+          'Veriler aylık serilerle işlendiği için yıl içindeki büyük değişimler daha görünür hale gelir.',
       },
     ],
   },
   {
     path: '/bugunun-parasiyla-ne-kadar',
-    title: 'BugÃ¼nÃ¼n parasÄ±yla ne kadar?',
-    metaTitle: 'BugÃ¼nÃ¼n ParasÄ±yla Ne Kadar? | TL AlÄ±m GÃ¼cÃ¼ Hesaplama',
+    title: 'Bugünün parasıyla ne kadar?',
+    metaTitle: 'Bugünün Parasıyla Ne Kadar? | TL Alım Gücü Hesaplama',
     description:
-      'Eski bir fiyatÄ±n, maaÅŸÄ±n veya borcun bugÃ¼nÃ¼n parasÄ±yla yaklaÅŸÄ±k karÅŸÄ±lÄ±ÄŸÄ±nÄ± hesaplayÄ±n.',
+      'Eski bir fiyatın, maaşın veya borcun bugünün parasıyla yaklaşık karşılığını hesaplayın.',
     intro:
-      'â€œBugÃ¼nÃ¼n parasÄ±yla ne kadar?â€ sorusu, geÃ§miÅŸteki bir tutarÄ± bugÃ¼nkÃ¼ fiyat ortamÄ±na taÅŸÄ±r. HesaplayÄ±cÄ±, seÃ§ilen baÅŸlangÄ±Ã§ ve bitiÅŸ ayÄ±na gÃ¶re yaklaÅŸÄ±k karÅŸÄ±lÄ±ÄŸÄ± Ã¼retir.',
+      '“Bugünün parasıyla ne kadar?” sorusu, geçmişteki bir tutarı bugünkü fiyat ortamına taşır. Hesaplayıcı, seçilen başlangıç ve bitiş ayına göre yaklaşık karşılığı üretir.',
     calculatorHref: '/?criteria=cpi%2CminimumWage',
     sections: [
       {
-        title: 'FiyatlarÄ± bugÃ¼ne taÅŸÄ±mak',
+        title: 'Fiyatları bugüne taşımak',
         body:
-          'Eski kira, maaÅŸ, Ã¼rÃ¼n fiyatÄ± veya birikim tutarÄ± TÃœFE ile bugÃ¼nkÃ¼ satÄ±n alma gÃ¼cÃ¼ aÃ§Ä±sÄ±ndan okunabilir.',
+          'Eski kira, maaş, ürün fiyatı veya birikim tutarı TÜFE ile bugünkü satın alma gücü açısından okunabilir.',
       },
       {
-        title: 'Gelir dÃ¼zeyiyle kÄ±yaslamak',
+        title: 'Gelir düzeyiyle kıyaslamak',
         body:
-          'Asgari Ã¼cret Ã¶lÃ§Ã¼tÃ¼, belirli bir tutarÄ±n farklÄ± dÃ¶nemlerdeki temel gelir seviyesine gÃ¶re nasÄ±l deÄŸiÅŸtiÄŸini gÃ¶rmeye yardÄ±mcÄ± olur.',
+          'Asgari ücret ölçütü, belirli bir tutarın farklı dönemlerdeki temel gelir seviyesine göre nasıl değiştiğini görmeye yardımcı olur.',
       },
       {
-        title: 'PaylaÅŸÄ±labilir sonuÃ§',
+        title: 'Paylaşılabilir sonuç',
         body:
-          'Hesaplama sonrasÄ± oluÅŸan URL, seÃ§ilen tutar ve tarihlerle paylaÅŸÄ±labilir.',
+          'Hesaplama sonrası oluşan URL, seçilen tutar ve tarihlerle paylaşılabilir.',
       },
     ],
   },
   {
     path: '/dolar-bazinda-ne-kadar-ederdi',
-    title: 'Dolar bazÄ±nda ne kadar ederdi?',
-    metaTitle: 'Dolar BazÄ±nda Ne Kadar Ederdi? | TL USD KarÅŸÄ±laÅŸtÄ±rma',
+    title: 'Dolar bazında ne kadar ederdi?',
+    metaTitle: 'Dolar Bazında Ne Kadar Ederdi? | TL USD Karşılaştırma',
     description:
-      'GeÃ§miÅŸteki TL tutarÄ±nÄ± dolar kuru deÄŸiÅŸimine gÃ¶re bugÃ¼nkÃ¼ yaklaÅŸÄ±k TL karÅŸÄ±lÄ±ÄŸÄ±yla kÄ±yaslayÄ±n.',
+      'Geçmişteki TL tutarını dolar kuru değişimine göre bugünkü yaklaşık TL karşılığıyla kıyaslayın.',
     intro:
-      'Dolar bazÄ±nda karÅŸÄ±laÅŸtÄ±rma, TLâ€™nin ABD dolarÄ± karÅŸÄ±sÄ±ndaki deÄŸiÅŸimini gÃ¶rmek iÃ§in kullanÄ±lÄ±r. Bu yaklaÅŸÄ±m alÄ±m gÃ¼cÃ¼nden farklÄ±dÄ±r; kur hareketine odaklanÄ±r.',
+      'Dolar bazında karşılaştırma, TL’nin ABD doları karşısındaki değişimini görmek için kullanılır. Bu yaklaşım alım gücünden farklıdır; kur hareketine odaklanır.',
     calculatorHref: '/?criteria=usd',
     sections: [
       {
-        title: 'Kur bazlÄ± karÅŸÄ±laÅŸtÄ±rma nedir?',
+        title: 'Kur bazlı karşılaştırma nedir?',
         body:
-          'BaÅŸlangÄ±Ã§ ayÄ±ndaki TL/USD seviyesi ile bitiÅŸ ayÄ±ndaki seviye karÅŸÄ±laÅŸtÄ±rÄ±lÄ±r ve tutara yaklaÅŸÄ±k bir kur Ã§arpanÄ± uygulanÄ±r.',
+          'Başlangıç ayındaki TL/USD seviyesi ile bitiş ayındaki seviye karşılaştırılır ve tutara yaklaşık bir kur çarpanı uygulanır.',
       },
       {
-        title: 'Enflasyonla aynÄ± ÅŸey deÄŸildir',
+        title: 'Enflasyonla aynı şey değildir',
         body:
-          'Dolar bazlÄ± sonuÃ§, TÃ¼rkiyeâ€™deki tÃ¼ketici fiyatlarÄ±nÄ± deÄŸil TLâ€™nin dolar karÅŸÄ±sÄ±ndaki deÄŸiÅŸimini gÃ¶sterir.',
+          'Dolar bazlı sonuç, Türkiye’deki tüketici fiyatlarını değil TL’nin dolar karşısındaki değişimini gösterir.',
       },
       {
-        title: 'Ne zaman kullanÄ±lÄ±r?',
+        title: 'Ne zaman kullanılır?',
         body:
-          'DÃ¶vizle ifade edilen maliyetler, ithal Ã¼rÃ¼nler veya dÃ¶viz bazlÄ± birikim kÄ±yaslarÄ± iÃ§in fikir verir.',
+          'Dövizle ifade edilen maliyetler, ithal ürünler veya döviz bazlı birikim kıyasları için fikir verir.',
       },
     ],
   },
   {
     path: '/altin-bazinda-ne-kadar-ederdi',
-    title: 'AltÄ±n bazÄ±nda ne kadar ederdi?',
-    metaTitle: 'AltÄ±n BazÄ±nda Ne Kadar Ederdi? | Gram AltÄ±n KarÅŸÄ±laÅŸtÄ±rma',
+    title: 'Altın bazında ne kadar ederdi?',
+    metaTitle: 'Altın Bazında Ne Kadar Ederdi? | Gram Altın Karşılaştırma',
     description:
-      'GeÃ§miÅŸteki TL tutarÄ±nÄ± gram altÄ±n fiyatÄ± deÄŸiÅŸimine gÃ¶re bugÃ¼nkÃ¼ yaklaÅŸÄ±k karÅŸÄ±lÄ±ÄŸÄ±yla hesaplayÄ±n.',
+      'Geçmişteki TL tutarını gram altın fiyatı değişimine göre bugünkü yaklaşık karşılığıyla hesaplayın.',
     intro:
-      'AltÄ±n bazÄ±nda karÅŸÄ±laÅŸtÄ±rma, belirli bir TL tutarÄ±nÄ±n gram altÄ±n fiyatÄ±ndaki deÄŸiÅŸimle nasÄ±l farklÄ±laÅŸacaÄŸÄ±nÄ± gÃ¶sterir. Bu sonuÃ§ yatÄ±rÄ±m getirisi deÄŸil, tarihsel fiyat kÄ±yasÄ±dÄ±r.',
+      'Altın bazında karşılaştırma, belirli bir TL tutarının gram altın fiyatındaki değişimle nasıl farklılaşacağını gösterir. Bu sonuç yatırım getirisi değil, tarihsel fiyat kıyasıdır.',
     calculatorHref: '/?criteria=gold%2Csilver',
     sections: [
       {
-        title: 'Gram altÄ±n Ã§arpanÄ±',
+        title: 'Gram altın çarpanı',
         body:
-          'BaÅŸlangÄ±Ã§ ve bitiÅŸ ayÄ±ndaki gram altÄ±n TL fiyatlarÄ± oranlanÄ±r. BÃ¶ylece geÃ§miÅŸteki tutarÄ±n altÄ±n fiyatÄ±na gÃ¶re bugÃ¼nkÃ¼ yaklaÅŸÄ±k karÅŸÄ±lÄ±ÄŸÄ± bulunur.',
+          'Başlangıç ve bitiş ayındaki gram altın TL fiyatları oranlanır. Böylece geçmişteki tutarın altın fiyatına göre bugünkü yaklaşık karşılığı bulunur.',
       },
       {
-        title: 'GÃ¼mÃ¼ÅŸle birlikte okumak',
+        title: 'Gümüşle birlikte okumak',
         body:
-          'GÃ¼mÃ¼ÅŸ serisi, deÄŸerli madenler arasÄ±nda farklÄ± fiyat davranÄ±ÅŸlarÄ±nÄ± kÄ±yaslamaya yardÄ±mcÄ± olur.',
+          'Gümüş serisi, değerli madenler arasında farklı fiyat davranışlarını kıyaslamaya yardımcı olur.',
       },
       {
-        title: 'YaklaÅŸÄ±k tarihsel kÄ±yas',
+        title: 'Yaklaşık tarihsel kıyas',
         body:
-          'Vergi, makas, alÄ±ÅŸ-satÄ±ÅŸ farkÄ± ve iÅŸlem maliyeti gibi detaylar hesaplamaya dahil deÄŸildir.',
+          'Vergi, makas, alış-satış farkı ve işlem maliyeti gibi detaylar hesaplamaya dahil değildir.',
       },
     ],
   },
   {
     path: '/2010da-10000-tl-bugun-ne-kadar',
-    title: '2010â€™da 10.000 TL bugÃ¼n ne kadar?',
-    metaTitle: '2010â€™da 10.000 TL BugÃ¼n Ne Kadar? | Enflasyon ve YatÄ±rÄ±m KÄ±yas',
+    title: '2010’da 10.000 TL bugün ne kadar?',
+    metaTitle: '2010’da 10.000 TL Bugün Ne Kadar? | Enflasyon ve Yatırım Kıyas',
     description:
-      '2010 yÄ±lÄ±ndaki 10.000 TL tutarÄ±nÄ± bugÃ¼nÃ¼n parasÄ±yla, TÃœFE, dolar, altÄ±n, BIST 100 ve Bitcoin verileriyle kÄ±yaslayÄ±n.',
+      '2010 yılındaki 10.000 TL tutarını bugünün parasıyla, TÜFE, dolar, altın, BIST 100 ve Bitcoin verileriyle kıyaslayın.',
     intro:
-      'â€œ2010â€™da 10.000 TL bugÃ¼n ne kadar ederdi?â€ sorusu tek bir cevaba sahip deÄŸildir. TÃœFE alÄ±m gÃ¼cÃ¼nÃ¼, dolar ve altÄ±n kur/fiyat etkisini, BIST 100 ve Bitcoin ise piyasa bazlÄ± tarihsel deÄŸiÅŸimi gÃ¶sterir.',
+      '“2010’da 10.000 TL bugün ne kadar ederdi?” sorusu tek bir cevaba sahip değildir. TÜFE alım gücünü, dolar ve altın kur/fiyat etkisini, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
     calculatorHref: '/?amount=10000&start=2010-01&criteria=cpi%2Cusd%2Cgold%2Cbist100%2Cbitcoin',
     sections: [
       {
-        title: 'TÃœFE ile bugÃ¼nkÃ¼ karÅŸÄ±lÄ±k',
+        title: 'TÜFE ile bugünkü karşılık',
         body:
-          'TÃœFE hesabÄ±, 2010â€™daki 10.000 TLâ€™nin tÃ¼ketici fiyatlarÄ± karÅŸÄ±sÄ±ndaki yaklaÅŸÄ±k bugÃ¼nkÃ¼ alÄ±m gÃ¼cÃ¼nÃ¼ gÃ¶sterir.',
+          'TÜFE hesabı, 2010’daki 10.000 TL’nin tüketici fiyatları karşısındaki yaklaşık bugünkü alım gücünü gösterir.',
       },
       {
-        title: 'Dolar ve altÄ±n farklÄ± sonuÃ§ verir',
+        title: 'Dolar ve altın farklı sonuç verir',
         body:
-          'DÃ¶viz ve gram altÄ±n serileri fiyat hareketlerini izlediÄŸi iÃ§in enflasyon hesabÄ±ndan farklÄ± Ã§arpanlar Ã¼retir.',
+          'Döviz ve gram altın serileri fiyat hareketlerini izlediği için enflasyon hesabından farklı çarpanlar üretir.',
       },
       {
-        title: 'Piyasa gÃ¶stergeleriyle okumak',
+        title: 'Piyasa göstergeleriyle okumak',
         body:
-          'BIST 100 ve Bitcoin gibi seriler, aynÄ± tutarÄ±n yatÄ±rÄ±m piyasalarÄ±yla kÄ±yaslandÄ±ÄŸÄ±nda nasÄ±l deÄŸiÅŸeceÄŸini yaklaÅŸÄ±k olarak gÃ¶sterir.',
+          'BIST 100 ve Bitcoin gibi seriler, aynı tutarın yatırım piyasalarıyla kıyaslandığında nasıl değişeceğini yaklaşık olarak gösterir.',
       },
     ],
   },
   {
     path: '/eski-maas-bugun-ne-kadar',
-    title: 'Eski maaÅŸ bugÃ¼n ne kadar?',
-    metaTitle: 'Eski MaaÅŸ BugÃ¼n Ne Kadar? | MaaÅŸ Enflasyon Hesaplama',
+    title: 'Eski maaş bugün ne kadar?',
+    metaTitle: 'Eski Maaş Bugün Ne Kadar? | Maaş Enflasyon Hesaplama',
     description:
-      'Eski maaÅŸÄ±nÄ±zÄ± bugÃ¼nkÃ¼ alÄ±m gÃ¼cÃ¼yle ve asgari Ã¼cret, dÃ¶viz, altÄ±n gibi farklÄ± gÃ¶stergelerle karÅŸÄ±laÅŸtÄ±rÄ±n.',
+      'Eski maaşınızı bugünkü alım gücüyle ve asgari ücret, döviz, altın gibi farklı göstergelerle karşılaştırın.',
     intro:
-      'Eski maaÅŸÄ±n bugÃ¼nkÃ¼ karÅŸÄ±lÄ±ÄŸÄ±nÄ± hesaplarken yalnÄ±zca nominal tutara bakmak yanÄ±ltÄ±cÄ±dÄ±r. Enflasyon, asgari Ã¼cret, dÃ¶viz ve altÄ±n gibi Ã¶lÃ§Ã¼tler farklÄ± ekonomik bakÄ±ÅŸlar saÄŸlar.',
+      'Eski maaşın bugünkü karşılığını hesaplarken yalnızca nominal tutara bakmak yanıltıcıdır. Enflasyon, asgari ücret, döviz ve altın gibi ölçütler farklı ekonomik bakışlar sağlar.',
     calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd%2Cgold',
     sections: [
       {
-        title: 'MaaÅŸÄ±n alÄ±m gÃ¼cÃ¼',
+        title: 'Maaşın alım gücü',
         body:
-          'TÃœFE serisi, eski maaÅŸÄ±n bugÃ¼nkÃ¼ fiyat dÃ¼zeyindeki yaklaÅŸÄ±k alÄ±m gÃ¼cÃ¼nÃ¼ hesaplamak iÃ§in en doÄŸrudan Ã¶lÃ§Ã¼ttÃ¼r.',
+          'TÜFE serisi, eski maaşın bugünkü fiyat düzeyindeki yaklaşık alım gücünü hesaplamak için en doğrudan ölçüttür.',
       },
       {
-        title: 'Asgari Ã¼cretle kÄ±yas',
+        title: 'Asgari ücretle kıyas',
         body:
-          'Asgari Ã¼cret karÅŸÄ±laÅŸtÄ±rmasÄ±, maaÅŸÄ±n temel gelir dÃ¼zeylerine gÃ¶re tarih iÃ§inde nasÄ±l konumlandÄ±ÄŸÄ±nÄ± anlamaya yardÄ±m eder.',
+          'Asgari ücret karşılaştırması, maaşın temel gelir düzeylerine göre tarih içinde nasıl konumlandığını anlamaya yardım eder.',
       },
       {
-        title: 'DÃ¶viz ve altÄ±n perspektifi',
+        title: 'Döviz ve altın perspektifi',
         body:
-          'Dolar ve altÄ±n bazlÄ± sonuÃ§lar gelir alÄ±m gÃ¼cÃ¼nden Ã§ok kur ve deÄŸerli maden fiyatÄ± deÄŸiÅŸimini gÃ¶sterir.',
+          'Dolar ve altın bazlı sonuçlar gelir alım gücünden çok kur ve değerli maden fiyatı değişimini gösterir.',
       },
     ],
   },
   {
     path: '/kira-enflasyon-hesaplama',
     title: 'Kira enflasyon hesaplama',
-    metaTitle: 'Kira Enflasyon Hesaplama | Eski Kira BugÃ¼n Ne Kadar?',
+    metaTitle: 'Kira Enflasyon Hesaplama | Eski Kira Bugün Ne Kadar?',
     description:
-      'GeÃ§miÅŸteki kira tutarÄ±nÄ± TÃœFE ve farklÄ± ekonomik gÃ¶stergelerle bugÃ¼nkÃ¼ yaklaÅŸÄ±k deÄŸerine taÅŸÄ±yÄ±n.',
+      'Geçmişteki kira tutarını TÜFE ve farklı ekonomik göstergelerle bugünkü yaklaşık değerine taşıyın.',
     intro:
-      'Eski kira tutarlarÄ±nÄ± bugÃ¼nÃ¼n koÅŸullarÄ±yla okumak iÃ§in TÃœFE iyi bir baÅŸlangÄ±Ã§ noktasÄ±dÄ±r. AynÄ± tutarÄ± dÃ¶viz, altÄ±n veya asgari Ã¼cret gibi Ã¶lÃ§Ã¼tlerle kÄ±yaslamak ise farklÄ± yorumlar saÄŸlar.',
+      'Eski kira tutarlarını bugünün koşullarıyla okumak için TÜFE iyi bir başlangıç noktasıdır. Aynı tutarı döviz, altın veya asgari ücret gibi ölçütlerle kıyaslamak ise farklı yorumlar sağlar.',
     calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd',
     sections: [
       {
-        title: 'Kira tutarÄ±nÄ± bugÃ¼ne taÅŸÄ±mak',
+        title: 'Kira tutarını bugüne taşımak',
         body:
-          'BaÅŸlangÄ±Ã§ ayÄ±ndaki kira, seÃ§ilen bitiÅŸ ayÄ±na TÃœFE Ã§arpanÄ±yla taÅŸÄ±narak yaklaÅŸÄ±k bugÃ¼nkÃ¼ alÄ±m gÃ¼cÃ¼ bulunur.',
+          'Başlangıç ayındaki kira, seçilen bitiş ayına TÜFE çarpanıyla taşınarak yaklaşık bugünkü alım gücü bulunur.',
       },
       {
-        title: 'Gelire gÃ¶re kira yÃ¼kÃ¼',
+        title: 'Gelire göre kira yükü',
         body:
-          'Asgari Ã¼cret karÅŸÄ±laÅŸtÄ±rmasÄ±, bir kira tutarÄ±nÄ±n temel gelir seviyesine gÃ¶re ne kadar aÄŸÄ±rlaÅŸtÄ±ÄŸÄ±nÄ± veya hafiflediÄŸini gÃ¶sterir.',
+          'Asgari ücret karşılaştırması, bir kira tutarının temel gelir seviyesine göre ne kadar ağırlaştığını veya hafiflediğini gösterir.',
       },
       {
-        title: 'YaklaÅŸÄ±k karÅŸÄ±laÅŸtÄ±rma',
+        title: 'Yaklaşık karşılaştırma',
         body:
-          'Hesaplama kira artÄ±ÅŸ mevzuatÄ± ya da bÃ¶lgesel konut piyasasÄ± yerine genel ekonomik serileri kullanÄ±r.',
+          'Hesaplama kira artış mevzuatı ya da bölgesel konut piyasası yerine genel ekonomik serileri kullanır.',
       },
     ],
   },
   {
     path: '/bist-bitcoin-altin-karsilastirma',
-    title: 'BIST, Bitcoin ve altÄ±n karÅŸÄ±laÅŸtÄ±rma',
-    metaTitle: 'BIST, Bitcoin ve AltÄ±n KarÅŸÄ±laÅŸtÄ±rma | Ne Kadar Ederdi?',
+    title: 'BIST, Bitcoin ve altın karşılaştırma',
+    metaTitle: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
     description:
-      'Bir TL tutarÄ±nÄ± BIST 100, Bitcoin, gram altÄ±n ve gÃ¼mÃ¼ÅŸ fiyatlarÄ±ndaki tarihsel deÄŸiÅŸimle karÅŸÄ±laÅŸtÄ±rÄ±n.',
+      'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
     intro:
-      'AynÄ± TL tutarÄ± enflasyon, dÃ¶viz, altÄ±n, BIST 100 ve Bitcoin gibi farklÄ± serilerle bambaÅŸka sonuÃ§lar verebilir. Bu sayfa yatÄ±rÄ±m tavsiyesi deÄŸil, tarihsel kÄ±yaslama Ã§erÃ§evesi sunar.',
+      'Aynı TL tutarı enflasyon, döviz, altın, BIST 100 ve Bitcoin gibi farklı serilerle bambaşka sonuçlar verebilir. Bu sayfa yatırım tavsiyesi değil, tarihsel kıyaslama çerçevesi sunar.',
     calculatorHref: '/?criteria=gold%2Csilver%2Cbist100%2Cbitcoin',
     sections: [
       {
-        title: 'Fiyat serileri aynÄ± ÅŸeyi Ã¶lÃ§mez',
+        title: 'Fiyat serileri aynı şeyi ölçmez',
         body:
-          'AltÄ±n, BIST 100 ve Bitcoin farklÄ± risk, oynaklÄ±k ve piyasa dinamiklerine sahiptir; sonuÃ§lar birlikte okunmalÄ±dÄ±r.',
+          'Altın, BIST 100 ve Bitcoin farklı risk, oynaklık ve piyasa dinamiklerine sahiptir; sonuçlar birlikte okunmalıdır.',
       },
       {
-        title: 'Tarih aralÄ±ÄŸÄ± sonucu belirler',
+        title: 'Tarih aralığı sonucu belirler',
         body:
-          'BaÅŸlangÄ±Ã§ ve bitiÅŸ ayÄ± deÄŸiÅŸtikÃ§e Ã§arpanlar bÃ¼yÃ¼k Ã¶lÃ§Ã¼de farklÄ±laÅŸabilir. Bu yÃ¼zden ay bazlÄ± seÃ§im Ã¶nemlidir.',
+          'Başlangıç ve bitiş ayı değiştikçe çarpanlar büyük ölçüde farklılaşabilir. Bu yüzden ay bazlı seçim önemlidir.',
       },
       {
-        title: 'YaklaÅŸÄ±k ve brÃ¼t karÅŸÄ±laÅŸtÄ±rma',
+        title: 'Yaklaşık ve brüt karşılaştırma',
         body:
-          'Vergi, iÅŸlem maliyeti, temettÃ¼, saklama maliyeti veya alÄ±m-satÄ±m makasÄ± gibi detaylar dahil deÄŸildir.',
+          'Vergi, işlem maliyeti, temettü, saklama maliyeti veya alım-satım makası gibi detaylar dahil değildir.',
       },
     ],
   },
@@ -311,126 +311,126 @@ const LANDING_PAGES: LandingPageContent[] = [
 const INFO_PAGES: InfoPageContent[] = [
   {
     path: '/hakkinda',
-    title: 'HakkÄ±nda',
-    metaTitle: 'HakkÄ±nda | Ne Kadar Ederdi?',
+    title: 'Hakkında',
+    metaTitle: 'Hakkında | Ne Kadar Ederdi?',
     description:
-      "Ne Kadar Ederdi'nin amacÄ±, kullandÄ±ÄŸÄ± veri tÃ¼rleri ve hesaplama yaklaÅŸÄ±mÄ± hakkÄ±nda bilgi.",
+      "Ne Kadar Ederdi'nin amacı, kullandığı veri türleri ve hesaplama yaklaşımı hakkında bilgi.",
     intro:
-      'Ne Kadar Ederdi, geÃ§miÅŸteki veya bugÃ¼nkÃ¼ bir tutarÄ± farklÄ± ekonomik gÃ¶stergelerle ay bazÄ±nda karÅŸÄ±laÅŸtÄ±rmak iÃ§in hazÄ±rlanmÄ±ÅŸ baÄŸÄ±msÄ±z bir hesaplama aracÄ±dÄ±r.',
+      'Ne Kadar Ederdi, geçmişteki veya bugünkü bir tutarı farklı ekonomik göstergelerle ay bazında karşılaştırmak için hazırlanmış bağımsız bir hesaplama aracıdır.',
     sections: [
       {
-        title: 'Ne iÅŸe yarar?',
+        title: 'Ne işe yarar?',
         body:
-          'AraÃ§; TÃœFE, dÃ¶viz, gram altÄ±n, gÃ¼mÃ¼ÅŸ, asgari Ã¼cret, BIST 100, Bitcoin ve benzeri tarihsel serilerle yaklaÅŸÄ±k karÅŸÄ±laÅŸtÄ±rma yapar. AmaÃ§ tek bir kesin cevap vermek deÄŸil, farklÄ± Ã¶lÃ§Ã¼tleri birlikte okunur hale getirmektir.',
+          'Araç; TÜFE, döviz, gram altın, gümüş, asgari ücret, BIST 100, Bitcoin ve benzeri tarihsel serilerle yaklaşık karşılaştırma yapar. Amaç tek bir kesin cevap vermek değil, farklı ölçütleri birlikte okunur hale getirmektir.',
       },
       {
-        title: 'Veri yaklaÅŸÄ±mÄ±',
+        title: 'Veri yaklaşımı',
         body:
-          'Hesaplamalar aylÄ±k veri noktalarÄ±na dayanÄ±r. Kaynak notlarÄ± sonuÃ§ kartlarÄ±nda gÃ¶sterilir; seri gÃ¼ncellemeleri otomatik veri toplama sÃ¼reciyle yenilenir ve eksik kaynaklarda mevcut son veri korunur.',
+          'Hesaplamalar aylık veri noktalarına dayanır. Kaynak notları sonuç kartlarında gösterilir; seri güncellemeleri otomatik veri toplama süreciyle yenilenir ve eksik kaynaklarda mevcut son veri korunur.',
       },
       {
-        title: 'Tavsiye deÄŸildir',
+        title: 'Tavsiye değildir',
         body:
-          'SonuÃ§lar bilgilendirme amaÃ§lÄ±dÄ±r. YatÄ±rÄ±m, kredi, kira, maaÅŸ veya hukuki kararlar iÃ§in tek baÅŸÄ±na kullanÄ±lmamalÄ±dÄ±r.',
+          'Sonuçlar bilgilendirme amaçlıdır. Yatırım, kredi, kira, maaş veya hukuki kararlar için tek başına kullanılmamalıdır.',
       },
     ],
   },
   {
     path: '/iletisim',
-    title: 'Ä°letiÅŸim',
-    metaTitle: 'Ä°letiÅŸim | Ne Kadar Ederdi?',
+    title: 'İletişim',
+    metaTitle: 'İletişim | Ne Kadar Ederdi?',
     description:
-      'Ne Kadar Ederdi ile ilgili Ã¶neri, veri kaynaÄŸÄ±, hata bildirimi ve reklam talepleri iÃ§in iletiÅŸim bilgileri.',
+      'Ne Kadar Ederdi ile ilgili öneri, veri kaynağı, hata bildirimi ve reklam talepleri için iletişim bilgileri.',
     intro:
-      'Ã–neri, hata bildirimi, veri kaynaÄŸÄ± dÃ¼zeltmesi veya reklam ve iÅŸ birliÄŸi talepleri iÃ§in iletiÅŸim kurabilirsiniz.',
+      'Öneri, hata bildirimi, veri kaynağı düzeltmesi veya reklam ve iş birliği talepleri için iletişim kurabilirsiniz.',
     sections: [
       {
         title: 'E-posta',
         body:
-          'Siteyle ilgili geri bildirimler iÃ§in e-posta gÃ¶nderebilirsiniz. MÃ¼mkÃ¼nse ilgili sayfa adresini, tarih aralÄ±ÄŸÄ±nÄ± ve beklediÄŸiniz sonucu da ekleyin.',
+          'Siteyle ilgili geri bildirimler için e-posta gönderebilirsiniz. Mümkünse ilgili sayfa adresini, tarih aralığını ve beklediğiniz sonucu da ekleyin.',
         link: { label: 'egemenyildiz03@gmail.com', href: 'mailto:egemenyildiz03@gmail.com' },
       },
       {
         title: 'Veri ve hata bildirimi',
         body:
-          'Bir seride eksik, gecikmeli veya hatalÄ± gÃ¶rÃ¼nen veri fark ederseniz kaynak Ã¶nerisini ve Ã¶rnek hesaplamayÄ± paylaÅŸmanÄ±z sorunu daha hÄ±zlÄ± incelememizi saÄŸlar.',
+          'Bir seride eksik, gecikmeli veya hatalı görünen veri fark ederseniz kaynak önerisini ve örnek hesaplamayı paylaşmanız sorunu daha hızlı incelememizi sağlar.',
       },
       {
-        title: 'Reklam ve iÅŸ birliÄŸi',
+        title: 'Reklam ve iş birliği',
         body:
-          'Reklam yerleÅŸimleri kullanÄ±cÄ± deneyimini bozmayacak ÅŸekilde sÄ±nÄ±rlÄ± tutulur. Ä°ÅŸ birliÄŸi taleplerinde marka, kampanya ve hedef sayfa bilgisini belirtmeniz yeterlidir.',
+          'Reklam yerleşimleri kullanıcı deneyimini bozmayacak şekilde sınırlı tutulur. İş birliği taleplerinde marka, kampanya ve hedef sayfa bilgisini belirtmeniz yeterlidir.',
       },
     ],
   },
   {
     path: '/gizlilik-politikasi',
-    title: 'Gizlilik PolitikasÄ±',
-    metaTitle: 'Gizlilik PolitikasÄ± | Ne Kadar Ederdi?',
+    title: 'Gizlilik Politikası',
+    metaTitle: 'Gizlilik Politikası | Ne Kadar Ederdi?',
     description:
-      "Ne Kadar Ederdi'nin analitik, reklam, Ã§erez ve kullanÄ±cÄ± verisi yaklaÅŸÄ±mÄ± hakkÄ±nda gizlilik bilgileri.",
+      "Ne Kadar Ederdi'nin analitik, reklam, çerez ve kullanıcı verisi yaklaşımı hakkında gizlilik bilgileri.",
     intro:
-      'Bu sayfa, Ne Kadar Ederdi kullanÄ±lÄ±rken hangi tÃ¼r verilerin iÅŸlenebileceÄŸini ve Ã¼Ã§Ã¼ncÃ¼ taraf servislerin nasÄ±l kullanÄ±ldÄ±ÄŸÄ±nÄ± aÃ§Ä±klar.',
+      'Bu sayfa, Ne Kadar Ederdi kullanılırken hangi tür verilerin işlenebileceğini ve üçüncü taraf servislerin nasıl kullanıldığını açıklar.',
     sections: [
       {
         title: 'Toplanan veriler',
         body:
-          'Sitede hesaplama yapmak iÃ§in kullanÄ±cÄ± hesabÄ± gerekmez. Miktar, tarih ve karÅŸÄ±laÅŸtÄ±rma seÃ§imleri hesaplama amacÄ±yla tarayÄ±cÄ±nÄ±z ile sunucu arasÄ±nda iÅŸlenir; bu bilgiler bireysel profil oluÅŸturmak iÃ§in kullanÄ±lmaz.',
+          'Sitede hesaplama yapmak için kullanıcı hesabı gerekmez. Miktar, tarih ve karşılaştırma seçimleri hesaplama amacıyla tarayıcınız ile sunucu arasında işlenir; bu bilgiler bireysel profil oluşturmak için kullanılmaz.',
       },
       {
         title: 'Analitik ve reklam',
         body:
-          'Site performansÄ±nÄ± ve ziyaret trafiÄŸini anlamak iÃ§in Cloudflare Web Analytics kullanÄ±labilir. Reklam gÃ¶sterimi iÃ§in Google AdSense kullanÄ±lÄ±r; Google ve iÅŸ ortaklarÄ± Ã§erezler veya benzer teknolojilerle reklam Ã¶lÃ§Ã¼mÃ¼ yapabilir.',
+          'Site performansını ve ziyaret trafiğini anlamak için Cloudflare Web Analytics kullanılabilir. Reklam gösterimi için Google AdSense kullanılır; Google ve iş ortakları çerezler veya benzer teknolojilerle reklam ölçümü yapabilir.',
       },
       {
-        title: 'Ä°letiÅŸim bilgileri',
+        title: 'İletişim bilgileri',
         body:
-          'E-posta ile bize ulaÅŸÄ±rsanÄ±z, paylaÅŸtÄ±ÄŸÄ±nÄ±z ad, e-posta adresi ve mesaj iÃ§eriÄŸi yalnÄ±zca talebinize cevap vermek iÃ§in kullanÄ±lÄ±r.',
+          'E-posta ile bize ulaşırsanız, paylaştığınız ad, e-posta adresi ve mesaj içeriği yalnızca talebinize cevap vermek için kullanılır.',
       },
       {
-        title: 'ÃœÃ§Ã¼ncÃ¼ taraf baÄŸlantÄ±lar',
+        title: 'Üçüncü taraf bağlantılar',
         body:
-          'Sitede veri kaynaklarÄ±na, sosyal paylaÅŸÄ±m servislerine veya reklam aÄŸlarÄ±na yÃ¶nlendiren baÄŸlantÄ±lar bulunabilir. Bu servislerin kendi gizlilik politikalarÄ±nÄ± incelemeniz Ã¶nerilir.',
+          'Sitede veri kaynaklarına, sosyal paylaşım servislerine veya reklam ağlarına yönlendiren bağlantılar bulunabilir. Bu servislerin kendi gizlilik politikalarını incelemeniz önerilir.',
       },
     ],
   },
   {
     path: '/kullanim-sartlari',
-    title: 'KullanÄ±m ÅžartlarÄ±',
-    metaTitle: 'KullanÄ±m ÅžartlarÄ± | Ne Kadar Ederdi?',
+    title: 'Kullanım Şartları',
+    metaTitle: 'Kullanım Şartları | Ne Kadar Ederdi?',
     description:
-      "Ne Kadar Ederdi hesaplama aracÄ±nÄ±n kullanÄ±m koÅŸullarÄ±, veri sÄ±nÄ±rlarÄ± ve sorumluluk reddi.",
+      "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
     intro:
-      'Ne Kadar Ederdi sitesini kullanarak hesaplamalarÄ±n yaklaÅŸÄ±k ve bilgilendirme amaÃ§lÄ± olduÄŸunu kabul etmiÅŸ olursunuz.',
+      'Ne Kadar Ederdi sitesini kullanarak hesaplamaların yaklaşık ve bilgilendirme amaçlı olduğunu kabul etmiş olursunuz.',
     sections: [
       {
-        title: 'YaklaÅŸÄ±k hesaplama',
+        title: 'Yaklaşık hesaplama',
         body:
-          'SonuÃ§lar aylÄ±k tarihsel serilerden Ã¼retilen yaklaÅŸÄ±k karÅŸÄ±laÅŸtÄ±rmalardÄ±r. Veri kaynaklarÄ±nda revizyon, gecikme, eksiklik veya metodoloji farkÄ± olabilir.',
+          'Sonuçlar aylık tarihsel serilerden üretilen yaklaşık karşılaştırmalardır. Veri kaynaklarında revizyon, gecikme, eksiklik veya metodoloji farkı olabilir.',
       },
       {
-        title: 'Finansal tavsiye deÄŸildir',
+        title: 'Finansal tavsiye değildir',
         body:
-          'Sitedeki iÃ§erikler yatÄ±rÄ±m, finans, hukuk, vergi veya muhasebe tavsiyesi niteliÄŸinde deÄŸildir. KararlarÄ±nÄ±z iÃ§in uzman gÃ¶rÃ¼ÅŸÃ¼ almanÄ±z Ã¶nerilir.',
+          'Sitedeki içerikler yatırım, finans, hukuk, vergi veya muhasebe tavsiyesi niteliğinde değildir. Kararlarınız için uzman görüşü almanız önerilir.',
       },
       {
-        title: 'KullanÄ±m sorumluluÄŸu',
+        title: 'Kullanım sorumluluğu',
         body:
-          'Hesaplama sonuÃ§larÄ±nÄ± yorumlama ve kullanma sorumluluÄŸu kullanÄ±cÄ±ya aittir. Site kesintisiz, hatasÄ±z veya belirli bir amaca uygun sonuÃ§ garantisi vermez.',
+          'Hesaplama sonuçlarını yorumlama ve kullanma sorumluluğu kullanıcıya aittir. Site kesintisiz, hatasız veya belirli bir amaca uygun sonuç garantisi vermez.',
       },
       {
-        title: 'DeÄŸiÅŸiklikler',
+        title: 'Değişiklikler',
         body:
-          'Veri serileri, reklam yerleÅŸimleri, sayfa iÃ§erikleri ve kullanÄ±m ÅŸartlarÄ± zaman iÃ§inde gÃ¼ncellenebilir.',
+          'Veri serileri, reklam yerleşimleri, sayfa içerikleri ve kullanım şartları zaman içinde güncellenebilir.',
       },
     ],
   },
 ];
 
 const FOOTER_LINKS = [
-  { href: '/hakkinda', label: 'HakkÄ±nda' },
-  { href: '/iletisim', label: 'Ä°letiÅŸim' },
-  { href: '/gizlilik-politikasi', label: 'Gizlilik PolitikasÄ±' },
-  { href: '/kullanim-sartlari', label: 'KullanÄ±m ÅžartlarÄ±' },
+  { href: '/hakkinda', label: 'Hakkında' },
+  { href: '/iletisim', label: 'İletişim' },
+  { href: '/gizlilik-politikasi', label: 'Gizlilik Politikası' },
+  { href: '/kullanim-sartlari', label: 'Kullanım Şartları' },
 ];
 
 function App() {
@@ -502,7 +502,7 @@ function App() {
         setError('');
       })
       .catch((apiError: unknown) => {
-        const message = apiError instanceof Error ? apiError.message : 'Hesaplama yapÄ±lamadÄ±.';
+        const message = apiError instanceof Error ? apiError.message : 'Hesaplama yapılamadı.';
         setError(message);
         if (results.length === 0) {
           setResults([]);
@@ -539,7 +539,7 @@ function App() {
   }, [latestCommonEndMonth, state.endMonth]);
 
   const inputTryAmount = results[0]?.normalizedAmount;
-  const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} â†’ ${formatMonth(state.endMonth)}`;
+  const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(state.endMonth)}`;
   const shareUrl = window.location.href;
 
   function updateState(partial: Partial<CalculatorState>) {
@@ -548,7 +548,7 @@ function App() {
 
   function updateAmount(value: string) {
     if (!/^[\d.,]*$/.test(value)) {
-      setAmountWarning('Miktar alanÄ±na sadece rakam, nokta ve virgÃ¼l girebilirsiniz.');
+      setAmountWarning('Miktar alanına sadece rakam, nokta ve virgül girebilirsiniz.');
       return;
     }
 
@@ -571,7 +571,7 @@ function App() {
     }
 
     if (parsed.value <= 0) {
-      setAmountWarning("Miktar 0'dan bÃ¼yÃ¼k olmalÄ±.");
+      setAmountWarning("Miktar 0'dan büyük olmalı.");
       return;
     }
 
@@ -617,14 +617,14 @@ function App() {
         <header className="site-header">
           <Logo />
           <div className="site-header__copy">
-            <p className="eyebrow">Ay ay deÄŸer hesabÄ±</p>
-            <p className="site-header__line">GeÃ§miÅŸ para, bugÃ¼nÃ¼n hesabÄ±yla.</p>
+            <p className="eyebrow">Ay ay değer hesabı</p>
+            <p className="site-header__line">Geçmiş para, bugünün hesabıyla.</p>
             <p className="site-header__note">
-              TÃœFE, dÃ¶viz, altÄ±n, gÃ¼mÃ¼ÅŸ, gelir ve piyasa verilerini aynÄ± ekranda okuyun.
+              TÜFE, döviz, altın, gümüş, gelir ve piyasa verilerini aynı ekranda okuyun.
             </p>
           </div>
           <button
-            aria-label={theme === 'dark' ? 'AÃ§Ä±k temaya geÃ§' : 'Koyu temaya geÃ§'}
+            aria-label={theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'}
             className="theme-toggle"
             type="button"
             onClick={toggleTheme}
@@ -632,6 +632,8 @@ function App() {
             {theme === 'dark' ? <Sun aria-hidden="true" size={18} /> : <Moon aria-hidden="true" size={18} />}
           </button>
         </header>
+
+        <AdSlot label="Reklam alanı" placement="top" />
 
         <section className="workbench [overflow-anchor:none]">
           <form
@@ -641,7 +643,7 @@ function App() {
             <div className="calculator-panel__head">
               <p className="eyebrow">Hesapla</p>
               <h1>Ne kadar ederdi?</h1>
-              <p>{formatMonth(state.startMonth)} ile {formatMonth(state.endMonth)} arasÄ±ndaki karÅŸÄ±lÄ±ÄŸÄ± karÅŸÄ±laÅŸtÄ±rÄ±n.</p>
+              <p>{formatMonth(state.startMonth)} ile {formatMonth(state.endMonth)} arasındaki karşılığı karşılaştırın.</p>
             </div>
 
             <div className="calculator-fields">
@@ -686,14 +688,14 @@ function App() {
 
               <div className="date-grid">
                 <MonthSelect
-                  label="BaÅŸlangÄ±Ã§"
+                  label="Başlangıç"
                   minYear={yearRange.min}
                   maxYear={yearRange.max}
                   value={state.startMonth}
                   onChange={(startMonth) => updateState({ startMonth })}
                 />
                 <MonthSelect
-                  label="BitiÅŸ"
+                  label="Bitiş"
                   minYear={yearRange.min}
                   maxMonth={latestCommonEndMonth ?? undefined}
                   maxYear={endMaxYear}
@@ -704,12 +706,12 @@ function App() {
 
               {latestCommonEndMonth !== null && latestCommonEndMonth! < defaultState().endMonth && (
                 <p className="inline-note">
-                  SeÃ§ili karÅŸÄ±laÅŸtÄ±rmalar iÃ§in son ortak veri: {formatMonth(latestCommonEndMonth ?? '')}.
+                  Seçili karşılaştırmalar için son ortak veri: {formatMonth(latestCommonEndMonth ?? '')}.
                 </p>
               )}
 
               <fieldset className="criteria-picker">
-                <legend>KarÅŸÄ±laÅŸtÄ±rma Ã¶lÃ§Ã¼tleri</legend>
+                <legend>Karşılaştırma ölçütleri</legend>
                 <div className="criteria-picker__groups">
                   {CRITERIA_GROUPS.map((group) => {
                     const criteria = availableCriteria.filter((criterion) => criterion.group === group.key);
@@ -748,7 +750,7 @@ function App() {
 
               {state.startMonth < '2005-01' && (
                 <p className="inline-note inline-note--strong">
-                  2005 Ã¶ncesi giriÅŸlerde eski TL yeni TL'ye Ã§evrilir; baÅŸlangÄ±Ã§ tutarÄ± 1.000.000'a bÃ¶lÃ¼nerek hesaplanÄ±r.
+                  2005 öncesi girişlerde eski TL yeni TL'ye çevrilir; başlangıç tutarı 1.000.000'a bölünerek hesaplanır.
                 </p>
               )}
             </div>
@@ -758,16 +760,16 @@ function App() {
             <div className="result-summary">
               <div className="result-summary__main">
                 <div>
-                  <p className="eyebrow">Hesaplama Ã¶zeti</p>
+                  <p className="eyebrow">Hesaplama özeti</p>
                   <h2>
                     <MoneyValue inputUnit={state.inputUnit} size="summary" value={state.amount || 0} />
                   </h2>
                   <p>
-                    {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine gÃ¶re.
+                    {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
                   </p>
                   {state.inputUnit !== 'try' && inputTryAmount ? (
                     <p className="result-summary__note">
-                      BaÅŸlangÄ±Ã§ ayÄ±ndaki yaklaÅŸÄ±k TL karÅŸÄ±lÄ±ÄŸÄ±: {formatMoney(inputTryAmount)}
+                      Başlangıç ayındaki yaklaşık TL karşılığı: {formatMoney(inputTryAmount)}
                     </p>
                   ) : null}
                 </div>
@@ -777,7 +779,7 @@ function App() {
                     href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
                     rel="noreferrer"
                     target="_blank"
-                    title="X'te paylaÅŸ"
+                    title="X'te paylaş"
                   >
                     <XIcon />
                   </a>
@@ -786,11 +788,11 @@ function App() {
                     href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
                     rel="noreferrer"
                     target="_blank"
-                    title="WhatsApp'ta paylaÅŸ"
+                    title="WhatsApp'ta paylaş"
                   >
                     <WhatsAppIcon />
                   </a>
-                  <button className="icon-action" title="BaÄŸlantÄ±yÄ± kopyala" type="button" onClick={copyUrl}>
+                  <button className="icon-action" title="Bağlantıyı kopyala" type="button" onClick={copyUrl}>
                     {copied ? <Check aria-hidden="true" size={18} /> : <Copy aria-hidden="true" size={18} />}
                   </button>
                 </div>
@@ -802,16 +804,16 @@ function App() {
             {loading && !error && results.length === 0 && (
               <div className="loading-state">
                 <Loader2 className="animate-spin" aria-hidden="true" size={28} />
-                <span>Hesaplama hazÄ±rlanÄ±yor</span>
+                <span>Hesaplama hazırlanıyor</span>
               </div>
             )}
 
             {results.length > 0 && (
               <div className="result-ledger [overflow-anchor:none]">
                 <div className="result-ledger__head">
-                  <span>Ã–lÃ§Ã¼t</span>
-                  <span>KarÅŸÄ±lÄ±k</span>
-                  <span>Ã‡arpan</span>
+                  <span>Ölçüt</span>
+                  <span>Karşılık</span>
+                  <span>Çarpan</span>
                   <span aria-hidden="true" />
                 </div>
                 {results.map((result) => (
@@ -822,37 +824,35 @@ function App() {
           </section>
         </section>
 
-        <aside className="secondary-strip">
+        <aside className="market-ad-row">
           <SpotMarketBar />
-          <AdSlot label="Reklam alanÄ±" placement="top" />
+          <AdSlot label="Reklam alanı" placement="side" />
         </aside>
 
-        {results.length > 0 && <AdSlot label="SonuÃ§ altÄ± reklam alanÄ±" placement="results" />}
-
         <p className="disclaimer">
-          Bu araÃ§ resmi ve gÃ¼venilir tarihsel kaynaklardan derlenen aylÄ±k verilerle yaklaÅŸÄ±k kÄ±yaslama sunar; yatÄ±rÄ±m tavsiyesi deÄŸildir.
+          Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.
         </p>
 
         <section aria-labelledby="seo-heading" className="guide-section">
           <div className="guide-section__intro">
             <p className="eyebrow">Okuma rehberi</p>
-            <h2 id="seo-heading">GeÃ§miÅŸteki para deÄŸerini karÅŸÄ±laÅŸtÄ±rma</h2>
+            <h2 id="seo-heading">Geçmişteki para değerini karşılaştırma</h2>
           </div>
           <div className="guide-section__items">
             <article>
-              <h3>Enflasyona gÃ¶re TL deÄŸeri</h3>
-              <p>TÃœFE serisi, geÃ§miÅŸteki bir TL tutarÄ±nÄ±n bugÃ¼nkÃ¼ yaklaÅŸÄ±k satÄ±n alma gÃ¼cÃ¼nÃ¼ gÃ¶rmek iÃ§in kullanÄ±lÄ±r.</p>
+              <h3>Enflasyona göre TL değeri</h3>
+              <p>TÜFE serisi, geçmişteki bir TL tutarının bugünkü yaklaşık satın alma gücünü görmek için kullanılır.</p>
             </article>
             <article>
-              <h3>DÃ¶viz ve deÄŸerli maden kÄ±yasÄ±</h3>
-              <p>Dolar, euro, gram altÄ±n ve gÃ¼mÃ¼ÅŸ karÅŸÄ±laÅŸtÄ±rmalarÄ± aylÄ±k veri serileri Ã¼zerinden yaklaÅŸÄ±k Ã§arpan Ã¼retir.</p>
+              <h3>Döviz ve değerli maden kıyası</h3>
+              <p>Dolar, euro, gram altın ve gümüş karşılaştırmaları aylık veri serileri üzerinden yaklaşık çarpan üretir.</p>
             </article>
             <article>
-              <h3>Asgari Ã¼cretle karÅŸÄ±laÅŸtÄ±rma</h3>
-              <p>Net asgari Ã¼cret serisi, belirli bir tutarÄ±n dÃ¶nemsel gelir dÃ¼zeyleriyle kÄ±yaslanmasÄ±na yardÄ±mcÄ± olur.</p>
+              <h3>Asgari ücretle karşılaştırma</h3>
+              <p>Net asgari ücret serisi, belirli bir tutarın dönemsel gelir düzeyleriyle kıyaslanmasına yardımcı olur.</p>
             </article>
           </div>
-          <nav className="guide-links" aria-label="Ä°lgili rehberler">
+          <nav className="guide-links" aria-label="İlgili rehberler">
             {LANDING_PAGES.map((page) => (
               <a href={page.path} key={page.path}>
                 {page.title}
@@ -902,12 +902,12 @@ function LandingPage({ page }: { page: LandingPageContent }) {
     <main className="min-h-screen bg-paper-50 text-ink-950">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-          <a className="w-fit" href="/" aria-label="Ana hesaplayÄ±cÄ±ya git">
+          <a className="w-fit" href="/" aria-label="Ana hesaplayıcıya git">
             <Logo />
           </a>
-          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="SEO sayfalarÄ±">
+          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="SEO sayfaları">
             <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/">
-              HesaplayÄ±cÄ±
+              Hesaplayıcı
             </a>
             <a
               className="rounded-md border border-oxide-200 bg-oxide-50 px-3 py-2 text-oxide-800 hover:border-oxide-700"
@@ -930,7 +930,7 @@ function LandingPage({ page }: { page: LandingPageContent }) {
                 className="inline-flex min-h-12 items-center justify-center rounded-md bg-ink-950 px-5 text-base font-bold text-white transition hover:bg-ink-800"
                 href={page.calculatorHref}
               >
-                HesaplayÄ±cÄ±yÄ± aÃ§
+                Hesaplayıcıyı aç
               </a>
             </div>
           </section>
@@ -945,7 +945,7 @@ function LandingPage({ page }: { page: LandingPageContent }) {
           </section>
 
           <section className="grid gap-3 border-t border-ink-100 pt-6">
-            <h2 className="font-display text-2xl font-black text-ink-950">Ä°lgili hesaplama sayfalarÄ±</h2>
+            <h2 className="font-display text-2xl font-black text-ink-950">İlgili hesaplama sayfaları</h2>
             <div className="grid gap-2 sm:grid-cols-2">
               {relatedPages.map((relatedPage) => (
                 <a
@@ -982,12 +982,12 @@ function InfoPage({ page }: { page: InfoPageContent }) {
     <main className="page-shell min-h-screen text-ink-950">
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-          <a className="w-fit" href="/" aria-label="Ana hesaplayÄ±cÄ±ya git">
+          <a className="w-fit" href="/" aria-label="Ana hesaplayıcıya git">
             <Logo />
           </a>
-          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="Site sayfalarÄ±">
+          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="Site sayfaları">
             <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/">
-              HesaplayÄ±cÄ±
+              Hesaplayıcı
             </a>
             {LANDING_PAGES.slice(0, 2).map((landingPage) => (
               <a
@@ -1064,7 +1064,7 @@ function SiteFooter() {
         ))}
       </nav>
       <p className="mt-3 text-xs leading-5">
-        Ne Kadar Ederdi tarihsel veri karÅŸÄ±laÅŸtÄ±rma aracÄ±dÄ±r; yatÄ±rÄ±m tavsiyesi deÄŸildir.
+        Ne Kadar Ederdi tarihsel veri karşılaştırma aracıdır; yatırım tavsiyesi değildir.
       </p>
     </footer>
   );
