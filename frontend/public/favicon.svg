@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
   <rect x="8" y="8" width="80" height="80" rx="18" fill="#D5F2DD"/>
   <rect x="8" y="8" width="80" height="80" rx="18" fill="none" stroke="#004A36" stroke-width="7"/>
-  <path d="M48 23a25 25 0 1 1-22.3 36.3" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="7"/>
-  <path d="M48 23v14M73 48H61" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="7"/>
-  <path d="M26 61l14-14 12 9 19-25" fill="none" stroke="#F1BD42" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
-  <circle cx="39" cy="55" r="13" fill="#FFFDF7" stroke="#00875F" stroke-width="6"/>
-  <text x="39" y="56" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk, Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#004A36">&#8378;</text>
-  <circle cx="71" cy="31" r="6" fill="#B96A39"/>
+  <path d="M31 23h34c0 14-12 17-16.7 25C53 56 65 59 65 73H31c0-14 12-17 16.7-25C43 40 31 37 31 23Z" fill="#FFFDF7" stroke="#004A36" stroke-linejoin="round" stroke-width="6"/>
+  <path d="M27 23h42M27 73h42" fill="none" stroke="#004A36" stroke-linecap="round" stroke-width="7"/>
+  <path d="M48 39v6M48 52v6" fill="none" stroke="#F1BD42" stroke-linecap="round" stroke-width="7"/>
+  <circle cx="48" cy="34" r="7" fill="#B96A39"/>
+  <circle cx="48" cy="65" r="13" fill="#F1BD42" stroke="#00875F" stroke-width="6"/>
+  <text x="48" y="66" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk, Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#004A36">&#8378;</text>
+  <path d="M70 39l7-7M76 42h7M67 31v-7" fill="none" stroke="#B96A39" stroke-linecap="round" stroke-width="5"/>
 </svg>
