@@ -169,35 +169,53 @@ select:focus-visible {
 }
 
 .brand-mark__glyph {
-  position: relative;
-  display: inline-flex;
   width: 2.75rem;
   height: 2.75rem;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--accent-strong);
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  box-shadow:
-    inset -7px -7px 0 color-mix(in srgb, var(--sun) 64%, transparent),
-    3px 3px 0 color-mix(in srgb, var(--accent-strong) 18%, transparent);
+  overflow: visible;
+  filter: drop-shadow(3px 3px 0 color-mix(in srgb, var(--accent-strong) 16%, transparent));
+}
+
+.brand-mark__plate {
+  fill: var(--accent-soft);
+  stroke: var(--accent-strong);
+  stroke-width: 2.4;
+}
+
+.brand-mark__fold {
+  fill: var(--surface);
+  stroke: var(--accent-strong);
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+}
+
+.brand-mark__trace,
+.brand-mark__arrow {
+  fill: none;
+  stroke: var(--sun);
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 3.4;
+}
+
+.brand-mark__trace--bottom {
+  stroke: var(--accent);
+}
+
+.brand-mark__currency,
+.brand-mark__question {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
+  font-weight: 800;
+  dominant-baseline: middle;
 }
 
 .brand-mark__currency {
-  font-size: 1.35rem;
-  line-height: 1;
-  transform: translateX(-0.12rem);
+  fill: var(--accent-strong);
+  font-size: 22px;
 }
 
 .brand-mark__question {
-  position: absolute;
-  right: 0.42rem;
-  bottom: 0.34rem;
-  color: var(--copper);
-  font-size: 0.9rem;
-  line-height: 1;
+  fill: var(--copper);
+  font-size: 18px;
 }
 
 .brand-mark p {
@@ -738,7 +756,7 @@ select:focus-visible {
 }
 
 .ad-slot--top {
-  min-height: 5.75rem;
+  min-height: 6.25rem;
   border-style: solid;
 }
 
@@ -752,6 +770,17 @@ select:focus-visible {
   position: absolute;
   inset: 0;
   z-index: 1;
+  transition: opacity 140ms ease;
+}
+
+.ad-slot--pending > ins.adsbygoogle,
+.ad-slot--unfilled > ins.adsbygoogle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ad-slot--filled > ins.adsbygoogle {
+  opacity: 1;
 }
 
 .ad-slot__label {

@@ -633,7 +633,10 @@ function App() {
           </button>
         </header>
 
-        <AdSlot label="Reklam alanı" placement="top" />
+        <aside className="market-ad-row">
+          <SpotMarketBar />
+          <AdSlot label="Reklam alanı" placement="side" />
+        </aside>
 
         <section className="workbench [overflow-anchor:none]">
           <form
@@ -824,10 +827,7 @@ function App() {
           </section>
         </section>
 
-        <aside className="market-ad-row">
-          <SpotMarketBar />
-          <AdSlot label="Reklam alanı" placement="side" />
-        </aside>
+        <AdSlot label="Reklam alanı" placement="top" />
 
         <p className="disclaimer">
           Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.

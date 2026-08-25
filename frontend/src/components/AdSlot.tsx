@@ -23,9 +23,9 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const clientId = ADSENSE_CLIENT;
   const adSlot = AD_SLOTS[placement];
   const isConfigured = Boolean(clientId && adSlot);
-  const wrapperClassName = `ad-slot ad-slot--${placement}`;
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
+  const wrapperClassName = `ad-slot ad-slot--${placement} ad-slot--${adStatus}`;
 
   useEffect(() => {
     if (!clientId || !adSlot) {
@@ -84,7 +84,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
 
   return (
     <div className={wrapperClassName}>
-      <AdLabel />
+      {adStatus !== 'filled' ? <AdLabel /> : null}
       {adStatus !== 'filled' ? (
         <span className="ad-slot__text">{label}</span>
       ) : null}
