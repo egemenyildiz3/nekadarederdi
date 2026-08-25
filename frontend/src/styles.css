@@ -755,15 +755,20 @@ select:focus-visible {
   font-weight: 800;
 }
 
-.ad-slot--top {
+.ad-slot--wide {
   min-height: 6.25rem;
   border-style: solid;
 }
 
-.ad-slot--side {
+.ad-slot--square {
   min-height: 15.625rem;
   aspect-ratio: 1;
   width: 100%;
+}
+
+.bottom-ad-stack {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .ad-slot > ins.adsbygoogle {

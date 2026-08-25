@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-type AdPlacement = 'top' | 'side';
+type AdPlacement = 'wide' | 'square';
 
 type AdSlotProps = {
   label: string;
@@ -15,8 +15,8 @@ type AdSlotProps = {
 
 const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT;
 const AD_SLOTS: Record<AdPlacement, string | undefined> = {
-  top: import.meta.env.VITE_ADSENSE_TOP_SLOT,
-  side: import.meta.env.VITE_ADSENSE_RESULTS_SLOT,
+  wide: import.meta.env.VITE_ADSENSE_RESULTS_SLOT || import.meta.env.VITE_ADSENSE_TOP_SLOT,
+  square: import.meta.env.VITE_ADSENSE_TOP_SLOT || import.meta.env.VITE_ADSENSE_RESULTS_SLOT,
 };
 
 export function AdSlot({ label, placement }: AdSlotProps) {
@@ -91,7 +91,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
       <ins
         ref={adRef}
         className="adsbygoogle"
-        style={{ display: 'block', minHeight: placement === 'top' ? '90px' : '250px', width: '100%' }}
+        style={{ display: 'block', minHeight: placement === 'wide' ? '90px' : '250px', width: '100%' }}
         data-ad-client={clientId}
         data-ad-slot={adSlot}
         data-ad-format="auto"
