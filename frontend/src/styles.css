@@ -32,23 +32,23 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #10130f;
-  --surface: #171b16;
-  --surface-muted: #22271f;
-  --surface-strong: #f2eadc;
-  --text: #f4efe5;
-  --text-muted: #b7b0a4;
-  --text-soft: #8f887d;
-  --line: #33382f;
-  --line-strong: #625c51;
-  --accent: #58c58f;
-  --accent-strong: #93e0b7;
-  --accent-soft: #173524;
-  --copper: #df9c70;
-  --blue: #81c6d3;
+  --bg: #24251f;
+  --surface: #2b2d26;
+  --surface-muted: #34372e;
+  --surface-strong: #f1eadc;
+  --text: #f6efe4;
+  --text-muted: #c8c0b2;
+  --text-soft: #a89f90;
+  --line: #4a4e42;
+  --line-strong: #797062;
+  --accent: #68d19b;
+  --accent-strong: #a8ecc5;
+  --accent-soft: #1e4430;
+  --copper: #e4a77d;
+  --blue: #9dd0da;
   --danger: #ff9b8d;
-  --danger-bg: #3a1714;
-  --warning-bg: #352817;
+  --danger-bg: #4a221e;
+  --warning-bg: #44341f;
   --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 34%, transparent);
   --shadow: none;
 }
@@ -107,7 +107,7 @@ select:focus-visible {
 
 .app-shell {
   background:
-    linear-gradient(90deg, transparent 0, transparent calc(50% - 1px), color-mix(in srgb, var(--line) 55%, transparent) calc(50% - 1px), color-mix(in srgb, var(--line) 55%, transparent) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 0, transparent calc(50% - 1px), color-mix(in srgb, var(--line) 34%, transparent) calc(50% - 1px), color-mix(in srgb, var(--line) 34%, transparent) 50%, transparent 50%),
     var(--bg);
   color: var(--text);
 }
@@ -523,8 +523,9 @@ select:focus-visible {
   grid-column: 1 / -1;
   display: grid;
   gap: 0.85rem;
-  padding-top: 0.85rem;
+  padding: 1rem;
   border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface-muted) 72%, var(--surface));
 }
 
 .result-row__description {
@@ -569,6 +570,8 @@ select:focus-visible {
 .source-note {
   display: flex;
   gap: 0.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.8rem;
   color: var(--text-muted);
   font-size: 0.88rem;
   line-height: 1.55;
@@ -876,7 +879,11 @@ select:focus-visible {
 
   .result-row__details {
     grid-column: 1 / -1;
-    margin-left: calc(50% + 0.5rem);
+    margin-left: 0;
+  }
+
+  .result-metadata {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .guide-section__items {
