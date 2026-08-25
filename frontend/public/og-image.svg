@@ -1,19 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">Ne Kadar Ederdi?</title>
   <desc id="desc">Geçmiş TL değeri, enflasyon, döviz, altın ve asgari ücret karşılaştırma aracı.</desc>
-  <rect width="1200" height="630" fill="#f3fbf7"/>
-  <path d="M0 0h1200v630H0z" fill="none" stroke="#0a1410" stroke-width="12"/>
-  <path d="M0 0h18v630H0z" fill="#0a1410"/>
-  <path d="M18 0h14v630H18z" fill="#1fbf87"/>
-  <path d="M32 0h10v630H32z" fill="#1e8fa1"/>
-  <rect x="84" y="82" width="128" height="128" rx="14" fill="#1fbf87" stroke="#0a1410" stroke-width="6"/>
-  <path d="M92 92h128v128H92z" fill="none" stroke="#0a1410" stroke-width="6" transform="translate(8 8)"/>
-  <text x="148" y="166" text-anchor="middle" font-family="Georgia, serif" font-size="56" font-weight="900" fill="#0a1410">₺?</text>
-  <text x="256" y="130" font-family="Arial, sans-serif" font-size="52" font-weight="800" fill="#0a1410">Ne Kadar Ederdi?</text>
-  <text x="256" y="205" font-family="Arial, sans-serif" font-size="30" font-weight="500" fill="#35443d">Geçmiş TL değeri ve enflasyon hesaplama</text>
-  <line x1="84" y1="278" x2="1116" y2="278" stroke="#b8c9c0" stroke-width="2"/>
-  <text x="84" y="355" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#005e3f">TÜFE • Dolar • Euro • Gram altın • Gümüş • Asgari ücret</text>
-  <text x="84" y="425" font-family="Arial, sans-serif" font-size="30" font-weight="500" fill="#35443d">Bir tutarın farklı tarihlerdeki yaklaşık karşılığını ay bazında kıyaslayın.</text>
-  <rect x="84" y="492" width="1032" height="70" rx="8" fill="#ffffff" stroke="#b8c9c0"/>
-  <text x="120" y="538" font-family="Courier New, monospace" font-size="28" font-weight="700" fill="#0a1410">nekadarederdi.com</text>
+  <rect width="1200" height="630" fill="#F6EFDC"/>
+  <path d="M0 0h1200v630H0z" fill="none" stroke="#004A36" stroke-width="12"/>
+  <path d="M0 0h20v630H0z" fill="#004A36"/>
+  <path d="M20 0h14v630H20z" fill="#00875F"/>
+  <path d="M34 0h10v630H34z" fill="#F1BD42"/>
+  <rect x="84" y="82" width="132" height="132" rx="16" fill="#D5F2DD" stroke="#004A36" stroke-width="7"/>
+  <path d="M188 98v100" stroke="#F1BD42" stroke-width="14"/>
+  <text x="140" y="166" text-anchor="middle" font-family="Space Grotesk, Arial, sans-serif" font-size="58" font-weight="800" fill="#004A36">₺</text>
+  <text x="176" y="175" text-anchor="middle" font-family="Space Grotesk, Arial, sans-serif" font-size="38" font-weight="800" fill="#B96A39">?</text>
+  <text x="256" y="130" font-family="Space Grotesk, Arial, sans-serif" font-size="52" font-weight="800" fill="#102018">Ne Kadar Ederdi?</text>
+  <text x="256" y="205" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Geçmiş TL değeri ve enflasyon hesaplama</text>
+  <line x1="84" y1="278" x2="1116" y2="278" stroke="#D7C8AA" stroke-width="2"/>
+  <text x="84" y="355" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="700" fill="#004A36">TÜFE · Dolar · Euro · Gram altın · Gümüş · Asgari ücret</text>
+  <text x="84" y="425" font-family="Manrope, Arial, sans-serif" font-size="30" font-weight="600" fill="#536459">Bir tutarın farklı tarihlerdeki yaklaşık karşılığını ay bazında kıyaslayın.</text>
+  <rect x="84" y="492" width="1032" height="70" rx="8" fill="#FFFDF7" stroke="#D7C8AA"/>
+  <text x="120" y="538" font-family="Space Grotesk, Arial, sans-serif" font-size="28" font-weight="700" fill="#102018">nekadarederdi.com</text>
 </svg>

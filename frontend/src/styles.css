@@ -24,6 +24,7 @@
   --panel-wash: #fff4d7;
   --result-open-bg: #f3ead9;
   --ad-bg: #e0f0dc;
+  --control-bg: #fffdf7;
   --danger: #b42318;
   --danger-bg: #fff0ed;
   --warning-bg: #f7ead3;
@@ -54,6 +55,7 @@
   --panel-wash: #34372e;
   --result-open-bg: #30342b;
   --ad-bg: #213d2f;
+  --control-bg: #3c4037;
   --danger: #ff9b8d;
   --danger-bg: #4a221e;
   --warning-bg: #44341f;
@@ -167,18 +169,35 @@ select:focus-visible {
 }
 
 .brand-mark__glyph {
-  display: grid;
+  position: relative;
+  display: inline-flex;
   width: 2.75rem;
   height: 2.75rem;
-  place-items: center;
-  border: 1px solid var(--accent-strong);
-  background:
-    linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--sun) 42%, var(--surface)));
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent-strong);
+  background: var(--accent-soft);
   color: var(--accent-strong);
-  box-shadow: inset -6px -6px 0 color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow:
+    inset -7px -7px 0 color-mix(in srgb, var(--sun) 64%, transparent),
+    3px 3px 0 color-mix(in srgb, var(--accent-strong) 18%, transparent);
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.45rem;
   font-weight: 700;
+}
+
+.brand-mark__currency {
+  font-size: 1.35rem;
+  line-height: 1;
+  transform: translateX(-0.12rem);
+}
+
+.brand-mark__question {
+  position: absolute;
+  right: 0.42rem;
+  bottom: 0.34rem;
+  color: var(--copper);
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .brand-mark p {
@@ -281,7 +300,7 @@ select:focus-visible {
   display: grid;
   overflow: hidden;
   border: 1px solid var(--line-strong);
-  background: color-mix(in srgb, var(--surface) 82%, white);
+  background: var(--control-bg);
 }
 
 .amount-control:focus-within {
@@ -333,10 +352,16 @@ select:focus-visible {
   min-height: 48px;
   min-width: 0;
   border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 86%, white);
+  background: var(--control-bg);
   color: var(--text);
   padding: 0 0.65rem;
   font-size: 0.94rem;
+}
+
+.amount-control__select option,
+.month-select select option {
+  background: var(--control-bg);
+  color: var(--text);
 }
 
 .month-select select:last-child {
@@ -406,6 +431,12 @@ select:focus-visible {
   border-color: var(--accent-strong);
   background: var(--surface-strong);
   color: #fff8e8;
+}
+
+:root[data-theme='dark'] .criteria-button[data-selected='true'] {
+  border-color: var(--accent);
+  background: #155237;
+  color: #effff5;
 }
 
 .results-panel {
