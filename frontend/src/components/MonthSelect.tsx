@@ -18,21 +18,32 @@ type MonthSelectProps = {
   value: string;
   minYear: number;
   maxYear: number;
+  maxMonth?: string;
   onChange: (value: string) => void;
 };
 
-export function MonthSelect({ label, value, minYear, maxYear, onChange }: MonthSelectProps) {
+export function MonthSelect({ label, value, minYear, maxYear, maxMonth, onChange }: MonthSelectProps) {
   const [yearPart, monthPart] = value.split('-');
   const selectedYear = Number(yearPart);
   const selectedMonth = Number(monthPart);
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, index) => maxYear - index);
+  const maxMonthYear = maxMonth ? Number(maxMonth.slice(0, 4)) : null;
+  const maxMonthNumber = maxMonth ? Number(maxMonth.slice(5, 7)) : null;
 
   function setMonth(month: number) {
-    onChange(`${selectedYear}-${String(month).padStart(2, '0')}`);
+    onChange(clampMonth(`${selectedYear}-${String(month).padStart(2, '0')}`));
   }
 
   function setYear(year: number) {
-    onChange(`${year}-${String(selectedMonth).padStart(2, '0')}`);
+    onChange(clampMonth(`${year}-${String(selectedMonth).padStart(2, '0')}`));
+  }
+
+  function clampMonth(month: string) {
+    return maxMonth && month > maxMonth ? maxMonth : month;
+  }
+
+  function isDisabledMonth(month: number) {
+    return Boolean(maxMonthYear && maxMonthNumber && selectedYear === maxMonthYear && month > maxMonthNumber);
   }
 
   return (
@@ -49,7 +60,7 @@ export function MonthSelect({ label, value, minYear, maxYear, onChange }: MonthS
           onChange={(event) => setMonth(Number(event.target.value))}
         >
           {MONTHS.map((month, index) => (
-            <option key={month} value={index + 1}>
+            <option disabled={isDisabledMonth(index + 1)} key={month} value={index + 1}>
               {month}
             </option>
           ))}

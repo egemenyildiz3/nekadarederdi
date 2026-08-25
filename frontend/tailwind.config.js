@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        data: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        data: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         paper: {

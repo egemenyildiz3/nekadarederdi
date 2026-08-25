@@ -3,12 +3,13 @@ import type { InputUnit } from '../types';
 
 type MoneyValueProps = {
   inputUnit?: InputUnit;
+  minCompactValue?: number;
   size?: 'summary' | 'card';
   value: number;
 };
 
-export function MoneyValue({ inputUnit = 'try', size = 'card', value }: MoneyValueProps) {
-  const parts = formatCompactInputAmountParts(value, inputUnit);
+export function MoneyValue({ inputUnit = 'try', minCompactValue, size = 'card', value }: MoneyValueProps) {
+  const parts = formatCompactInputAmountParts(value, inputUnit, minCompactValue);
 
   return (
     <span className={`money-value money-value--${size}`} title={parts.full}>

@@ -9,7 +9,7 @@ import { SpotMarketBar } from './components/SpotMarketBar';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseLocalizedNumber } from './lib/format';
-import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, SeriesKey } from './types';
+import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, MarketSeries, SeriesKey } from './types';
 
 const MAX_INPUT_AMOUNT = 999_999_999_999;
 const MAX_INPUT_MESSAGE = 'Miktar en fazla 999.999.999.999 olabilir.';
@@ -525,6 +525,14 @@ function App() {
     const available = new Set(catalog.series.map((series) => series.key));
     return CRITERIA.filter((criterion) => available.has(criterion.key));
   }, [catalog]);
+  const latestCommonEndMonth = useMemo(() => getLatestCommonEndMonth(catalog, state.criteria), [catalog, state.criteria]);
+  const endMaxYear = latestCommonEndMonth ? Number(latestCommonEndMonth.slice(0, 4)) : yearRange.max;
+
+  useEffect(() => {
+    if (latestCommonEndMonth && state.endMonth > latestCommonEndMonth) {
+      setState((current) => ({ ...current, endMonth: latestCommonEndMonth }));
+    }
+  }, [latestCommonEndMonth, state.endMonth]);
 
   const inputTryAmount = results[0]?.normalizedAmount;
   const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(state.endMonth)}`;
@@ -662,11 +670,17 @@ function App() {
                 <MonthSelect
                   label="Bitiş"
                   minYear={yearRange.min}
-                  maxYear={yearRange.max}
+                  maxMonth={latestCommonEndMonth ?? undefined}
+                  maxYear={endMaxYear}
                   value={state.endMonth}
                   onChange={(endMonth) => updateState({ endMonth })}
                 />
               </div>
+              {latestCommonEndMonth && latestCommonEndMonth < defaultState().endMonth && (
+                <p className="rounded-md border border-ink-100 bg-white/70 px-3 py-2 text-xs leading-5 text-ink-500">
+                  Seçili karşılaştırmalar için son ortak veri: {formatMonth(latestCommonEndMonth)}.
+                </p>
+              )}
 
               <fieldset className="grid gap-3">
                 <legend className="text-sm font-semibold text-ink-800">Karşılaştırma</legend>
@@ -1016,6 +1030,25 @@ function InfoPage({ page }: { page: InfoPageContent }) {
       </div>
     </main>
   );
+}
+
+function getLatestCommonEndMonth(catalog: MarketCatalog | null, criteria: SeriesKey[]): string | null {
+  if (!catalog || criteria.length === 0) {
+    return null;
+  }
+
+  const latestMonths = criteria
+    .map((key) => catalog.series.find((series) => series.key === key))
+    .filter((series): series is MarketSeries => Boolean(series))
+    .map((series) =>
+      series.observations
+        .filter((observation) => Number.isFinite(observation.value))
+        .map((observation) => observation.date.slice(0, 7))
+        .sort((first, second) => second.localeCompare(first))[0],
+    )
+    .filter((month): month is string => Boolean(month));
+
+  return latestMonths.length ? latestMonths.sort()[0] : null;
 }
 
 function SiteFooter() {

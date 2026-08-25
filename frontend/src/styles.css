@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 :root {
   color-scheme: light;
-  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: geometricPrecision;
 }
@@ -28,6 +28,10 @@ select {
   font: inherit;
 }
 
+.font-data {
+  font-variant-numeric: tabular-nums;
+}
+
 .money-value {
   display: flex;
   max-width: 100%;
@@ -38,8 +42,9 @@ select {
 
 .money-value__amount {
   min-width: 0;
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-  font-weight: 800;
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0;
   white-space: nowrap;
 }
@@ -49,7 +54,7 @@ select {
   align-items: baseline;
   gap: 0.34rem;
   flex: 0 0 auto;
-  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: 0;
   white-space: nowrap;
@@ -66,9 +71,9 @@ select {
 }
 
 .money-value__symbol {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   font-size: 1.42em;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 0.82;
 }
 

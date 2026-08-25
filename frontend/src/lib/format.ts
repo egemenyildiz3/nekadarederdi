@@ -20,6 +20,7 @@ const compactMoneyUnits = [
   { value: 1_000_000_000_000, label: 'trilyon' },
   { value: 1_000_000_000, label: 'milyar' },
   { value: 1_000_000, label: 'milyon' },
+  { value: 1_000, label: 'bin' },
 ];
 
 export type CompactAmountParts = {
@@ -40,6 +41,7 @@ export function formatCompactMoney(value: number): string {
 export function formatCompactInputAmountParts(
   value: number,
   inputUnit: 'try' | 'usd' | 'eur' | 'gold' | 'silver',
+  minCompactValue = 1_000_000,
 ): CompactAmountParts {
   const suffix =
     inputUnit === 'try'
@@ -53,17 +55,17 @@ export function formatCompactInputAmountParts(
       : 'gr gümüş';
 
   return {
-    ...formatCompactNumberParts(value),
+    ...formatCompactNumberParts(value, minCompactValue),
     suffix,
     full: formatFullInputAmount(value, inputUnit),
   };
 }
 
-function formatCompactNumberParts(value: number): Pick<CompactAmountParts, 'amount' | 'scale'> {
+function formatCompactNumberParts(value: number, minCompactValue: number): Pick<CompactAmountParts, 'amount' | 'scale'> {
   const absoluteValue = Math.abs(value);
   const unit = compactMoneyUnits.find((item) => absoluteValue >= item.value);
 
-  if (!unit) {
+  if (!unit || absoluteValue < minCompactValue) {
     return { amount: formatTryNumber(value), scale: '' };
   }
 
