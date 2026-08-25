@@ -672,7 +672,7 @@ select:focus-visible {
   margin: 0;
 }
 
-.market-sponsor-row {
+.market-stack {
   display: grid;
   gap: 0.75rem;
 }
@@ -991,8 +991,19 @@ select:focus-visible {
     align-items: center;
   }
 
+  .site-header > .brand-mark {
+    grid-column: 1;
+  }
+
+  .site-header > .theme-toggle {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+  }
+
   .site-header__copy {
-    grid-column: auto;
+    grid-column: 2;
     justify-self: end;
     text-align: right;
   }
@@ -1023,14 +1034,8 @@ select:focus-visible {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .market-sponsor-row {
-    grid-template-columns: minmax(0, 1fr) minmax(10rem, 12rem);
-    align-items: stretch;
-  }
-
-  .sponsor-frame--square {
-    min-height: 10rem;
-    aspect-ratio: 1;
+  .market-stack .sponsor-frame--wide {
+    min-height: 7.5rem;
   }
 }
 
@@ -1088,13 +1093,8 @@ select:focus-visible {
     font-size: 3rem;
   }
 
-  .market-sponsor-row {
-    grid-template-columns: minmax(0, 1fr) minmax(15.625rem, 20rem);
-    align-items: stretch;
-  }
-
-  .sponsor-frame--square {
-    min-height: 15.625rem;
+  .market-stack .sponsor-frame--wide {
+    min-height: 8.5rem;
   }
 
   .date-grid {
