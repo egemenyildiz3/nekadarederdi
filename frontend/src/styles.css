@@ -746,6 +746,40 @@ select:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.spot-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.spot-change {
+  display: inline-flex;
+  min-height: 1.45rem;
+  align-items: center;
+  gap: 0.18rem;
+  border: 1px solid var(--line);
+  padding: 0.1rem 0.38rem;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.spot-change[data-direction='up'] {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: color-mix(in srgb, var(--accent-soft) 66%, transparent);
+  color: var(--accent-strong);
+}
+
+.spot-change[data-direction='down'] {
+  border-color: color-mix(in srgb, var(--copper) 48%, var(--line));
+  background: color-mix(in srgb, var(--warning-bg) 76%, transparent);
+  color: var(--copper);
+}
+
 .sponsor-frame {
   position: relative;
   display: flex;

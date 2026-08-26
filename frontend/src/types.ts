@@ -57,6 +57,8 @@ export type SpotMarketItem = {
   key: 'usd' | 'eur' | 'gold' | 'bitcoin';
   label: string;
   value: number;
+  previousValue?: number | null;
+  changePercent?: number | null;
   unit: string;
   source: string;
 };

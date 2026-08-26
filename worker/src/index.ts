@@ -41,6 +41,8 @@ type SpotMarketItem = {
   key: 'usd' | 'eur' | 'gold' | 'bitcoin';
   label: string;
   value: number;
+  previousValue?: number | null;
+  changePercent?: number | null;
   unit: string;
   source: string;
 };
@@ -380,21 +382,27 @@ function escapeHtml(value: string) {
 
 async function getSpotMarket() {
   const [usd, eur, goldOunce, btcTryDirect, btcUsd] = await Promise.all([
-    fetchYahooPrice('USDTRY=X'),
-    fetchYahooPrice('EURTRY=X'),
-    fetchYahooPrice('GC=F'),
-    fetchYahooPrice('BTC-TRY'),
-    fetchYahooPrice('BTC-USD'),
+    fetchYahooQuote('USDTRY=X'),
+    fetchYahooQuote('EURTRY=X'),
+    fetchYahooQuote('GC=F'),
+    fetchYahooQuote('BTC-TRY'),
+    fetchYahooQuote('BTC-USD'),
   ]);
-  const fallbackUsd = latestSeriesValue('usd');
-  const fallbackEur = latestSeriesValue('eur');
-  const fallbackGold = latestSeriesValue('gold');
-  const fallbackBitcoin = latestSeriesValue('bitcoin');
-  const usdTry = usd ?? fallbackUsd;
-  const eurTry = eur ?? fallbackEur;
-  const gramGoldTry = goldOunce && usdTry ? (goldOunce * usdTry) / 31.1034768 : fallbackGold;
-  const btcTry = btcTryDirect ?? (btcUsd && usdTry ? btcUsd * usdTry : null);
-  const bitcoinTry = btcTry ?? fallbackBitcoin;
+  const fallbackUsd = latestSeriesPair('usd');
+  const fallbackEur = latestSeriesPair('eur');
+  const fallbackGold = latestSeriesPair('gold');
+  const fallbackBitcoin = latestSeriesPair('bitcoin');
+  const usdTry = usd?.value ?? fallbackUsd.value;
+  const eurTry = eur?.value ?? fallbackEur.value;
+  const gramGoldTry = goldOunce?.value && usdTry ? (goldOunce.value * usdTry) / 31.1034768 : fallbackGold.value;
+  const btcTry = btcTryDirect?.value ?? (btcUsd?.value && usdTry ? btcUsd.value * usdTry : null);
+  const bitcoinTry = btcTry ?? fallbackBitcoin.value;
+  const previousUsdTry = usd?.previousValue ?? fallbackUsd.previousValue;
+  const previousEurTry = eur?.previousValue ?? fallbackEur.previousValue;
+  const previousGramGoldTry =
+    goldOunce?.previousValue && previousUsdTry ? (goldOunce.previousValue * previousUsdTry) / 31.1034768 : fallbackGold.previousValue;
+  const previousBtcTry =
+    btcTryDirect?.previousValue ?? (btcUsd?.previousValue && previousUsdTry ? btcUsd.previousValue * previousUsdTry : fallbackBitcoin.previousValue);
   const source = usd && eur && goldOunce && btcTry ? 'Yahoo Finance, anlık piyasa verisi' : 'Son mevcut seri verisi';
   const items: SpotMarketItem[] = [
     { key: 'usd', label: 'Dolar', value: usdTry, unit: 'TL/USD', source: usd ? 'Yahoo Finance' : 'Son aylık seri' },
@@ -402,15 +410,34 @@ async function getSpotMarket() {
     { key: 'gold', label: 'Gram altın', value: gramGoldTry, unit: 'TL/gr', source: goldOunce && usd ? 'Yahoo Finance türev' : 'Son aylık seri' },
     { key: 'bitcoin', label: 'Bitcoin', value: bitcoinTry, unit: 'TL/BTC', source: btcTry ? 'Yahoo Finance' : 'Son aylık seri' },
   ];
+  const previousValues: Record<SpotMarketItem['key'], number | null> = {
+    usd: previousUsdTry,
+    eur: previousEurTry,
+    gold: previousGramGoldTry,
+    bitcoin: previousBtcTry,
+  };
+  const enrichedItems = items.map((item) => ({
+    ...item,
+    previousValue: previousValues[item.key],
+    changePercent: calculateChangePercent(item.value, previousValues[item.key]),
+  }));
 
   return {
     updatedAt: new Date().toISOString(),
     source,
-    items,
+    items: enrichedItems,
   };
 }
 
-async function fetchYahooPrice(symbol: string) {
+function calculateChangePercent(value: number, previousValue: number | null | undefined) {
+  if (!Number.isFinite(value) || !Number.isFinite(previousValue) || !previousValue) {
+    return null;
+  }
+
+  return ((value - previousValue) / previousValue) * 100;
+}
+
+async function fetchYahooQuote(symbol: string) {
   try {
     const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1m`, {
       headers: {
@@ -424,25 +451,35 @@ async function fetchYahooPrice(symbol: string) {
     }
 
     const payload = (await response.json()) as {
-      chart?: { result?: Array<{ meta?: { regularMarketPrice?: number }; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> };
+      chart?: {
+        result?: Array<{
+          meta?: { regularMarketPrice?: number; chartPreviousClose?: number; previousClose?: number };
+          indicators?: { quote?: Array<{ close?: Array<number | null> }> };
+        }>;
+      };
     };
     const result = payload.chart?.result?.[0];
     const close = result?.indicators?.quote?.[0]?.close?.filter((value): value is number => Number.isFinite(value)) ?? [];
     const lastClose = close[close.length - 1];
+    const value = Number.isFinite(result?.meta?.regularMarketPrice) ? result!.meta!.regularMarketPrice! : lastClose ?? null;
+    const previousValue = result?.meta?.chartPreviousClose ?? result?.meta?.previousClose ?? close[0] ?? null;
 
-    return Number.isFinite(result?.meta?.regularMarketPrice) ? result!.meta!.regularMarketPrice! : lastClose ?? null;
+    return value ? { value, previousValue } : null;
   } catch {
     return null;
   }
 }
 
-function latestSeriesValue(key: SeriesKey) {
+function latestSeriesPair(key: SeriesKey) {
   const series = (catalog.series as MarketSeries[]).find((item) => item.key === key);
-  const latest = series?.observations
+  const observations = series?.observations
     .filter((item) => Number.isFinite(item.value))
-    .sort((first, second) => second.date.localeCompare(first.date))[0];
+    .sort((first, second) => second.date.localeCompare(first.date)) ?? [];
 
-  return latest?.value ?? 0;
+  return {
+    value: observations[0]?.value ?? 0,
+    previousValue: observations[1]?.value ?? null,
+  };
 }
 
 function shouldRedirectToCanonicalHost(request: Request, url: URL) {

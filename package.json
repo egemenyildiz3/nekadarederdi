@@ -13,6 +13,7 @@
     "cf:dev": "npm run build:cloudflare && wrangler dev",
     "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "data:update": "node scripts/update-market-data.mjs",
+    "data:verify": "node scripts/verify-market-data.mjs",
     "dev:worker": "wrangler dev",
     "dev:frontend": "npm run dev -w frontend -- --port 7573",
     "preview:frontend": "npm run preview -w frontend -- --port 7180"

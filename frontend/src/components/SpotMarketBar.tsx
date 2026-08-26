@@ -84,7 +84,10 @@ export function SpotMarketBar() {
           <div className="spot-item" key={item.key} title={item.source}>
             <p>{item.label}</p>
             <strong>{formatSpotValue(item)}</strong>
-            <span>{item.unit}</span>
+            <span className="spot-item__meta">
+              <span>{item.unit}</span>
+              <SpotChange item={item} />
+            </span>
           </div>
         ))}
       </div>
@@ -100,21 +103,55 @@ function formatSpotValue(item: SpotMarket['items'][number]) {
   return formatMoney(item.value);
 }
 
+function SpotChange({ item }: { item: SpotMarketItem }) {
+  const changePercent = item.changePercent;
+
+  if (typeof changePercent !== 'number' || !Number.isFinite(changePercent)) {
+    return null;
+  }
+
+  const direction = changePercent > 0 ? 'up' : changePercent < 0 ? 'down' : 'flat';
+  const sign = changePercent > 0 ? '+' : '';
+
+  return (
+    <span className="spot-change" data-direction={direction} aria-label={`Önceki veriye göre ${formatSpotChange(changePercent)}`}>
+      <span aria-hidden="true">{direction === 'up' ? '↑' : direction === 'down' ? '↓' : '→'}</span>
+      {sign}
+      {formatSpotChange(changePercent)}
+    </span>
+  );
+}
+
+function formatSpotChange(value: number) {
+  return `${new Intl.NumberFormat('tr-TR', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(value)}%`;
+}
+
 function buildFallbackMarket(catalog: MarketCatalog): SpotMarket {
   return {
     updatedAt: catalog.updatedAt,
     source: 'Son aylık seri',
     items: SPOT_KEYS.map((key) => {
       const series = catalog.series.find((item) => item.key === key);
-      const latest = [...(series?.observations ?? [])]
+      const observations = [...(series?.observations ?? [])]
         .filter((observation) => Number.isFinite(observation.value))
-        .sort((first, second) => second.date.localeCompare(first.date))[0];
+        .sort((first, second) => second.date.localeCompare(first.date));
+      const latest = observations[0];
+      const previous = observations[1];
       const definition = SPOT_DEFINITIONS[key];
+      const changePercent =
+        latest && previous && previous.value
+          ? ((latest.value - previous.value) / previous.value) * 100
+          : null;
 
       return {
         key,
         label: definition.label,
         value: latest?.value ?? Number.NaN,
+        previousValue: previous?.value ?? null,
+        changePercent,
         unit: series?.unit ?? definition.unit,
         source: latest ? `Son aylık seri: ${formatMonth(latest.date.slice(0, 7))}` : 'Veri yok',
       };

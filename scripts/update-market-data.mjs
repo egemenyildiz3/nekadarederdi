@@ -190,6 +190,15 @@ async function fetchCpi() {
     }
   }
 
+  for (const match of oskaHtml.matchAll(/<td[^>]*>\s*<strong>([^<]+)<\/strong>\s*<\/td>\s*<td[^>]*>([^<]+)<\/td>/g)) {
+    const date = toTurkishMonth(match[1]);
+    const value = parseTrNumber(match[2]);
+
+    if (date && Number.isFinite(value)) {
+      byMonth.set(date.slice(0, 7), value);
+    }
+  }
+
   const rows = [...byMonth.entries()]
     .map((match) => ({
       date: `${match[0]}-01`,
@@ -359,10 +368,21 @@ function deriveBitcoinTry(btcUsd, usdTryRows) {
 }
 
 async function fetchHousingIndex() {
+  const evdsRows = await fetchEvdsMonthlySeries('TP.KFE.TR');
+
+  if (evdsRows.length > 0) {
+    return evdsRows;
+  }
+
   const html = await fetchText('https://altinla.com/tr/konut/fiyat-endeksi', { optional: true });
   const rows = [...html.matchAll(/\{\\"date\\":\\"(\d{4}-\d{2}-\d{2})\\",\\"value\\":([0-9.]+)\}/g)]
     .map((match) => ({ date: match[1], value: Number(match[2]) }))
     .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value));
+  rows.push(
+    ...[...html.matchAll(/\{"date":"(\d{4}-\d{2}-\d{2})","value":([0-9.]+)\}/g)]
+      .map((match) => ({ date: match[1], value: Number(match[2]) }))
+      .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value)),
+  );
 
   if (rows.length === 0) {
     const existing = getExistingSeries('housing');
@@ -430,6 +450,36 @@ async function fetchDepositIndex() {
     index *= 1 + item.rate / 100 / 12;
     return { date: item.date, value: round(index, 8) };
   });
+}
+
+async function fetchEvdsMonthlySeries(seriesCode) {
+  const apiKey = process.env.EVDS_API_KEY;
+
+  if (!apiKey) {
+    console.warn(`EVDS_API_KEY yok; ${seriesCode} serisi EVDS'den alÄ±namadÄ±.`);
+    return [];
+  }
+
+  const startDate = `01-01-${startYear}`;
+  const endDate = `28-${end.slice(5, 7)}-${end.slice(0, 4)}`;
+  const url = `https://evds2.tcmb.gov.tr/service/evds/series=${encodeURIComponent(seriesCode)}&startDate=${startDate}&endDate=${endDate}&type=json&key=${encodeURIComponent(apiKey)}`;
+  const text = await fetchText(url, { optional: true });
+
+  if (!text) {
+    return [];
+  }
+
+  const payload = JSON.parse(text);
+  const rows = (payload.items ?? [])
+    .map((item) => {
+      const date = normalizeDate(item.Tarih ?? item.tarih ?? item.DATE);
+      const rawValue = item[seriesCode] ?? item[seriesCode.replace(/\./g, '_')];
+      return { date, value: parseTrNumber(String(rawValue ?? '')) };
+    })
+    .filter((item) => item.date && item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value))
+    .sort((first, second) => first.date.localeCompare(second.date));
+
+  return dedupeByMonth(rows).map((item) => ({ date: item.date, value: round(item.value, 6) }));
 }
 
 async function fetchMinimumWage() {
