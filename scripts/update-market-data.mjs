@@ -186,7 +186,11 @@ async function fetchCpi() {
     const value = parseTrNumber(match[2]);
 
     if (date && Number.isFinite(value)) {
-      byMonth.set(date.slice(0, 7), value);
+      const month = date.slice(0, 7);
+
+      if (!byMonth.has(month)) {
+        byMonth.set(month, value);
+      }
     }
   }
 
@@ -195,7 +199,11 @@ async function fetchCpi() {
     const value = parseTrNumber(match[2]);
 
     if (date && Number.isFinite(value)) {
-      byMonth.set(date.slice(0, 7), value);
+      const month = date.slice(0, 7);
+
+      if (!byMonth.has(month)) {
+        byMonth.set(month, value);
+      }
     }
   }
 

@@ -501,7 +501,13 @@ function App() {
     if (results.length === 0) {
       setLoading(true);
     }
-    calculateOnBackend(debouncedState)
+    const commonEndMonth = getLatestCommonEndMonth(catalog, debouncedState.criteria);
+    const requestState =
+      commonEndMonth && debouncedState.endMonth > commonEndMonth
+        ? { ...debouncedState, endMonth: commonEndMonth }
+        : debouncedState;
+
+    calculateOnBackend(requestState)
       .then((nextResults) => {
         setResults(nextResults);
         setError('');
@@ -514,7 +520,7 @@ function App() {
         }
       })
       .finally(() => setLoading(false));
-  }, [debouncedState]);
+  }, [catalog, debouncedState]);
 
   const yearRange = useMemo(() => {
     const observations = catalog?.series.flatMap((series) => series.observations) ?? [];
@@ -543,8 +549,9 @@ function App() {
     }
   }, [latestCommonEndMonth, state.endMonth]);
 
+  const resultEndMonth = getResultEndMonth(results) ?? state.endMonth;
   const inputTryAmount = results[0]?.normalizedAmount;
-  const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(state.endMonth)}`;
+  const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(resultEndMonth)}`;
   const shareUrl = window.location.href;
 
   function updateState(partial: Partial<CalculatorState>) {
@@ -772,7 +779,7 @@ function App() {
                     <MoneyValue inputUnit={state.inputUnit} size="summary" value={state.amount || 0} />
                   </h2>
                   <p>
-                    {formatMonth(state.startMonth)} tarihinden {formatMonth(state.endMonth)} tarihine göre.
+                    {formatMonth(state.startMonth)} tarihinden {formatMonth(resultEndMonth)} tarihine göre.
                   </p>
                   {state.inputUnit !== 'try' && inputTryAmount ? (
                     <p className="result-summary__note">
@@ -1089,6 +1096,15 @@ function getLatestCommonEndMonth(catalog: MarketCatalog | null, criteria: Series
     .filter((month): month is string => Boolean(month));
 
   return latestMonths.length ? latestMonths.sort()[0] : null;
+}
+
+function getResultEndMonth(results: CalculationResult[]) {
+  const months = results
+    .map((result) => result.endObservation.date.slice(0, 7))
+    .filter(Boolean)
+    .sort();
+
+  return months[0] ?? null;
 }
 
 function SiteFooter() {

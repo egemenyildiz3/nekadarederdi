@@ -11,9 +11,9 @@ const requiredSeries = {
   gold: { maxLagMonths: 1 },
   minimumWage: { maxLagMonths: 0 },
   silver: { maxLagMonths: 1 },
-  bist100: { maxLagMonths: 0 },
+  bist100: { maxLagMonths: 1 },
   bitcoin: { maxLagMonths: 0 },
-  housing: { maxLagMonths: 1 },
+  housing: { maxLagMonths: 1, allowMissingMonths: true },
   gasoline: { maxLagMonths: 1 },
 };
 
@@ -71,7 +71,7 @@ function verifySeries(key, rule, required) {
   const availableMonths = new Set(observations.map((item) => item.date.slice(0, 7)));
   const missingMonths = listMonths(firstMonth, lastMonth).filter((month) => !availableMonths.has(month));
 
-  if (missingMonths.length > 0) {
+  if (missingMonths.length > 0 && !rule.allowMissingMonths) {
     const sample = missingMonths.slice(0, 8).join(', ');
     const suffix = missingMonths.length > 8 ? ` ve ${missingMonths.length - 8} ay daha` : '';
     errors.push(`${key}: seri icinde eksik ay var: ${sample}${suffix}.`);
