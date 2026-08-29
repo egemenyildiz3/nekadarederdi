@@ -818,6 +818,10 @@ select:focus-visible {
   gap: 0.75rem;
 }
 
+.sponsor-stack--after-content {
+  margin-top: 0.25rem;
+}
+
 .sponsor-frame > ins.adsbygoogle {
   position: absolute;
   inset: 0;
@@ -967,6 +971,37 @@ select:focus-visible {
   background: var(--accent-soft);
   color: var(--accent-strong);
   transform: translateY(-1px);
+}
+
+.guide-faq {
+  display: grid;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.guide-faq details {
+  border-top: 1px solid var(--line);
+}
+
+.guide-faq details:first-child {
+  border-top: 0;
+}
+
+.guide-faq summary {
+  min-height: 48px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  font-weight: 800;
+}
+
+.guide-faq summary::marker {
+  color: var(--accent-strong);
+}
+
+.guide-faq p {
+  padding: 0 1rem 1rem;
 }
 
 .money-value {

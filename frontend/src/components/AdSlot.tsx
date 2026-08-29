@@ -17,6 +17,7 @@ const DEFAULT_ADSENSE_CLIENT = 'ca-pub-3946058913389575';
 const DEFAULT_SQUARE_SLOT = '6095138583';
 
 const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT || DEFAULT_ADSENSE_CLIENT;
+const SHOW_AD_PREVIEW = import.meta.env.DEV || import.meta.env.VITE_SHOW_AD_PLACEHOLDERS === 'true';
 const AD_SLOTS: Record<AdPlacement, string | undefined> = {
   wide: import.meta.env.VITE_ADSENSE_RESULTS_SLOT || import.meta.env.VITE_ADSENSE_TOP_SLOT,
   square: import.meta.env.VITE_ADSENSE_SQUARE_SLOT || DEFAULT_SQUARE_SLOT,
@@ -75,6 +76,14 @@ export function AdSlot({ label, placement }: AdSlotProps) {
       window.clearTimeout(timeoutId);
     };
   }, [adStatus, isConfigured]);
+
+  if (!isConfigured && !SHOW_AD_PREVIEW) {
+    return null;
+  }
+
+  if (isConfigured && adStatus === 'unfilled' && !SHOW_AD_PREVIEW) {
+    return null;
+  }
 
   if (!isConfigured) {
     return (

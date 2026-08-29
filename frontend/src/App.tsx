@@ -381,6 +381,10 @@ const INFO_PAGES: InfoPageContent[] = [
         title: 'Analitik ve reklam',
         body:
           'Site performansını ve ziyaret trafiğini anlamak için Cloudflare Web Analytics kullanılabilir. Reklam gösterimi için Google AdSense kullanılır; Google ve iş ortakları çerezler veya benzer teknolojilerle reklam ölçümü yapabilir.',
+        link: {
+          label: 'Google reklam verilerini nasıl kullanır?',
+          href: 'https://policies.google.com/technologies/partner-sites',
+        },
       },
       {
         title: 'İletişim bilgileri',
@@ -636,7 +640,6 @@ function App() {
 
         <aside className="market-stack">
           <SpotMarketBar />
-          <AdSlot label="Reklam alanı" placement="wide" />
         </aside>
 
         <section className="workbench [overflow-anchor:none]">
@@ -828,10 +831,6 @@ function App() {
           </section>
         </section>
 
-        <section className="sponsor-stack" aria-label="Alt reklam alanları">
-          <AdSlot label="Sonuç altı reklam alanı" placement="wide" />
-        </section>
-
         <p className="disclaimer">
           Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.
         </p>
@@ -857,6 +856,32 @@ function App() {
               <h3>Asgari ücretle karşılaştırma</h3>
               <p>Net asgari ücret serisi, belirli bir tutarın dönemsel gelir düzeyleriyle kıyaslanmasına yardımcı olur.</p>
             </article>
+            <article style={{ '--guide-index': '"04"' } as CSSProperties}>
+              <h3>Sonucun yaklaşık olmasının nedeni</h3>
+              <p>Seriler aylık kapanış, aylık ortalama veya resmi endeks değerleriyle tutulur. Gün içi fiyat, makas, vergi, komisyon ve kaynak revizyonları sonuca dahil edilmez.</p>
+            </article>
+            <article style={{ '--guide-index': '"05"' } as CSSProperties}>
+              <h3>Veri kaynakları nasıl okunur?</h3>
+              <p>Her sonuç kartında kullanılan seri, başlangıç değeri, bitiş değeri ve kaynak notu ayrı gösterilir. Kaynaklar yenilendikçe hesaplama aynı yöntemle güncellenir.</p>
+            </article>
+            <article style={{ '--guide-index': '"06"' } as CSSProperties}>
+              <h3>Hangi karşılaştırma ne anlatır?</h3>
+              <p>Reel TL alım gücünü, döviz yabancı para karşılığını, altın ve gümüş değer saklama kıyasını, asgari ücret ise dönemsel gelir ölçeğini anlatır.</p>
+            </article>
+          </div>
+          <div className="guide-faq" aria-label="Sık sorulan sorular">
+            <details>
+              <summary>Bu araç resmi enflasyon hesaplayıcı mı?</summary>
+              <p>Hayır. Resmi kaynaklardan derlenen tarihsel serilerle yaklaşık karşılaştırma yapar; tek başına resmi işlem veya karar dayanağı değildir.</p>
+            </details>
+            <details>
+              <summary>Neden ay seçiliyor, gün seçilmiyor?</summary>
+              <p>Kullanılan birçok seri aylık yayımlanır. Ay bazlı seçim, TÜFE, asgari ücret, konut endeksi ve piyasa serilerini aynı ekranda tutarlı karşılaştırmayı sağlar.</p>
+            </details>
+            <details>
+              <summary>Son veri neden bazen bir önceki ay olur?</summary>
+              <p>Resmi endeksler ve bazı piyasa özetleri gecikmeli yayımlanır. Araç, seçili ölçütlerde ortak ve güvenilir son ayı kullanır.</p>
+            </details>
           </div>
           <div className="guide-link-panel">
             <p className="eyebrow">Popüler hesaplamalar</p>
@@ -868,6 +893,10 @@ function App() {
               ))}
             </nav>
           </div>
+        </section>
+
+        <section className="sponsor-stack sponsor-stack--after-content" aria-label="Reklam alanı">
+          <AdSlot label="Reklam alanı" placement="wide" />
         </section>
 
         <SiteFooter />
