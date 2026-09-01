@@ -72,7 +72,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki bir TL tutarının TÜFE verilerine göre bugünkü yaklaşık satın alma gücünü hesaplayın.',
     intro:
       'Enflasyon hesaplama, aynı tutarın farklı tarihlerdeki alım gücünü karşılaştırmak için kullanılır. Ne Kadar Ederdi, TÜFE serisiyle geçmiş TL değerini aylık düzeyde yaklaşık olarak gösterir.',
-    calculatorHref: '/?criteria=cpi',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'TÜFE ile para değeri nasıl okunur?',
@@ -126,7 +126,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Eski bir fiyatın, maaşın veya borcun bugünün parasıyla yaklaşık karşılığını hesaplayın.',
     intro:
       '“Bugünün parasıyla ne kadar?” sorusu, geçmişteki bir tutarı bugünkü fiyat ortamına taşır. Hesaplayıcı, seçilen başlangıç ve bitiş ayına göre yaklaşık karşılığı üretir.',
-    calculatorHref: '/?criteria=cpi%2CminimumWage',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Fiyatları bugüne taşımak',
@@ -153,7 +153,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki TL tutarını dolar kuru değişimine göre bugünkü yaklaşık TL karşılığıyla kıyaslayın.',
     intro:
       'Dolar bazında karşılaştırma, TL’nin ABD doları karşısındaki değişimini görmek için kullanılır. Bu yaklaşım alım gücünden farklıdır; kur hareketine odaklanır.',
-    calculatorHref: '/?criteria=usd',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Kur bazlı karşılaştırma nedir?',
@@ -180,7 +180,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki TL tutarını gram altın fiyatı değişimine göre bugünkü yaklaşık karşılığıyla hesaplayın.',
     intro:
       'Altın bazında karşılaştırma, belirli bir TL tutarının gram altın fiyatındaki değişimle nasıl farklılaşacağını gösterir. Bu sonuç yatırım getirisi değil, tarihsel fiyat kıyasıdır.',
-    calculatorHref: '/?criteria=gold%2Csilver',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Gram altın çarpanı',
@@ -207,7 +207,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       '2010 yılındaki 10.000 TL tutarını bugünün parasıyla, TÜFE, dolar, altın, BIST 100 ve Bitcoin verileriyle kıyaslayın.',
     intro:
       '“2010’da 10.000 TL bugün ne kadar ederdi?” sorusu tek bir cevaba sahip değildir. TÜFE alım gücünü, dolar ve altın kur/fiyat etkisini, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
-    calculatorHref: '/?amount=10000&start=2010-01&criteria=cpi%2Cusd%2Cgold%2Cbist100%2Cbitcoin',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'TÜFE ile bugünkü karşılık',
@@ -234,7 +234,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Eski maaşınızı bugünkü alım gücüyle ve asgari ücret, döviz, altın gibi farklı göstergelerle karşılaştırın.',
     intro:
       'Eski maaşın bugünkü karşılığını hesaplarken yalnızca nominal tutara bakmak yanıltıcıdır. Enflasyon, asgari ücret, döviz ve altın gibi ölçütler farklı ekonomik bakışlar sağlar.',
-    calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd%2Cgold',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Maaşın alım gücü',
@@ -261,7 +261,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Geçmişteki kira tutarını TÜFE ve farklı ekonomik göstergelerle bugünkü yaklaşık değerine taşıyın.',
     intro:
       'Eski kira tutarlarını bugünün koşullarıyla okumak için TÜFE iyi bir başlangıç noktasıdır. Aynı tutarı döviz, altın veya asgari ücret gibi ölçütlerle kıyaslamak ise farklı yorumlar sağlar.',
-    calculatorHref: '/?criteria=cpi%2CminimumWage%2Cusd',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Kira tutarını bugüne taşımak',
@@ -288,7 +288,7 @@ const LANDING_PAGES: LandingPageContent[] = [
       'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
     intro:
       'Aynı TL tutarı enflasyon, döviz, altın, BIST 100 ve Bitcoin gibi farklı serilerle bambaşka sonuçlar verebilir. Bu sayfa yatırım tavsiyesi değil, tarihsel kıyaslama çerçevesi sunar.',
-    calculatorHref: '/?criteria=gold%2Csilver%2Cbist100%2Cbitcoin',
+    calculatorHref: '/#hesapla',
     sections: [
       {
         title: 'Fiyat serileri aynı şeyi ölçmez',
@@ -649,7 +649,7 @@ function App() {
           <SpotMarketBar />
         </aside>
 
-        <section className="workbench [overflow-anchor:none]">
+        <section id="hesapla" className="workbench [overflow-anchor:none]">
           <form
             className="calculator-panel [overflow-anchor:none] lg:sticky lg:top-5 lg:self-start"
             onSubmit={(event) => event.preventDefault()}
