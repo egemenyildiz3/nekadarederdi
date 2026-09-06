@@ -138,13 +138,25 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
   </url>
   <url>
     <loc>https://nekadarederdi.com/hakkinda</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.55</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/metodoloji</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-kaynaklari</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://nekadarederdi.com/iletisim</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -218,6 +230,16 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
     title: 'Hakkında | Ne Kadar Ederdi?',
     description:
       "Ne Kadar Ederdi'nin amacı, kullandığı veri türleri ve hesaplama yaklaşımı hakkında bilgi.",
+  },
+  '/metodoloji': {
+    title: 'Metodoloji | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi hesaplamalarinin hangi yontemle uretildigini, aylik veri yaklasimini ve sonuclarin nasil yorumlanmasi gerektigini aciklar.',
+  },
+  '/veri-kaynaklari': {
+    title: 'Veri Kaynaklari | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi uzerinde kullanilan TUFE, doviz, altin, gumus, asgari ucret, BIST 100, Bitcoin, konut ve yakit veri serilerinin kaynak yaklasimi.',
   },
   '/iletisim': {
     title: 'İletişim | Ne Kadar Ederdi?',
@@ -367,7 +389,8 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
     .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`)
     .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/, `<meta property="og:url" content="${canonical}" />`)
     .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`)
-    .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`);
+    .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`)
+    .replace(/<div\s+id="root"\s*><\/div>/, `<div id="root">${renderStaticPublisherContent(url.pathname, metadata)}</div>`);
 
   return new Response(nextHtml, {
     status: isKnownPage ? response.status : 404,
@@ -378,6 +401,57 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
 
 function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderStaticPublisherContent(pathname: string, metadata: { title: string; description: string }) {
+  if (!KNOWN_PAGE_PATHS.has(pathname)) {
+    return '';
+  }
+
+  const isHome = pathname === '/';
+  const title = isHome ? 'Ne Kadar Ederdi?' : metadata.title.replace(' | Ne Kadar Ederdi?', '');
+  const sections = isHome
+    ? [
+        {
+          title: 'Hesaplama aracı',
+          body:
+            'Ne Kadar Ederdi; geçmişteki bir tutarı TÜFE, dolar, euro, gram altın, gümüş, asgari ücret, BIST 100, Bitcoin, konut ve yakıt serileriyle aynı ekranda kıyaslayan ücretsiz bir araçtır.',
+        },
+        {
+          title: 'Yöntem',
+          body:
+            'Hesaplamalar aylık veri noktalarıyla yapılır. Başlangıç ayındaki değer ile bitiş ayındaki değer oranlanır ve girilen tutara uygulanır. Döviz ve maden sonuçları alım gücü hesabı değil, ilgili fiyat serisinin tarihsel değişimidir.',
+        },
+        {
+          title: 'Kaynak ve sınırlamalar',
+          body:
+            'Seriler resmi kurumlar ve yaygın piyasa veri kaynaklarından derlenir. Gün içi fiyat, vergi, komisyon, alış-satış makası, temettü ve bölgesel fiyat farkları hesaba dahil değildir; sonuçlar yatırım tavsiyesi değildir.',
+        },
+      ]
+    : [
+        {
+          title: 'Bu sayfanın amacı',
+          body: metadata.description,
+        },
+        {
+          title: 'Nasıl yorumlanmalı?',
+          body:
+            'Sonuç tek bir kesin değer değil, seçilen tarih aralığına ve ölçüte bağlı yaklaşık bir karşılaştırmadır. Aynı tutar enflasyon, döviz, altın ve gelir ölçeğinde farklı sonuçlar verebilir.',
+        },
+        {
+          title: 'Veri yaklaşımı',
+          body:
+            'Araç aylık serilerle çalışır. Bir veri henüz yayımlanmadıysa hesaplama seçili ölçütler için mevcut en son güvenilir aya göre yapılır ve kaynak notları sonuçlarda gösterilir.',
+        },
+      ];
+
+  return `<article class="static-publisher-content" aria-label="Sayfa içeriği">
+    <h1>${escapeHtml(title)}</h1>
+    <p>${escapeHtml(metadata.description)}</p>
+    ${sections
+      .map((section) => `<section><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`)
+      .join('')}
+  </article>`;
 }
 
 async function getSpotMarket() {

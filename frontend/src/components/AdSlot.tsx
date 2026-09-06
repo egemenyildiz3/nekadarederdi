@@ -16,6 +16,7 @@ type AdSlotProps = {
 const DEFAULT_ADSENSE_CLIENT = 'ca-pub-3946058913389575';
 const DEFAULT_SQUARE_SLOT = '6095138583';
 
+const ADSENSE_ENABLED = import.meta.env.VITE_ADSENSE_ENABLED === 'true';
 const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT || DEFAULT_ADSENSE_CLIENT;
 const SHOW_AD_PREVIEW = import.meta.env.DEV || import.meta.env.VITE_SHOW_AD_PLACEHOLDERS === 'true';
 const AD_SLOTS: Record<AdPlacement, string | undefined> = {
@@ -26,7 +27,7 @@ const AD_SLOTS: Record<AdPlacement, string | undefined> = {
 export function AdSlot({ label, placement }: AdSlotProps) {
   const clientId = ADSENSE_CLIENT;
   const adSlot = AD_SLOTS[placement];
-  const isConfigured = Boolean(clientId && adSlot);
+  const isConfigured = Boolean(ADSENSE_ENABLED && clientId && adSlot);
   const adRef = useRef<HTMLModElement>(null);
   const [adStatus, setAdStatus] = useState<'pending' | 'filled' | 'unfilled'>('pending');
   const wrapperClassName = `sponsor-frame sponsor-frame--${placement} sponsor-frame--${adStatus}`;

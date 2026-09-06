@@ -1004,6 +1004,43 @@ select:focus-visible {
   padding: 0 1rem 1rem;
 }
 
+.static-publisher-content {
+  max-width: 60rem;
+  margin: 2rem auto;
+  border: 1px solid #d8c7a6;
+  background: #fffaf0;
+  color: #061b16;
+  padding: 1.25rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.65;
+}
+
+.static-publisher-content h1,
+.static-publisher-content h2,
+.static-publisher-content p {
+  margin: 0;
+}
+
+.static-publisher-content h1 {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.static-publisher-content > p {
+  margin-top: 0.65rem;
+  color: #4d625b;
+}
+
+.static-publisher-content section {
+  margin-top: 1rem;
+  border-top: 1px solid #d8c7a6;
+  padding-top: 1rem;
+}
+
+.static-publisher-content h2 {
+  font-size: 1.1rem;
+}
+
 .money-value {
   display: flex;
   max-width: 100%;

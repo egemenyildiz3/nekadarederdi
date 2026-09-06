@@ -337,6 +337,68 @@ const INFO_PAGES: InfoPageContent[] = [
     ],
   },
   {
+    path: '/metodoloji',
+    title: 'Metodoloji',
+    metaTitle: 'Metodoloji | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi hesaplamalarının hangi yöntemle üretildiğini, aylık veri yaklaşımını ve sonuçların nasıl yorumlanması gerektiğini açıklar.',
+    intro:
+      'Bu sayfa, araçtaki karşılaştırmaların nasıl hesaplandığını ve neden her sonucun yaklaşık bir ekonomik okuma olarak değerlendirilmesi gerektiğini anlatır.',
+    sections: [
+      {
+        title: 'Oran bazlı hesaplama',
+        body:
+          'Her ölçütte başlangıç ayındaki seri değeri ile bitiş ayındaki seri değeri karşılaştırılır. Bitiş değeri başlangıç değerine bölünür ve çıkan çarpan girilen tutara uygulanır.',
+      },
+      {
+        title: 'Aylık veri kullanımı',
+        body:
+          'TÜFE, konut endeksi, asgari ücret ve birçok piyasa serisi aylık düzeyde daha tutarlı okunur. Bu nedenle gün seçimi yerine ay seçimi kullanılır; henüz yayımlanmayan aylar için son güvenilir veri beklenir.',
+      },
+      {
+        title: 'Farklı ölçütler farklı şey söyler',
+        body:
+          'Reel TL satın alma gücünü, döviz kurları yabancı para karşılığını, altın ve gümüş değerli maden fiyatını, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
+      },
+      {
+        title: 'Dahil olmayan kalemler',
+        body:
+          'Vergi, komisyon, alış-satış makası, temettü, saklama maliyeti, bölgesel fiyat farkı ve kişisel harcama sepeti hesaplamaya dahil değildir.',
+      },
+    ],
+  },
+  {
+    path: '/veri-kaynaklari',
+    title: 'Veri Kaynakları',
+    metaTitle: 'Veri Kaynakları | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi üzerinde kullanılan TÜFE, döviz, altın, gümüş, asgari ücret, BIST 100, Bitcoin, konut ve yakıt veri serilerinin kaynak yaklaşımı.',
+    intro:
+      'Ne Kadar Ederdi, tek bir rakam üretmek yerine kaynakları görülebilir olan aylık serilerle karşılaştırma yapar. Kaynak notları sonuç kartlarında da gösterilir.',
+    sections: [
+      {
+        title: 'Resmi endeksler',
+        body:
+          'TÜFE ve konut gibi endekslerde resmi yayımlanan seri değerleri esas alınır. Bu veriler genellikle geriden gelir; yeni ay yayımlanmadan hesaplamaya eklenmez.',
+      },
+      {
+        title: 'Döviz ve piyasa serileri',
+        body:
+          'Dolar, euro, gram altın, gümüş, BIST 100 ve Bitcoin serileri aylık ortalama veya ay sonu değer yaklaşımıyla işlenir. Günlük oynaklıklar bu tarihsel karşılaştırmanın dışında kalır.',
+      },
+      {
+        title: 'Gelir ve maliyet serileri',
+        body:
+          'Asgari ücret, yakıt ve mevduat gibi seriler farklı ekonomik ölçekleri görünür kılmak için kullanılır. Bu seriler doğrudan yatırım getirisi ya da resmi hak ediş hesabı anlamına gelmez.',
+      },
+      {
+        title: 'Güncelleme ve kontrol',
+        body:
+          'Veri güncelleme süreci otomatik çalışacak şekilde hazırlanır. Pipeline, serilerin son ayını ve boşluklarını kontrol eder; kaynak gecikmesi varsa mevcut son güvenilir ay korunur.',
+      },
+    ],
+  },
+  {
     path: '/iletisim',
     title: 'İletişim',
     metaTitle: 'İletişim | Ne Kadar Ederdi?',
@@ -433,6 +495,8 @@ const INFO_PAGES: InfoPageContent[] = [
 
 const FOOTER_LINKS = [
   { href: '/hakkinda', label: 'Hakkında' },
+  { href: '/metodoloji', label: 'Metodoloji' },
+  { href: '/veri-kaynaklari', label: 'Veri Kaynakları' },
   { href: '/iletisim', label: 'İletişim' },
   { href: '/gizlilik-politikasi', label: 'Gizlilik Politikası' },
   { href: '/kullanim-sartlari', label: 'Kullanım Şartları' },

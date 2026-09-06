@@ -26,12 +26,6 @@
         document.documentElement.dataset.theme = stored || 'light';
       })();
     </script>
-    <script
-      id="adsense-script"
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3946058913389575"
-      crossorigin="anonymous"
-    ></script>
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="tr_TR" />
     <meta property="og:site_name" content="Ne Kadar Ederdi?" />
@@ -97,7 +91,37 @@
         </p>
       </section>
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <article class="static-publisher-content" aria-label="Sayfa içeriği">
+        <h1>Ne Kadar Ederdi?</h1>
+        <p>
+          Geçmişteki bir TL tutarını TÜFE, dolar, euro, gram altın, gümüş, asgari ücret,
+          BIST 100, Bitcoin, konut ve yakıt serileriyle ay bazında karşılaştıran ücretsiz hesaplama aracı.
+        </p>
+        <section>
+          <h2>Hesaplama aracı</h2>
+          <p>
+            Araç, başlangıç ayındaki seri değeri ile bitiş ayındaki seri değerini oranlar ve girilen tutara
+            yaklaşık bir çarpan uygular. Aynı tutarı alım gücü, döviz, değerli maden, gelir ve piyasa
+            göstergeleriyle birlikte okumaya yardımcı olur.
+          </p>
+        </section>
+        <section>
+          <h2>Veri yaklaşımı</h2>
+          <p>
+            Hesaplamalar aylık veri noktalarıyla yapılır. Henüz yayımlanmayan aylar için son güvenilir veri
+            kullanılır; kaynak notları sonuç kartlarında gösterilir.
+          </p>
+        </section>
+        <section>
+          <h2>Sınırlar</h2>
+          <p>
+            Sonuçlar resmi karar, hak ediş hesabı veya yatırım tavsiyesi değildir. Vergi, komisyon,
+            alış-satış makası, temettü ve kişisel harcama sepeti hesaplamaya dahil değildir.
+          </p>
+        </section>
+      </article>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
