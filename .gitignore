@@ -21,4 +21,6 @@ obj/
 *.md
 !README.md
 
-.chrome-qa
+.chrome-
+
+*.txt
