@@ -69,6 +69,7 @@ const VALID_INPUT_UNITS = new Set<InputUnit>(['try', 'usd', 'eur', 'gold', 'silv
 const TL_CUTOVER = '2005-01';
 const MAX_INPUT_AMOUNT = 999_999_999_999;
 const CANONICAL_HOST = 'nekadarederdi.com';
+const URL_STATE_PARAMS = ['amount', 'unit', 'start', 'end', 'criteria'];
 const ADS_TXT = 'google.com, pub-3946058913389575, DIRECT, f08c47fec0942fa0';
 const ROBOTS_TXT = `User-agent: *
 Allow: /
@@ -274,6 +275,7 @@ export default {
       url.protocol = 'https:';
       url.hostname = CANONICAL_HOST;
       url.port = '';
+      normalizePageQuery(url);
       return Response.redirect(url.toString(), 301);
     }
 
@@ -284,6 +286,12 @@ export default {
         url.pathname = normalizedPath;
         return Response.redirect(url.toString(), 301);
       }
+    }
+
+    const pageQueryRedirectUrl = getPageQueryRedirectUrl(request, url);
+
+    if (pageQueryRedirectUrl) {
+      return Response.redirect(pageQueryRedirectUrl, 301);
     }
 
     if (url.pathname === '/health') {
@@ -566,6 +574,44 @@ function shouldRedirectToCanonicalHost(request: Request, url: URL) {
   }
 
   return !isLocalHost(url.hostname) && (url.hostname !== CANONICAL_HOST || url.protocol !== 'https:');
+}
+
+function getPageQueryRedirectUrl(request: Request, url: URL) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return null;
+  }
+
+  if (!KNOWN_PAGE_PATHS.has(url.pathname) || !hasSearchParams(url)) {
+    return null;
+  }
+
+  const nextUrl = new URL(url.toString());
+  normalizePageQuery(nextUrl);
+  return nextUrl.toString();
+}
+
+function normalizePageQuery(url: URL) {
+  if (!KNOWN_PAGE_PATHS.has(url.pathname) || !hasSearchParams(url)) {
+    return;
+  }
+
+  const stateParams = new URLSearchParams();
+
+  for (const key of URL_STATE_PARAMS) {
+    const value = url.searchParams.get(key);
+
+    if (value) {
+      stateParams.set(key, value);
+    }
+  }
+
+  url.search = '';
+  url.hash = url.pathname === '/' && hasSearchParams(stateParams) ? stateParams.toString() : '';
+}
+
+function hasSearchParams(value: URL | URLSearchParams) {
+  const params = value instanceof URL ? value.searchParams : value;
+  return params.keys().next().done === false;
 }
 
 function isLocalHost(hostname: string) {

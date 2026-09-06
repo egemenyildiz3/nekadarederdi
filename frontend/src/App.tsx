@@ -8,7 +8,7 @@ import { MoneyValue } from './components/MoneyValue';
 import { ResultCard } from './components/ResultCard';
 import { SpotMarketBar } from './components/SpotMarketBar';
 import { calculateOnBackend, fetchSeries } from './lib/api';
-import { defaultState, isDefaultState, parseStateFromUrl, stateToSearchParams } from './lib/calculator';
+import { defaultState, isDefaultState, parseStateFromUrl, stateToHash } from './lib/calculator';
 import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseEditableLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, MarketSeries, SeriesKey } from './types';
 
@@ -515,7 +515,7 @@ function App() {
   }
 
   const [state, setState] = useState<CalculatorState>(() => {
-    const initialState = parseStateFromUrl(window.location.search);
+    const initialState = parseStateFromUrl(window.location.search, window.location.hash);
     return { ...initialState, amount: Math.min(initialState.amount, MAX_INPUT_AMOUNT) };
   });
   const [results, setResults] = useState<CalculationResult[]>([]);
@@ -551,8 +551,8 @@ function App() {
   }, [catalog]);
 
   useEffect(() => {
-    const query = isDefaultState(state) ? '' : `?${stateToSearchParams(state)}`;
-    const nextUrl = `${window.location.pathname}${query}`;
+    const hash = isDefaultState(state) ? '' : stateToHash(state);
+    const nextUrl = `${window.location.pathname}${hash}`;
     window.history.replaceState(null, '', nextUrl);
   }, [state]);
 

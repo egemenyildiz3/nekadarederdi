@@ -30,9 +30,9 @@ export function defaultState(): CalculatorState {
   };
 }
 
-export function parseStateFromUrl(search: string): CalculatorState {
+export function parseStateFromUrl(search: string, hash = ''): CalculatorState {
   const fallback = defaultState();
-  const params = new URLSearchParams(search);
+  const params = new URLSearchParams(search || stateParamsFromHash(hash));
   const amount = Number(params.get('amount'));
   const inputUnit = normalizeInputUnit(params.get('unit')) ?? fallback.inputUnit;
   const criteria = params
@@ -59,6 +59,10 @@ export function stateToSearchParams(state: CalculatorState): string {
   return params.toString();
 }
 
+export function stateToHash(state: CalculatorState): string {
+  return `#${stateToSearchParams(state)}`;
+}
+
 export function isDefaultState(state: CalculatorState): boolean {
   const fallback = defaultState();
   return (
@@ -72,6 +76,17 @@ export function isDefaultState(state: CalculatorState): boolean {
 
 function normalizeInputUnit(value: string | null): InputUnit | null {
   return value && VALID_INPUT_UNITS.includes(value as InputUnit) ? (value as InputUnit) : null;
+}
+
+function stateParamsFromHash(hash: string): string {
+  const value = hash.startsWith('#') ? hash.slice(1) : hash;
+
+  if (!value || value === 'hesapla') {
+    return '';
+  }
+
+  const queryIndex = value.indexOf('?');
+  return queryIndex >= 0 ? value.slice(queryIndex + 1) : value;
 }
 
 function sameCriteria(first: SeriesKey[], second: SeriesKey[]): boolean {
