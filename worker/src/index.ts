@@ -138,6 +138,42 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://nekadarederdi.com/rehberler</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/rehberler/tufe-ile-para-degeri-nasil-hesaplanir</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/rehberler/dolar-ve-tufe-karsilastirmasi</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/rehberler/gram-altin-ile-alim-gucu-hesaplama</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/rehberler/asgari-ucretin-yillara-gore-alim-gucu</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/rehberler/2010daki-1000-tl-bugun-ne-kadar</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://nekadarederdi.com/hakkinda</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>yearly</changefreq>
@@ -226,6 +262,36 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
     title: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
     description:
       'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
+  },
+  '/rehberler': {
+    title: 'Rehberler | Ne Kadar Ederdi?',
+    description:
+      'TUFE, dolar, altin, asgari ucret ve gecmis para degeri hesaplamalarini dogru yorumlamak icin hazirlanmis rehberler.',
+  },
+  '/rehberler/tufe-ile-para-degeri-nasil-hesaplanir': {
+    title: 'TUFE ile Para Degeri Nasil Hesaplanir? | Ne Kadar Ederdi?',
+    description:
+      'Gecmisteki bir TL tutarinin TUFE endeksiyle bugunku yaklasik alim gucune nasil tasindigini orneklerle okuyun.',
+  },
+  '/rehberler/dolar-ve-tufe-karsilastirmasi': {
+    title: 'Dolar ve TUFE Karsilastirmasi | Ne Kadar Ederdi?',
+    description:
+      'Ayni tutarin dolar kuru ve TUFE olcutleriyle neden farkli sonuclar verdigini, hangi sonucun neyi anlattigini ogrenin.',
+  },
+  '/rehberler/gram-altin-ile-alim-gucu-hesaplama': {
+    title: 'Gram Altin ile Alim Gucu Hesaplama | Ne Kadar Ederdi?',
+    description:
+      'Gram altin karsilastirmasinin neyi gosterdigini, TUFE alim gucu hesabindan neden ayrildigini okuyun.',
+  },
+  '/rehberler/asgari-ucretin-yillara-gore-alim-gucu': {
+    title: 'Asgari Ucretin Yillara Gore Alim Gucu | Ne Kadar Ederdi?',
+    description:
+      'Asgari ucret serisinin eski maas, kira ve fiyat karsilastirmalarinda nasil yorumlanmasi gerektigini aciklayan rehber.',
+  },
+  '/rehberler/2010daki-1000-tl-bugun-ne-kadar': {
+    title: '2010daki 1.000 TL Bugun Ne Kadar? | Ne Kadar Ederdi?',
+    description:
+      '2010 yilindaki 1.000 TL tutarini TUFE, dolar, altin ve asgari ucret gibi farkli olcutlerle yorumlama rehberi.',
   },
   '/hakkinda': {
     title: 'Hakkında | Ne Kadar Ederdi?',
@@ -398,7 +464,10 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
     .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/, `<meta property="og:url" content="${canonical}" />`)
     .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`)
     .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`)
-    .replace(/<div\s+id="root"\s*><\/div>/, `<div id="root">${renderStaticPublisherContent(url.pathname, metadata)}</div>`);
+    .replace(
+      /<div\s+id="root"\s*>[\s\S]*?<\/article>\s*<\/div>/,
+      `<div id="root">${renderStaticPublisherContent(url.pathname, metadata)}</div>`,
+    );
 
   return new Response(nextHtml, {
     status: isKnownPage ? response.status : 404,
@@ -418,6 +487,7 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
 
   const isHome = pathname === '/';
   const title = isHome ? 'Ne Kadar Ederdi?' : metadata.title.replace(' | Ne Kadar Ederdi?', '');
+  const staticGuideSections = getStaticGuideSections(pathname);
   const sections = isHome
     ? [
         {
@@ -436,7 +506,7 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
             'Seriler resmi kurumlar ve yaygın piyasa veri kaynaklarından derlenir. Gün içi fiyat, vergi, komisyon, alış-satış makası, temettü ve bölgesel fiyat farkları hesaba dahil değildir; sonuçlar yatırım tavsiyesi değildir.',
         },
       ]
-    : [
+    : staticGuideSections ?? [
         {
           title: 'Bu sayfanın amacı',
           body: metadata.description,
@@ -459,7 +529,121 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
     ${sections
       .map((section) => `<section><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`)
       .join('')}
+    ${
+      isHome
+        ? `<section><h2>TUFE, doviz ve altin farkli sorulara cevap verir</h2><p>Reel TL sonucu satin alma gucunu, dolar ve euro sonuclari kur degisimini, gram altin ve gumus sonuclari degerli maden fiyatlarini anlatir. Ayni tutar farkli olcutlerde farkli karsiliklar uretebilir.</p></section><section><h2>Rehberler ve metodoloji</h2><p>Site, TUFE ile para degeri, dolar ve TUFE karsilastirmasi, gram altin hesabinin sinirlari ve asgari ucret olcegi gibi konulari aciklayan rehberler icerir. Metodoloji ve veri kaynaklari sayfalari hesaplama mantigini ayrica aciklar.</p></section><section><h2>Kontrollu indexleme</h2><p>Paylasilabilir hesaplama adresleri hash ile saklanir ve otomatik olarak binlerce benzer sayfaya donusturulmez. Indexlenebilir sayfalar ek aciklama ve baglam sunan secilmis rehberlerden olusur.</p></section>`
+        : ''
+    }
   </article>`;
+}
+
+function getStaticGuideSections(pathname: string) {
+  const guides: Record<string, { title: string; body: string }[]> = {
+    '/rehberler': [
+      {
+        title: 'Rehberlerin amaci',
+        body:
+          'Bu sayfalar hesap makinesindeki sonuclari dogru yorumlamak icin hazirlandi. TUFE, doviz, altin, asgari ucret ve piyasa serileri ayni ekonomik soruya cevap vermez.',
+      },
+      {
+        title: 'Hesap makinesiyle baglanti',
+        body:
+          'Her rehber ilgili hesaplama ayarlariyla hesap makinesine baglanir. Boylece aciklama metni ile canli hesaplama ayni veri katmani uzerinden okunur.',
+      },
+      {
+        title: 'Kontrollu icerik stratejisi',
+        body:
+          'Site tum olasi hesaplama kombinasyonlarini indexlenebilir sayfaya cevirmek yerine, kullaniciya ek baglam sunan secilmis rehberleri indexler.',
+      },
+    ],
+    '/rehberler/tufe-ile-para-degeri-nasil-hesaplanir': [
+      {
+        title: 'Endeks orani ne anlatir?',
+        body:
+          'Baslangic ayindaki TUFE endeksi ile bitis ayindaki TUFE endeksi oranlanir. Bu oran gecmisteki nominal tutarin bugunku fiyat duzeyindeki yaklasik karsiligini verir.',
+      },
+      {
+        title: 'Alim gucu ve fiyat farki',
+        body:
+          'TUFE sonucu yatirim getirisi degil, tuketici fiyatlari karsisindaki yaklasik alim gucu hesabidir. Dolar veya altin sonuclariyla ayni sey degildir.',
+      },
+      {
+        title: 'Ay bazli veri',
+        body:
+          'TUFE aylik yayimlanan resmi bir seri oldugu icin arac gun secimi yerine ay bazli karsilastirma kullanir.',
+      },
+    ],
+    '/rehberler/dolar-ve-tufe-karsilastirmasi': [
+      {
+        title: 'TUFE ic fiyat duzeyini okur',
+        body:
+          'TUFE hesabi tuketici fiyatlarinin donem boyunca nasil degistigine bakar ve yerel alim gucu icin daha dogrudan bir olcek sunar.',
+      },
+      {
+        title: 'Dolar kuru dis deger perspektifi verir',
+        body:
+          'Dolar sonucu TLnin ABD dolari karsisindaki tarihsel hareketini yansitir. Ithal urunler ve doviz bazli birikim kiyaslarinda fikir verir.',
+      },
+      {
+        title: 'Farkli sonuc normaldir',
+        body:
+          'Kur ve tuketici fiyatlari ayni hizda hareket etmek zorunda degildir. Bu nedenle ayni tutar TUFE ve dolar olcutunde farkli karsilik uretebilir.',
+      },
+    ],
+    '/rehberler/gram-altin-ile-alim-gucu-hesaplama': [
+      {
+        title: 'Altin fiyat serisi ayri bir olcektir',
+        body:
+          'Gram altin TL fiyati ons altin ve doviz kurundan etkilenir. Bu sonuc alim gucu hesabi degil, degerli maden fiyat kiyasidir.',
+      },
+      {
+        title: 'Gumusle birlikte okumak',
+        body:
+          'Gumus serisi degerli madenler arasinda fiyat hareketlerinin ne kadar farklilasabilecegini gosterir.',
+      },
+      {
+        title: 'Maliyetler dahil degildir',
+        body:
+          'Alis satis farki, vergi, komisyon ve saklama maliyeti hesaplamaya eklenmez. Sonuc yaklasik tarihsel kiyas olarak okunmalidir.',
+      },
+    ],
+    '/rehberler/asgari-ucretin-yillara-gore-alim-gucu': [
+      {
+        title: 'Gelir olcegi farkli bir sorudur',
+        body:
+          'TUFE fiyat duzeyine bakarken asgari ucret sonucu ayni tutarin temel gelir karsisindaki agirligini gosterir.',
+      },
+      {
+        title: 'Eski maas yorumunda ise yarar',
+        body:
+          'Bir maas incelenirken TUFE alim gucunu, asgari ucret ise gelir skalasindaki goreli konumu gorunur kilar.',
+      },
+      {
+        title: 'Resmi bordro hesabi degildir',
+        body:
+          'Asgari ucret serisi yaklasik karsilastirma icindir; resmi bordro, hak edis veya hukuki hesap yerine gecmez.',
+      },
+    ],
+    '/rehberler/2010daki-1000-tl-bugun-ne-kadar': [
+      {
+        title: 'Tek cevap yoktur',
+        body:
+          '2010daki 1.000 TL icin TUFE, dolar, altin ve asgari ucret farkli ekonomik anlamlar tasir. Once hangi soruyu sordugunuzu netlestirmek gerekir.',
+      },
+      {
+        title: 'Olcutleri birlikte okuyun',
+        body:
+          'Reel TL alim gucunu, dolar dis degeri, altin degerli maden fiyatini, asgari ucret ise gelir olcegini anlatir.',
+      },
+      {
+        title: 'Hesap makinesiyle ayrintilandirin',
+        body:
+          'Rehber baglantisi hesap makinesini 2010 baslangici ve 1.000 TL tutariyla acar. Bitis ayini ve olcutleri degistirerek sonucu yeniden yorumlayabilirsiniz.',
+      },
+    ],
+  };
+
+  return guides[pathname] ?? null;
 }
 
 async function getSpotMarket() {
