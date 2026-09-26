@@ -9,6 +9,16 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": true
   },
+  "routes": [
+    {
+      "pattern": "nekadarederdi.com/*",
+      "zone_name": "nekadarederdi.com"
+    },
+    {
+      "pattern": "www.nekadarederdi.com/*",
+      "zone_name": "nekadarederdi.com"
+    }
+  ],
   "observability": {
     "enabled": true
   }
