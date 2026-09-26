@@ -7,9 +7,10 @@ import { MonthSelect } from './components/MonthSelect';
 import { MoneyValue } from './components/MoneyValue';
 import { ResultCard } from './components/ResultCard';
 import { SpotMarketBar } from './components/SpotMarketBar';
+import catalogData from '../../data/market-series.json';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToHash } from './lib/calculator';
-import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, parseEditableLocalizedNumber } from './lib/format';
+import { formatEditableNumber, formatInputAmount, formatMoney, formatMonth, numberFormatter, parseEditableLocalizedNumber } from './lib/format';
 import type { CalculationResult, CalculatorState, InputUnit, MarketCatalog, MarketSeries, SeriesKey } from './types';
 
 const MAX_INPUT_AMOUNT = 999_999_999_999;
@@ -72,6 +73,24 @@ type GuidePageContent = {
   calculatorHref: string;
   sections: { title: string; body: string }[];
   takeaways: string[];
+};
+
+type PublisherPageContent = {
+  path: string;
+  hub: 'atlas' | 'guncellemeler' | 'veri-defteri';
+  eyebrow: string;
+  title: string;
+  metaTitle: string;
+  description: string;
+  intro: string;
+  calculatorHref?: string;
+  calculation?: {
+    amount: number;
+    inputUnit: InputUnit;
+    startMonth: string;
+    criteria: SeriesKey[];
+  };
+  sections: { title: string; body: string }[];
 };
 
 const LANDING_PAGES: LandingPageContent[] = [
@@ -667,8 +686,287 @@ const GUIDE_PAGES: GuidePageContent[] = [
   },
 ];
 
+const PUBLISHER_PAGES: PublisherPageContent[] = [
+  {
+    path: '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor',
+    hub: 'atlas',
+    eyebrow: 'Para Değeri Atlası',
+    title: '2010’daki 1.000 TL bugün ne anlatıyor?',
+    metaTitle: '2010’daki 1.000 TL Bugün Ne Anlatıyor? | Para Değeri Atlası',
+    description:
+      '2010 Ocak ayındaki 1.000 TL tutarını TÜFE, dolar, euro, gram altın, asgari ücret, benzin ve mevduat serileriyle birlikte okuyun.',
+    intro:
+      'Bu atlas notu tek bir “doğru değer” aramak yerine aynı tutarı farklı ekonomik ölçeklerde yan yana okur. TÜFE alım gücünü, döviz dış değer değişimini, altın ve mevduat ise farklı fiyat/getiri perspektiflerini gösterir.',
+    calculatorHref: '/#amount=1000&unit=try&start=2010-01&criteria=cpi%2Cusd%2Ceur%2Cgold%2CminimumWage%2Cgasoline%2Cdeposit',
+    calculation: {
+      amount: 1000,
+      inputUnit: 'try',
+      startMonth: '2010-01',
+      criteria: ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'gasoline', 'deposit'],
+    },
+    sections: [
+      {
+        title: 'TÜFE sonucu temel alım gücü okumasıdır',
+        body:
+          'Geçmişteki TL tutarını bugünkü fiyat düzeyine taşırken en doğrudan başlangıç noktası TÜFE’dir. Bu sonuç yatırım getirisi değil, tüketici fiyatları karşısındaki yaklaşık satın alma gücü karşılığıdır.',
+      },
+      {
+        title: 'Döviz ve altın farklı hikaye anlatır',
+        body:
+          'Dolar, euro ve gram altın sonuçları yerel fiyat sepetini değil, TL’nin farklı piyasa serileri karşısındaki hareketini gösterir. Bu yüzden TÜFE sonucundan ayrışmaları normaldir.',
+      },
+      {
+        title: 'Benzin ve ücret gündelik hissi tamamlar',
+        body:
+          'Benzin serisi gündelik maliyet hissi, asgari ücret ise gelir ölçeği sağlar. Aynı tutar günlük yaşam, ücret ve piyasa açısından farklı ağırlık taşıyabilir.',
+      },
+    ],
+  },
+  {
+    path: '/atlas/eski-maaslarin-alim-gucu',
+    hub: 'atlas',
+    eyebrow: 'Para Değeri Atlası',
+    title: 'Eski maaşların alım gücü nasıl okunmalı?',
+    metaTitle: 'Eski Maaşların Alım Gücü | Para Değeri Atlası',
+    description:
+      '2015’teki 5.000 TL maaşı TÜFE, asgari ücret, dolar, gram altın ve benzin ölçütleriyle karşılaştıran veri notu.',
+    intro:
+      'Maaş karşılaştırması yalnızca enflasyon çarpanı değildir. Aynı maaş tüketici fiyatlarına, asgari ücrete, dövize ve gündelik maliyetlere göre ayrı ayrı değerlendirilmelidir.',
+    calculatorHref: '/#amount=5000&unit=try&start=2015-01&criteria=cpi%2CminimumWage%2Cusd%2Cgold%2Cgasoline',
+    calculation: {
+      amount: 5000,
+      inputUnit: 'try',
+      startMonth: '2015-01',
+      criteria: ['cpi', 'minimumWage', 'usd', 'gold', 'gasoline'],
+    },
+    sections: [
+      {
+        title: 'TÜFE maaşın fiyat düzeyindeki karşılığını verir',
+        body:
+          'Eski maaşı bugüne taşırken TÜFE sonucu, benzer bir tüketim sepetini korumak için gereken yaklaşık TL tutarını gösterir.',
+      },
+      {
+        title: 'Asgari ücret gelir skalasını gösterir',
+        body:
+          'Asgari ücret kıyası, maaşın temel gelir düzeyine göre konumunun nasıl değiştiğini anlamaya yardım eder. Bu resmi bordro hesabı değildir.',
+      },
+      {
+        title: 'Döviz ve altın maaş yorumunu sertleştirir',
+        body:
+          'Döviz ve altın sonuçları maaşın yerel alım gücünden çok dış değer ve değerli maden fiyatları karşısındaki görünümünü anlatır.',
+      },
+    ],
+  },
+  {
+    path: '/atlas/dolar-mi-tufe-mi-altin-mi',
+    hub: 'atlas',
+    eyebrow: 'Para Değeri Atlası',
+    title: 'Dolar mı, TÜFE mi, altın mı?',
+    metaTitle: 'Dolar mı TÜFE mi Altın mı? | Para Değeri Atlası',
+    description:
+      'Aynı TL tutarının TÜFE, dolar, euro, gram altın ve gümüş ölçütlerinde neden farklı sonuç verdiğini gösteren karşılaştırma.',
+    intro:
+      'Para değeri sorusunda ölçüt seçimi sonucu belirler. Bu sayfa 2020’den bugüne 10.000 TL için üç yaygın okuma biçimini yan yana koyar.',
+    calculatorHref: '/#amount=10000&unit=try&start=2020-01&criteria=cpi%2Cusd%2Ceur%2Cgold%2Csilver',
+    calculation: {
+      amount: 10000,
+      inputUnit: 'try',
+      startMonth: '2020-01',
+      criteria: ['cpi', 'usd', 'eur', 'gold', 'silver'],
+    },
+    sections: [
+      {
+        title: 'TÜFE yerel fiyat sepetidir',
+        body:
+          'TÜFE sonucu kira, gıda, ulaşım ve hizmetlerden oluşan tüketici fiyat düzeyine daha yakın bir okuma sağlar.',
+      },
+      {
+        title: 'Dolar ve euro dış değer ölçer',
+        body:
+          'Döviz sonuçları ithal ürün, döviz borcu veya yabancı para birikimi gibi sorular için anlamlıdır; tüketici enflasyonuyla birebir aynı değildir.',
+      },
+      {
+        title: 'Altın ve gümüş piyasa serisidir',
+        body:
+          'Değerli maden sonuçları ons fiyatı, kur ve piyasa koşullarından etkilenir. Alış-satış makası ve işlem maliyetleri dahil değildir.',
+      },
+    ],
+  },
+  {
+    path: '/guncellemeler/2026-09',
+    hub: 'guncellemeler',
+    eyebrow: 'Aylık veri notu',
+    title: 'Eylül 2026 veri durumu',
+    metaTitle: 'Eylül 2026 Veri Durumu | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi veri setindeki serilerin son ayları, geciken resmi veriler ve hesaplama davranışı hakkında Eylül 2026 notu.',
+    intro:
+      'Bu not, sitenin kullandığı veri setinde hangi serilerin hangi aya kadar geldiğini ve gecikmeli yayımlanan serilerde hesaplayıcının neden son güvenilir aya döndüğünü açıklar.',
+    sections: [
+      {
+        title: 'Resmi seriler gecikmeli gelir',
+        body:
+          'TÜFE, konut endeksi ve bazı maliyet serileri kaynak kurumların yayımlama takvimine bağlıdır. Bir ay seçilebilir olsa bile hesaplama, ilgili ölçütlerin mevcut son ortak ayına göre yapılır.',
+      },
+      {
+        title: 'Piyasa serileri daha hızlı güncellenir',
+        body:
+          'Döviz, altın, Bitcoin ve BIST gibi piyasa serileri daha sık değişir. Aylık kıyaslama yapısında seri değerleri güncellenirken yöntem aynı kalır.',
+      },
+      {
+        title: 'Kullanıcıya gösterilen uyarı bilinçlidir',
+        body:
+          'Seçili ölçütlerde son ortak veri ayı daha gerideyse hesaplayıcı bunu form içinde belirtir. Amaç boş ya da uydurma veriyle sonuç üretmemektir.',
+      },
+    ],
+  },
+  {
+    path: '/guncellemeler/2026-08',
+    hub: 'guncellemeler',
+    eyebrow: 'Aylık veri notu',
+    title: 'Ağustos 2026 veri durumu',
+    metaTitle: 'Ağustos 2026 Veri Durumu | Ne Kadar Ederdi?',
+    description:
+      'Ağustos 2026 itibarıyla para değeri hesaplamalarında kullanılan aylık veri yaklaşımı, ortak ay mantığı ve kaynak gecikmeleri.',
+    intro:
+      'Ne Kadar Ederdi, farklı kaynaklardan gelen serileri tek bir ekranda okutur. Bu yüzden her seri için “son veri ayı” aynı olmayabilir.',
+    sections: [
+      {
+        title: 'Ortak ay yaklaşımı hatalı karşılaştırmayı önler',
+        body:
+          'Birden fazla ölçüt seçildiğinde araç, tüm seçili serilerde güvenilir veri bulunan son ortak aya döner. Böylece bir seri güncel, diğeri eksik haldeyken yanıltıcı sonuç gösterilmez.',
+      },
+      {
+        title: 'Kaynak notları sonuç kartlarında tutulur',
+        body:
+          'Her sonuç kartı başlangıç ve bitiş verisini, çarpanı ve kaynak notunu ayrıca gösterir. Bu notlar kullanıcının sonucu nasıl okuyacağını anlaması için önemlidir.',
+      },
+      {
+        title: 'Güncelleme düzeni sitenin parçasıdır',
+        body:
+          'Veri seti düzenli kontrol edilir. Yeni seri yayımlandığında hesaplama motoru aynı oran yöntemini kullanarak sonuçları günceller.',
+      },
+    ],
+  },
+  {
+    path: '/veri-defteri/tufe',
+    hub: 'veri-defteri',
+    eyebrow: 'Veri Defteri',
+    title: 'TÜFE serisi',
+    metaTitle: 'TÜFE Serisi | Veri Defteri',
+    description:
+      'TÜFE serisinin Ne Kadar Ederdi içinde neyi ölçtüğü, nasıl kullanıldığı, hangi sınırlara sahip olduğu ve son veri ayı.',
+    sections: [
+      {
+        title: 'Ne anlatır?',
+        body:
+          'TÜFE serisi geçmişteki TL tutarının tüketici fiyatları karşısındaki yaklaşık bugünkü alım gücünü hesaplamak için kullanılır.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'TÜFE kişisel harcama sepetini, bölgesel fiyat farkını, yatırım getirisini veya resmi hak ediş hesabını tek başına temsil etmez.',
+      },
+      {
+        title: 'Hesaplama yöntemi',
+        body:
+          'Bitiş ayındaki endeks başlangıç ayındaki endekse bölünür; çıkan çarpan girilen TL tutarına uygulanır.',
+      },
+    ],
+    intro:
+      'TÜFE, sitenin reel TL sonucunun temelidir. En çok “geçmişteki para bugünün alım gücüyle ne ederdi?” sorusunda kullanılır.',
+  },
+  {
+    path: '/veri-defteri/dolar',
+    hub: 'veri-defteri',
+    eyebrow: 'Veri Defteri',
+    title: 'Dolar serisi',
+    metaTitle: 'Dolar Serisi | Veri Defteri',
+    description:
+      'Dolar serisinin TL karşılaştırmalarında nasıl kullanıldığı, kur bazlı sonucun ne anlattığı ve hangi sınırlara sahip olduğu.',
+    intro:
+      'Dolar serisi, TL’nin ABD doları karşısındaki tarihsel değişimini okumak için kullanılır. Bu sonuç enflasyon hesabı değildir.',
+    sections: [
+      {
+        title: 'Ne anlatır?',
+        body:
+          'Dolar sonucu, seçilen TL tutarının kur değişimine göre bugün yaklaşık hangi TL karşılığa denk geleceğini gösterir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Dolar kuru yerel tüketici fiyatlarıyla aynı şey değildir. İthal ürün etkisi için fikir verse de genel alım gücünün tek ölçütü değildir.',
+      },
+      {
+        title: 'Nasıl okunur?',
+        body:
+          'Kur çarpanı büyüdükçe aynı TL tutarının dolar bazlı bugünkü karşılığı artar. Sonuç alış-satış makası ve işlem maliyeti içermez.',
+      },
+    ],
+  },
+  {
+    path: '/veri-defteri/gram-altin',
+    hub: 'veri-defteri',
+    eyebrow: 'Veri Defteri',
+    title: 'Gram altın serisi',
+    metaTitle: 'Gram Altın Serisi | Veri Defteri',
+    description:
+      'Gram altın fiyat serisinin geçmiş para değeri karşılaştırmalarında nasıl yorumlandığı ve TÜFE’den neden farklı sonuç verdiği.',
+    intro:
+      'Gram altın serisi, TL tutarlarını değerli maden fiyatı üzerinden okumak için kullanılır. Ons altın ve kur hareketleri sonucu etkiler.',
+    sections: [
+      {
+        title: 'Ne anlatır?',
+        body:
+          'Geçmişteki bir TL tutarının gram altın fiyatındaki değişime göre bugünkü yaklaşık TL karşılığını gösterir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Bu sonuç kişisel yatırım getirisi garantisi değildir; vergi, makas, komisyon ve saklama maliyeti dahil değildir.',
+      },
+      {
+        title: 'Nasıl kullanılır?',
+        body:
+          'TÜFE sonucu ile yan yana okunması, alım gücü ve değerli maden fiyatı perspektiflerinin ayrılmasına yardım eder.',
+      },
+    ],
+  },
+  {
+    path: '/veri-defteri/asgari-ucret',
+    hub: 'veri-defteri',
+    eyebrow: 'Veri Defteri',
+    title: 'Asgari ücret serisi',
+    metaTitle: 'Asgari Ücret Serisi | Veri Defteri',
+    description:
+      'Asgari ücret serisinin eski maaş, kira ve fiyat karşılaştırmalarında nasıl kullanıldığı ve hangi sınırlara sahip olduğu.',
+    intro:
+      'Asgari ücret serisi, belirli bir tutarın dönemsel temel gelir düzeyi karşısındaki ağırlığını okumak için kullanılır.',
+    sections: [
+      {
+        title: 'Ne anlatır?',
+        body:
+          'Aynı tutarın farklı dönemlerdeki net asgari ücret düzeyine göre nasıl konumlandığını gösterir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Resmi bordro, kıdem, tazminat veya hukuki hak ediş hesabı değildir. Gelir ölçeği olarak yaklaşık karşılaştırma sunar.',
+      },
+      {
+        title: 'Nerede işe yarar?',
+        body:
+          'Eski maaş, kira ve temel gider karşılaştırmalarında TÜFE sonucunu tamamlayan gelir perspektifi sağlar.',
+      },
+    ],
+  },
+];
+
 const FOOTER_LINKS = [
+  { href: '/atlas', label: 'Atlas' },
   { href: '/rehberler', label: 'Rehberler' },
+  { href: '/veri-defteri', label: 'Veri Defteri' },
+  { href: '/guncellemeler', label: 'Güncellemeler' },
   { href: '/hakkinda', label: 'Hakkında' },
   { href: '/metodoloji', label: 'Metodoloji' },
   { href: '/veri-kaynaklari', label: 'Veri Kaynakları' },
@@ -681,9 +979,22 @@ function App() {
   const landingPage = LANDING_PAGES.find((page) => page.path === window.location.pathname);
   const infoPage = INFO_PAGES.find((page) => page.path === window.location.pathname);
   const guidePage = GUIDE_PAGES.find((page) => page.path === window.location.pathname);
+  const publisherPage = PUBLISHER_PAGES.find((page) => page.path === window.location.pathname);
 
   if (window.location.pathname === '/rehberler') {
     return <GuideIndexPage />;
+  }
+
+  if (window.location.pathname === '/atlas') {
+    return <PublisherIndexPage hub="atlas" />;
+  }
+
+  if (window.location.pathname === '/guncellemeler') {
+    return <PublisherIndexPage hub="guncellemeler" />;
+  }
+
+  if (window.location.pathname === '/veri-defteri') {
+    return <PublisherIndexPage hub="veri-defteri" />;
   }
 
   if (landingPage) {
@@ -696,6 +1007,10 @@ function App() {
 
   if (guidePage) {
     return <GuidePage page={guidePage} />;
+  }
+
+  if (publisherPage) {
+    return <PublisherPage page={publisherPage} />;
   }
 
   const [state, setState] = useState<CalculatorState>(() => {
@@ -1535,6 +1850,334 @@ function GuidePage({ page }: { page: GuidePageContent }) {
   );
 }
 
+function PublisherIndexPage({ hub }: { hub: PublisherPageContent['hub'] }) {
+  const pages = PUBLISHER_PAGES.filter((page) => page.hub === hub);
+  const config = getPublisherHubConfig(hub);
+
+  useEffect(() => {
+    document.title = config.metaTitle;
+    setMetaContent('description', config.description);
+    setMetaProperty('og:title', config.metaTitle);
+    setMetaProperty('og:description', config.description);
+    setMetaProperty('og:url', `https://nekadarederdi.com${config.path}`);
+    setMetaContent('twitter:title', config.metaTitle);
+    setMetaContent('twitter:description', config.description);
+    setCanonical(`https://nekadarederdi.com${config.path}`);
+  }, [config]);
+
+  return (
+    <main className="page-shell min-h-screen text-ink-950">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+        <PageHeader />
+        <article className="publisher-page">
+          <section className="publisher-hero">
+            <p className="eyebrow">{config.eyebrow}</p>
+            <h1>{config.title}</h1>
+            <p>{config.description}</p>
+          </section>
+          <section className="publisher-grid" aria-label={config.title}>
+            {pages.map((page) => (
+              <a className="publisher-card" href={page.path} key={page.path}>
+                <span className="eyebrow">{page.eyebrow}</span>
+                <h2>{page.title}</h2>
+                <p>{page.description}</p>
+              </a>
+            ))}
+          </section>
+          <section className="publisher-note">
+            <h2>Bu bölüm neden var?</h2>
+            <p>{config.note}</p>
+          </section>
+        </article>
+        <SiteFooter />
+      </div>
+    </main>
+  );
+}
+
+function PublisherPage({ page }: { page: PublisherPageContent }) {
+  const results = page.calculation ? calculatePublishedResults(page.calculation) : [];
+  const latestRows = getSeriesLedgerRows(page);
+  const relatedPages = PUBLISHER_PAGES.filter((item) => item.hub === page.hub && item.path !== page.path).slice(0, 3);
+
+  useEffect(() => {
+    document.title = page.metaTitle;
+    setMetaContent('description', page.description);
+    setMetaProperty('og:title', page.metaTitle);
+    setMetaProperty('og:description', page.description);
+    setMetaProperty('og:url', `https://nekadarederdi.com${page.path}`);
+    setMetaContent('twitter:title', page.metaTitle);
+    setMetaContent('twitter:description', page.description);
+    setCanonical(`https://nekadarederdi.com${page.path}`);
+  }, [page]);
+
+  return (
+    <main className="page-shell min-h-screen text-ink-950">
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+        <PageHeader />
+        <article className="publisher-page">
+          <section className="publisher-hero">
+            <p className="eyebrow">{page.eyebrow}</p>
+            <h1>{page.title}</h1>
+            <p>{page.intro}</p>
+            {page.calculatorHref ? (
+              <a className="publisher-cta" href={page.calculatorHref}>
+                Hesap makinesinde aç
+              </a>
+            ) : null}
+          </section>
+
+          {results.length > 0 ? (
+            <section className="publisher-table-section" aria-labelledby="publisher-result-heading">
+              <div>
+                <p className="eyebrow">Veriden çıkan tablo</p>
+                <h2 id="publisher-result-heading">
+                  {formatInputAmount(page.calculation!.amount, page.calculation!.inputUnit)} için ölçütlere göre karşılık
+                </h2>
+                <p>
+                  {formatMonth(page.calculation!.startMonth)} başlangıcından {formatMonth(results[0].endObservation.date.slice(0, 7))} son
+                  ortak veri ayına kadar hesaplandı.
+                </p>
+              </div>
+              <div className="publisher-table" role="table" aria-label="Örnek hesaplama sonuçları">
+                <div className="publisher-table__row publisher-table__row--head" role="row">
+                  <span role="columnheader">Ölçüt</span>
+                  <span role="columnheader">Karşılık</span>
+                  <span role="columnheader">Çarpan</span>
+                  <span role="columnheader">Bitiş verisi</span>
+                </div>
+                {results.map((result) => (
+                  <div className="publisher-table__row" role="row" key={result.series.key}>
+                    <span role="cell">
+                      <strong>{result.series.name}</strong>
+                      <small>{result.series.description}</small>
+                    </span>
+                    <span role="cell">{formatMoney(result.resultAmount)}</span>
+                    <span role="cell">{numberFormatter.format(result.multiplier)}x</span>
+                    <span role="cell">
+                      {formatTryNumberForPage(result.endObservation.value)}
+                      <small>{formatMonth(result.endObservation.date.slice(0, 7))}</small>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {latestRows.length > 0 ? (
+            <section className="publisher-table-section" aria-labelledby="series-ledger-heading">
+              <div>
+                <p className="eyebrow">Seri kapsamı</p>
+                <h2 id="series-ledger-heading">Bu sayfada kullanılan veri durumu</h2>
+                <p>Kaynak gecikmesi olan serilerde hesap makinesi boş değer üretmek yerine son güvenilir gözleme döner.</p>
+              </div>
+              <div className="publisher-table publisher-table--compact" role="table" aria-label="Veri serisi durumu">
+                <div className="publisher-table__row publisher-table__row--head" role="row">
+                  <span role="columnheader">Seri</span>
+                  <span role="columnheader">Son ay</span>
+                  <span role="columnheader">Son değer</span>
+                  <span role="columnheader">Kaynak notu</span>
+                </div>
+                {latestRows.map((row) => (
+                  <div className="publisher-table__row" role="row" key={row.key}>
+                    <span role="cell">
+                      <strong>{row.name}</strong>
+                    </span>
+                    <span role="cell">{formatMonth(row.month)}</span>
+                    <span role="cell">{row.value}</span>
+                    <span role="cell">{row.source}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="publisher-section-grid">
+            {page.sections.map((section) => (
+              <article key={section.title}>
+                <h2>{section.title}</h2>
+                <p>{section.body}</p>
+              </article>
+            ))}
+          </section>
+
+          <section className="publisher-note">
+            <h2>Yöntem ve sınırlama</h2>
+            <p>
+              Tablolar Ne Kadar Ederdi veri setindeki aylık gözlemlerle oran yöntemi kullanılarak üretilir. Sonuçlar
+              bilgilendirme amaçlı yaklaşık karşılaştırmadır; yatırım tavsiyesi, resmi hak ediş ya da hukuki hesap
+              değildir.
+            </p>
+          </section>
+
+          {relatedPages.length > 0 ? (
+            <section className="guide-link-panel">
+              <p className="eyebrow">Aynı bölümden</p>
+              <nav className="guide-links" aria-label="İlgili yayın sayfaları">
+                {relatedPages.map((relatedPage) => (
+                  <a href={relatedPage.path} key={relatedPage.path}>
+                    {relatedPage.title}
+                  </a>
+                ))}
+              </nav>
+            </section>
+          ) : null}
+        </article>
+        <SiteFooter />
+      </div>
+    </main>
+  );
+}
+
+function getPublisherHubConfig(hub: PublisherPageContent['hub']) {
+  const configs = {
+    atlas: {
+      path: '/atlas',
+      eyebrow: 'Para Değeri Atlası',
+      title: 'Para Değeri Atlası',
+      metaTitle: 'Para Değeri Atlası | Ne Kadar Ederdi?',
+      description:
+        'Geçmiş para değerini TÜFE, döviz, altın, ücret ve piyasa serileriyle açıklayan veri tabanlı analizler.',
+      note:
+        'Atlas sayfaları otomatik çoğaltılmış hesaplama sayfaları değildir. Her not, seçilmiş bir ekonomik soruyu sitenin kendi veri setinden üretilen tablo ve yorumlarla açıklar.',
+    },
+    guncellemeler: {
+      path: '/guncellemeler',
+      eyebrow: 'Güncellemeler',
+      title: 'Aylık veri notları',
+      metaTitle: 'Aylık Veri Notları | Ne Kadar Ederdi?',
+      description:
+        'Ne Kadar Ederdi veri setindeki güncellemeler, son veri ayları ve kaynak gecikmeleri hakkında düzenli notlar.',
+      note:
+        'Bu notlar, sitenin veri bakımını görünür kılar. Hangi serinin hangi aya kadar geldiğini ve hesaplamanın neden bazen son ortak aya döndüğünü açıklar.',
+    },
+    'veri-defteri': {
+      path: '/veri-defteri',
+      eyebrow: 'Veri Defteri',
+      title: 'Veri Defteri',
+      metaTitle: 'Veri Defteri | Ne Kadar Ederdi?',
+      description:
+        'TÜFE, dolar, gram altın, asgari ücret ve diğer serilerin hesaplamada nasıl kullanıldığını açıklayan kaynak defteri.',
+      note:
+        'Veri Defteri, her serinin neyi anlattığını ve neyi anlatmadığını açıklar. Amaç hesaplama sonucunu kaynak ve yöntem bağlamından koparmamaktır.',
+    },
+  } as const;
+
+  return configs[hub];
+}
+
+function calculatePublishedResults(calculation: NonNullable<PublisherPageContent['calculation']>): CalculationResult[] {
+  const catalog = catalogData as MarketCatalog;
+  const endMonth = getLatestCommonEndMonth(catalog, calculation.criteria) ?? currentCatalogMonth();
+  const request = {
+    amount: calculation.amount,
+    inputUnit: calculation.inputUnit,
+    startMonth: calculation.startMonth,
+    endMonth,
+    criteria: calculation.criteria,
+  };
+  const normalizedAmount = inputAmountToTryForPage(request.amount, request.inputUnit, request.startMonth);
+
+  return request.criteria
+    .map((key) => {
+      const series = catalog.series.find((item) => item.key === key);
+
+      if (!series) {
+        return null;
+      }
+
+      const startObservation = pickObservationForPage(series.observations, request.startMonth);
+      const endObservation = pickObservationForPage(series.observations, request.endMonth);
+      const multiplier = endObservation.value / startObservation.value;
+
+      return {
+        series: {
+          key: series.key,
+          name: series.name,
+          shortName: series.shortName,
+          description: series.description,
+          unit: series.unit,
+          sourceNote: series.sourceNote,
+        },
+        originalAmount: request.amount,
+        normalizedAmount,
+        resultAmount: normalizedAmount * multiplier,
+        multiplier,
+        startObservation,
+        endObservation,
+        appliedPre2005Conversion: request.inputUnit === 'try' && request.startMonth < '2005-01',
+      } satisfies CalculationResult;
+    })
+    .filter((result): result is CalculationResult => Boolean(result));
+}
+
+function getSeriesLedgerRows(page: PublisherPageContent) {
+  const catalog = catalogData as MarketCatalog;
+  const keys = page.calculation?.criteria ?? getHubSeriesKeys(page.hub);
+
+  return keys
+    .map((key) => {
+      const series = catalog.series.find((item) => item.key === key);
+      const latest = series?.observations
+        .filter((item) => Number.isFinite(item.value))
+        .sort((first, second) => second.date.localeCompare(first.date))[0];
+
+      if (!series || !latest) {
+        return null;
+      }
+
+      return {
+        key,
+        name: series.name,
+        month: latest.date.slice(0, 7),
+        value: `${formatTryNumberForPage(latest.value)} ${series.unit}`,
+        source: series.sourceNote,
+      };
+    })
+    .filter((row): row is { key: SeriesKey; name: string; month: string; value: string; source: string } => Boolean(row));
+}
+
+function getHubSeriesKeys(hub: PublisherPageContent['hub']): SeriesKey[] {
+  if (hub === 'veri-defteri') {
+    return ['cpi', 'usd', 'gold', 'minimumWage'];
+  }
+
+  return ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'gasoline'];
+}
+
+function inputAmountToTryForPage(amount: number, inputUnit: InputUnit, startMonth: string) {
+  if (inputUnit === 'try') {
+    return startMonth < '2005-01' ? amount / 1_000_000 : amount;
+  }
+
+  const catalog = catalogData as MarketCatalog;
+  const series = catalog.series.find((item) => item.key === inputUnit);
+
+  return series ? amount * pickObservationForPage(series.observations, startMonth).value : amount;
+}
+
+function pickObservationForPage(observations: MarketSeries['observations'], month: string) {
+  const monthDate = `${month}-01`;
+  const previous = observations
+    .filter((item) => item.date <= monthDate)
+    .sort((first, second) => second.date.localeCompare(first.date))[0];
+
+  return previous ?? [...observations].sort((first, second) => first.date.localeCompare(second.date))[0];
+}
+
+function currentCatalogMonth() {
+  const catalog = catalogData as MarketCatalog;
+  const months = catalog.series
+    .flatMap((series) => series.observations.map((observation) => observation.date.slice(0, 7)))
+    .sort();
+
+  return months[months.length - 1] ?? new Date().toISOString().slice(0, 7);
+}
+
+function formatTryNumberForPage(value: number) {
+  return numberFormatter.format(value);
+}
+
 function getLatestCommonEndMonth(catalog: MarketCatalog | null, criteria: SeriesKey[]): string | null {
   if (!catalog || criteria.length === 0) {
     return null;
@@ -1575,6 +2218,12 @@ function PageHeader() {
         </a>
         <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/rehberler">
           Rehberler
+        </a>
+        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/atlas">
+          Atlas
+        </a>
+        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/veri-defteri">
+          Veri Defteri
         </a>
         <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/metodoloji">
           Metodoloji

@@ -79,67 +79,13 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nekadarederdi.com/</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://nekadarederdi.com/enflasyon-hesaplama</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/gecmis-para-degeri</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/bugunun-parasiyla-ne-kadar</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/dolar-bazinda-ne-kadar-ederdi</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/altin-bazinda-ne-kadar-ederdi</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/2010da-10000-tl-bugun-ne-kadar</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/eski-maas-bugun-ne-kadar</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/kira-enflasyon-hesaplama</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://nekadarederdi.com/bist-bitcoin-altin-karsilastirma</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://nekadarederdi.com/rehberler</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -170,6 +116,78 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <url>
     <loc>https://nekadarederdi.com/rehberler/2010daki-1000-tl-bugun-ne-kadar</loc>
     <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/atlas</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/atlas/2010daki-1000-tl-bugun-ne-anlatiyor</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/atlas/eski-maaslarin-alim-gucu</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/atlas/dolar-mi-tufe-mi-altin-mi</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-defteri</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-defteri/tufe</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-defteri/dolar</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-defteri/gram-altin</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/veri-defteri/asgari-ucret</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/guncellemeler</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/guncellemeler/2026-09</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nekadarederdi.com/guncellemeler/2026-08</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -323,8 +341,95 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
     description:
       "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
   },
+  '/atlas': {
+    title: 'Para Degeri Atlasi | Ne Kadar Ederdi?',
+    description:
+      'Gecmis para degerini TUFE, doviz, altin, ucret ve piyasa serileriyle aciklayan veri tabanli analizler.',
+  },
+  '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor': {
+    title: '2010daki 1.000 TL Bugun Ne Anlatiyor? | Para Degeri Atlasi',
+    description:
+      '2010 Ocak ayindaki 1.000 TL tutarini TUFE, dolar, euro, gram altin, asgari ucret, benzin ve mevduat serileriyle birlikte okuyun.',
+  },
+  '/atlas/eski-maaslarin-alim-gucu': {
+    title: 'Eski Maaslarin Alim Gucu | Para Degeri Atlasi',
+    description:
+      '2015teki 5.000 TL maasi TUFE, asgari ucret, dolar, gram altin ve benzin olcutleriyle karsilastiran veri notu.',
+  },
+  '/atlas/dolar-mi-tufe-mi-altin-mi': {
+    title: 'Dolar mi TUFE mi Altin mi? | Para Degeri Atlasi',
+    description:
+      'Ayni TL tutarinin TUFE, dolar, euro, gram altin ve gumus olcutlerinde neden farkli sonuc verdigini gosteren karsilastirma.',
+  },
+  '/veri-defteri': {
+    title: 'Veri Defteri | Ne Kadar Ederdi?',
+    description:
+      'TUFE, dolar, gram altin, asgari ucret ve diger serilerin hesaplamada nasil kullanildigini aciklayan kaynak defteri.',
+  },
+  '/veri-defteri/tufe': {
+    title: 'TUFE Serisi | Veri Defteri',
+    description:
+      'TUFE serisinin Ne Kadar Ederdi icinde neyi olctugu, nasil kullanildigi, hangi sinirlara sahip oldugu ve son veri ayi.',
+  },
+  '/veri-defteri/dolar': {
+    title: 'Dolar Serisi | Veri Defteri',
+    description:
+      'Dolar serisinin TL karsilastirmalarinda nasil kullanildigi, kur bazli sonucun ne anlattigi ve hangi sinirlara sahip oldugu.',
+  },
+  '/veri-defteri/gram-altin': {
+    title: 'Gram Altin Serisi | Veri Defteri',
+    description:
+      'Gram altin fiyat serisinin gecmis para degeri karsilastirmalarinda nasil yorumlandigi ve TUFEden neden farkli sonuc verdigi.',
+  },
+  '/veri-defteri/asgari-ucret': {
+    title: 'Asgari Ucret Serisi | Veri Defteri',
+    description:
+      'Asgari ucret serisinin eski maas, kira ve fiyat karsilastirmalarinda nasil kullanildigi ve hangi sinirlara sahip oldugu.',
+  },
+  '/guncellemeler': {
+    title: 'Aylik Veri Notlari | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi veri setindeki guncellemeler, son veri aylari ve kaynak gecikmeleri hakkinda duzenli notlar.',
+  },
+  '/guncellemeler/2026-09': {
+    title: 'Eylul 2026 Veri Durumu | Ne Kadar Ederdi?',
+    description:
+      'Ne Kadar Ederdi veri setindeki serilerin son aylari, geciken resmi veriler ve hesaplama davranisi hakkinda Eylul 2026 notu.',
+  },
+  '/guncellemeler/2026-08': {
+    title: 'Agustos 2026 Veri Durumu | Ne Kadar Ederdi?',
+    description:
+      'Agustos 2026 itibariyla para degeri hesaplamalarinda kullanilan aylik veri yaklasimi, ortak ay mantigi ve kaynak gecikmeleri.',
+  },
 };
 const KNOWN_PAGE_PATHS = new Set(Object.keys(SEO_PAGES));
+const INDEXABLE_PAGE_PATHS = new Set([
+  '/',
+  '/rehberler',
+  '/rehberler/tufe-ile-para-degeri-nasil-hesaplanir',
+  '/rehberler/dolar-ve-tufe-karsilastirmasi',
+  '/rehberler/gram-altin-ile-alim-gucu-hesaplama',
+  '/rehberler/asgari-ucretin-yillara-gore-alim-gucu',
+  '/rehberler/2010daki-1000-tl-bugun-ne-kadar',
+  '/atlas',
+  '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor',
+  '/atlas/eski-maaslarin-alim-gucu',
+  '/atlas/dolar-mi-tufe-mi-altin-mi',
+  '/veri-defteri',
+  '/veri-defteri/tufe',
+  '/veri-defteri/dolar',
+  '/veri-defteri/gram-altin',
+  '/veri-defteri/asgari-ucret',
+  '/guncellemeler',
+  '/guncellemeler/2026-09',
+  '/guncellemeler/2026-08',
+  '/hakkinda',
+  '/metodoloji',
+  '/veri-kaynaklari',
+  '/iletisim',
+  '/gizlilik-politikasi',
+  '/kullanim-sartlari',
+]);
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -449,7 +554,7 @@ async function rewriteHtmlMetadata(request: Request, response: Response) {
   const canonical = isKnownPage
     ? `https://${CANONICAL_HOST}${url.pathname === '/' ? '/' : url.pathname}`
     : `https://${CANONICAL_HOST}/`;
-  const isIndexablePage = isKnownPage && request.url === canonical;
+  const isIndexablePage = isKnownPage && INDEXABLE_PAGE_PATHS.has(url.pathname) && request.url === canonical;
   const html = await response.text();
   const nextHtml = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(metadata.title)}</title>`)
@@ -486,8 +591,10 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
   }
 
   const isHome = pathname === '/';
-  const title = isHome ? 'Ne Kadar Ederdi?' : metadata.title.replace(' | Ne Kadar Ederdi?', '');
+  const title = isHome ? 'Ne Kadar Ederdi?' : metadata.title.split(' | ')[0];
   const staticGuideSections = getStaticGuideSections(pathname);
+  const staticPublisherSections = getStaticPublisherSections(pathname);
+  const staticCalculation = renderStaticCalculation(pathname);
   const sections = isHome
     ? [
         {
@@ -506,7 +613,7 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
             'Seriler resmi kurumlar ve yaygın piyasa veri kaynaklarından derlenir. Gün içi fiyat, vergi, komisyon, alış-satış makası, temettü ve bölgesel fiyat farkları hesaba dahil değildir; sonuçlar yatırım tavsiyesi değildir.',
         },
       ]
-    : staticGuideSections ?? [
+    : staticPublisherSections ?? staticGuideSections ?? [
         {
           title: 'Bu sayfanın amacı',
           body: metadata.description,
@@ -529,6 +636,7 @@ function renderStaticPublisherContent(pathname: string, metadata: { title: strin
     ${sections
       .map((section) => `<section><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`)
       .join('')}
+    ${staticCalculation}
     ${
       isHome
         ? `<section><h2>TUFE, doviz ve altin farkli sorulara cevap verir</h2><p>Reel TL sonucu satin alma gucunu, dolar ve euro sonuclari kur degisimini, gram altin ve gumus sonuclari degerli maden fiyatlarini anlatir. Ayni tutar farkli olcutlerde farkli karsiliklar uretebilir.</p></section><section><h2>Rehberler ve metodoloji</h2><p>Site, TUFE ile para degeri, dolar ve TUFE karsilastirmasi, gram altin hesabinin sinirlari ve asgari ucret olcegi gibi konulari aciklayan rehberler icerir. Metodoloji ve veri kaynaklari sayfalari hesaplama mantigini ayrica aciklar.</p></section><section><h2>Kontrollu indexleme</h2><p>Paylasilabilir hesaplama adresleri hash ile saklanir ve otomatik olarak binlerce benzer sayfaya donusturulmez. Indexlenebilir sayfalar ek aciklama ve baglam sunan secilmis rehberlerden olusur.</p></section>`
@@ -644,6 +752,270 @@ function getStaticGuideSections(pathname: string) {
   };
 
   return guides[pathname] ?? null;
+}
+
+function getStaticPublisherSections(pathname: string) {
+  const pages: Record<string, { title: string; body: string }[]> = {
+    '/atlas': [
+      {
+        title: 'Veriden uretilen secilmis analizler',
+        body:
+          'Para Degeri Atlasi, tum olasi hesaplama kombinasyonlarini indexlemek yerine elle secilmis ekonomik sorulari veri tablosu ve yorumla aciklar.',
+      },
+      {
+        title: 'Hesap makinesiyle ayni veri katmani',
+        body:
+          'Atlas notlarindaki tablolar sitenin hesaplama motorundaki aylik serilerle uretilir; metin ve arac birbirinden kopuk degildir.',
+      },
+      {
+        title: 'Doorway yerine yayin degeri',
+        body:
+          'Her sayfa farkli bir yorum problemi uzerine kurulur: maas, alim gucu, doviz, altin, ucret ve kaynak gecikmesi gibi.',
+      },
+    ],
+    '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor': [
+      {
+        title: 'Tek dogru deger yoktur',
+        body:
+          '2010 Ocak ayindaki 1.000 TL, TUFEye gore alim gucu, dolara gore dis deger, altina gore degerli maden fiyati, asgari ucrete gore gelir olcegi anlatir.',
+      },
+      {
+        title: 'Tablo ayni soruyu farkli olcutlerle okur',
+        body:
+          'Ayni baslangic tutari icin hesaplanan carpani ve bitis verisini yan yana gostermek, sonucun neden tek rakama indirgenemeyecegini aciklar.',
+      },
+      {
+        title: 'Kullanici hesap makinesinde degistirebilir',
+        body:
+          'Bu sayfa secilmis bir ornektir; kullanici baslangic ayini, bitis ayini ve olcutleri hesap makinesinde degistirerek ayni yontemi kullanabilir.',
+      },
+    ],
+    '/atlas/eski-maaslarin-alim-gucu': [
+      {
+        title: 'Maas icin once alim gucu okunur',
+        body:
+          'Eski maasi bugune tasirken TUFE sonucu benzer bir fiyat seviyesinde gereken yaklasik TL tutarini verir.',
+      },
+      {
+        title: 'Gelir skalasi ayri bir katmandir',
+        body:
+          'Asgari ucret sonucu, maasin temel gelir duzeyine gore goreli konumunu okumaya yardim eder.',
+      },
+      {
+        title: 'Doviz ve altin maasi baska acidan sertlestirir',
+        body:
+          'Dolar ve altin sonuclari yerel alim gucunden cok dis deger ve degerli maden fiyatlarina gore karsilik uretir.',
+      },
+    ],
+    '/atlas/dolar-mi-tufe-mi-altin-mi': [
+      {
+        title: 'Olcut secimi soruyu degistirir',
+        body:
+          'TUFE yerel fiyat sepetini, dolar ve euro kur hareketini, altin ve gumus degerli maden fiyatini anlatir.',
+      },
+      {
+        title: 'Farkli sonuclar hata degildir',
+        body:
+          'Kur, enflasyon ve maden fiyatlari ayni hizda hareket etmek zorunda olmadigi icin ayni tutar farkli olcutlerde farkli karsilik verir.',
+      },
+      {
+        title: 'Birlikte okumak daha durustur',
+        body:
+          'Tek bir rakam yerine birden cok seriyle okuma yapmak, para degeri sorusunun belirsizligini gorunur kilar.',
+      },
+    ],
+    '/veri-defteri': [
+      {
+        title: 'Seri bazli kaynak defteri',
+        body:
+          'Veri Defteri, hesap makinesindeki serilerin neyi anlattigini, son veri ayini ve sinirlarini ayri ayri aciklar.',
+      },
+      {
+        title: 'Son veri ayi onemlidir',
+        body:
+          'Resmi endeksler ve piyasa serileri ayni takvimle yayinlanmaz; hesaplama mevcut son guvenilir veriye gore yapilir.',
+      },
+      {
+        title: 'Kaynak notlari sonuc yorumuna dahildir',
+        body:
+          'Her seri, resmi karar veya yatirim tavsiyesi yerine yaklasik tarihsel karsilastirma icin kullanilir.',
+      },
+    ],
+    '/veri-defteri/tufe': [
+      {
+        title: 'Ne anlatir?',
+        body:
+          'TUFE serisi gecmisteki TL tutarinin tuketici fiyatlari karsisindaki yaklasik bugunku alim gucunu hesaplamak icin kullanilir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Kisisel harcama sepetini, bolgesel fiyat farkini, yatirim getirisini veya resmi hak edis hesabini tek basina temsil etmez.',
+      },
+      {
+        title: 'Yontem',
+        body:
+          'Bitis ayindaki endeks baslangic ayindaki endekse bolunur; cikan carpani girilen TL tutarina uygulariz.',
+      },
+    ],
+    '/veri-defteri/dolar': [
+      {
+        title: 'Ne anlatir?',
+        body:
+          'Dolar serisi, TLnin ABD dolari karsisindaki tarihsel hareketini ve kur bazli yaklasik karsiligi gosterir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Dolar kuru yerel tuketici fiyatlariyla ayni sey degildir ve genel alim gucunun tek olcutu olarak okunmamalidir.',
+      },
+      {
+        title: 'Yontem',
+        body:
+          'Baslangic ve bitis ayindaki TL/USD degerleri oranlanir; alis-satis makasi ve komisyon hesaba katilmaz.',
+      },
+    ],
+    '/veri-defteri/gram-altin': [
+      {
+        title: 'Ne anlatir?',
+        body:
+          'Gram altin serisi gecmis TL tutarini degerli maden fiyatindaki degisimle karsilastirir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Vergi, makas, komisyon, saklama maliyeti veya kisisel yatirim performansi hesaba dahil degildir.',
+      },
+      {
+        title: 'Yontem',
+        body:
+          'Baslangic ve bitis ayindaki gram altin TL fiyatlari oranlanarak yaklasik carpana ulasilir.',
+      },
+    ],
+    '/veri-defteri/asgari-ucret': [
+      {
+        title: 'Ne anlatir?',
+        body:
+          'Asgari ucret serisi belirli bir tutarin donemsel temel gelir duzeyi karsisindaki agirligini gosterir.',
+      },
+      {
+        title: 'Ne anlatmaz?',
+        body:
+          'Resmi bordro, kidem, tazminat veya hukuki hak edis hesabi degildir.',
+      },
+      {
+        title: 'Yontem',
+        body:
+          'Aylik net asgari ucret seviyeleri oranlanir ve girilen tutara gelir olcegi olarak uygulanir.',
+      },
+    ],
+    '/guncellemeler': [
+      {
+        title: 'Duzenli veri bakimi',
+        body:
+          'Guncelleme notlari hangi serilerin hangi aya kadar geldigi ve gecikmeli kaynaklarda ne yapildigini aciklar.',
+      },
+      {
+        title: 'Son ortak ay mantigi',
+        body:
+          'Birden fazla olcut secildiginde arac, tum secili serilerde guvenilir veri bulunan ortak bitis ayini kullanir.',
+      },
+      {
+        title: 'Yayin surekliligi',
+        body:
+          'Bu bolum sitenin sadece bir arac degil, veri seti duzenli izlenen bir yayin oldugunu gosterir.',
+      },
+    ],
+    '/guncellemeler/2026-09': [
+      {
+        title: 'Resmi seriler gecikmeli gelir',
+        body:
+          'TUFE, konut ve bazi maliyet serileri kaynak kurumlarin yayim takvimine baglidir; hesaplama son guvenilir aya doner.',
+      },
+      {
+        title: 'Piyasa serileri daha hizli degisir',
+        body:
+          'Doviz, altin, Bitcoin ve BIST gibi piyasa serileri daha sik degisir; aylik kiyaslama yontemi degismez.',
+      },
+      {
+        title: 'Bos veri yerine acik uyari',
+        body:
+          'Secili olcutlerde son ortak veri gerideyse arac bunu kullaniciya bildirir ve uydurma sonuc uretmez.',
+      },
+    ],
+    '/guncellemeler/2026-08': [
+      {
+        title: 'Ortak ay yaklasimi',
+        body:
+          'Tum secili serilerde veri olan son ay kullanilarak bir serinin guncel, digerinin eksik oldugu yaniltici tablolar onlenir.',
+      },
+      {
+        title: 'Kaynak notlari gorunur tutulur',
+        body:
+          'Sonuc kartlari baslangic verisini, bitis verisini, carpani ve kaynak notunu ayri gosterir.',
+      },
+      {
+        title: 'Aylik veri yapisi korunur',
+        body:
+          'Yeni veri geldikce ayni oran yontemiyle hesaplama yenilenir; gunluk hassasiyet varmis gibi davranilmaz.',
+      },
+    ],
+  };
+
+  return pages[pathname] ?? null;
+}
+
+function renderStaticCalculation(pathname: string) {
+  const calculations: Record<string, CalculatorRequest> = {
+    '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor': {
+      amount: 1000,
+      inputUnit: 'try',
+      startMonth: '2010-01',
+      endMonth: '2099-12',
+      criteria: ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'gasoline', 'deposit'],
+    },
+    '/atlas/eski-maaslarin-alim-gucu': {
+      amount: 5000,
+      inputUnit: 'try',
+      startMonth: '2015-01',
+      endMonth: '2099-12',
+      criteria: ['cpi', 'minimumWage', 'usd', 'gold', 'gasoline'],
+    },
+    '/atlas/dolar-mi-tufe-mi-altin-mi': {
+      amount: 10000,
+      inputUnit: 'try',
+      startMonth: '2020-01',
+      endMonth: '2099-12',
+      criteria: ['cpi', 'usd', 'eur', 'gold', 'silver'],
+    },
+  };
+  const request = calculations[pathname];
+
+  if (!request) {
+    return '';
+  }
+
+  try {
+    const results = calculate(request);
+    const rows = results
+      .map(
+        (result) =>
+          `<tr><td>${escapeHtml(result.series.name)}</td><td>${escapeHtml(formatStaticMoney(result.resultAmount))}</td><td>${escapeHtml(formatStaticNumber(result.multiplier))}x</td><td>${escapeHtml(result.endObservation.date.slice(0, 7))}</td></tr>`,
+      )
+      .join('');
+
+    return `<section><h2>Veriden uretilen ornek tablo</h2><p>Bu tablo sitenin aylik veri setiyle otomatik hesaplanir ve ayni tutarin farkli olcutlerde neden ayrildigini gosterir.</p><table><thead><tr><th>Olcut</th><th>Karsilik</th><th>Carpan</th><th>Bitis ayi</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+  } catch {
+    return '';
+  }
+}
+
+function formatStaticMoney(value: number) {
+  return `${formatStaticNumber(value)} TL`;
+}
+
+function formatStaticNumber(value: number) {
+  return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(value);
 }
 
 async function getSpotMarket() {
