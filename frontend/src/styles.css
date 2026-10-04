@@ -63,6 +63,39 @@
   --shadow: none;
 }
 
+.primary-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.primary-links a, .evidence-section a, .calculation-evidence a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.primary-links a { padding: 8px 0; font-weight: 700; }
+.evidence-section { margin: 32px 0; line-height: 1.8; overflow-wrap: anywhere; }
+.evidence-section h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.2; font-weight: 800; margin-bottom: 20px; }
+.evidence-section h2 { font-size: 24px; font-weight: 800; margin: 32px 0 12px; }
+.source-entry { padding: 24px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
+.source-entry h3, .calculation-step h3 { font-size: 18px; font-weight: 800; }
+.source-entry p { margin: 8px 0; max-width: 78ch; }
+.evidence-table-scroll { overflow-x: auto; margin: 24px 0; }
+.evidence-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.evidence-table caption { text-align: left; font-weight: 700; margin-bottom: 12px; }
+.evidence-table th, .evidence-table td { text-align: left; vertical-align: top; padding: 12px; border-bottom: 1px solid var(--line); min-width: 105px; }
+.evidence-table thead { background: var(--surface-muted); }
+.calculation-evidence { padding: 20px; font-size: 14px; line-height: 1.75; border-top: 1px solid var(--line); }
+.calculation-evidence p { margin: 10px 0; }
+.calculation-evidence summary { cursor: pointer; font-weight: 800; min-height: 44px; padding: 10px 0; }
+.calculation-step { border-top: 1px solid var(--line); padding: 16px 0; }
+.noscript-note { margin: 16px auto; padding: 12px 24px; max-width: 80ch; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+
 .theme-switching * {
   transition: none !important;
 }
@@ -431,7 +464,7 @@ select:focus-visible {
 
 .criteria-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
 }
 
@@ -1502,7 +1535,6 @@ select:focus-visible {
 }
 
 @media (max-width: 24rem) {
-  .criteria-grid,
   .result-metadata {
     grid-template-columns: 1fr;
   }

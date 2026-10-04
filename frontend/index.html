@@ -8,10 +8,7 @@
     <meta name="theme-color" content="#005e3f" />
     <meta name="application-name" content="Ne Kadar Ederdi?" />
     <meta name="author" content="Ne Kadar Ederdi?" />
-    <meta
-      name="keywords"
-      content="ne kadar ederdi, enflasyon hesaplama, geçmiş para değeri, TL değer hesaplama, TÜFE hesaplama, dolar karşılaştırma, altın karşılaştırma, asgari ücret karşılaştırma"
-    />
+    <meta name="google-adsense-account" content="ca-pub-3946058913389575" />
     <meta
       name="description"
       content="Geçmişteki bir TL tutarı bugün ne kadar ederdi? TÜFE, dolar, euro, gram altın, gümüş ve asgari ücret verileriyle aylık karşılaştırma yapın."
@@ -22,7 +19,7 @@
     <link rel="mask-icon" href="/favicon.svg" color="#004a36" />
     <script>
       (function () {
-        var stored = localStorage.getItem('theme');
+        var stored; try { stored = localStorage.getItem('theme'); } catch (_) {}
         document.documentElement.dataset.theme = stored || 'light';
       })();
     </script>
@@ -82,68 +79,8 @@
     <title>Ne Kadar Ederdi? | Geçmiş TL Değeri ve Enflasyon Hesaplama</title>
   </head>
   <body>
-    <noscript>
-      <section>
-        <h1>Ne Kadar Ederdi?</h1>
-        <p>
-          Geçmişteki TL tutarlarını TÜFE, dolar, euro, gram altın, gümüş ve asgari ücret verileriyle karşılaştıran
-          ücretsiz hesaplama aracı.
-        </p>
-      </section>
-    </noscript>
-    <div id="root">
-      <article class="static-publisher-content" aria-label="Sayfa içeriği">
-        <h1>Ne Kadar Ederdi?</h1>
-        <p>
-          Geçmişteki bir TL tutarını TÜFE, dolar, euro, gram altın, gümüş, asgari ücret,
-          BIST 100, Bitcoin, konut ve yakıt serileriyle ay bazında karşılaştıran ücretsiz hesaplama aracı.
-        </p>
-        <section>
-          <h2>Hesaplama aracı</h2>
-          <p>
-            Araç, başlangıç ayındaki seri değeri ile bitiş ayındaki seri değerini oranlar ve girilen tutara
-            yaklaşık bir çarpan uygular. Aynı tutarı alım gücü, döviz, değerli maden, gelir ve piyasa
-            göstergeleriyle birlikte okumaya yardımcı olur.
-          </p>
-        </section>
-        <section>
-          <h2>Veri yaklaşımı</h2>
-          <p>
-            Hesaplamalar aylık veri noktalarıyla yapılır. Henüz yayımlanmayan aylar için son güvenilir veri
-            kullanılır; kaynak notları sonuç kartlarında gösterilir.
-          </p>
-        </section>
-        <section>
-          <h2>Sınırlar</h2>
-          <p>
-            Sonuçlar resmi karar, hak ediş hesabı veya yatırım tavsiyesi değildir. Vergi, komisyon,
-            alış-satış makası, temettü ve kişisel harcama sepeti hesaplamaya dahil değildir.
-          </p>
-        </section>
-        <section>
-          <h2>TUFE, doviz ve altin farkli sorulara cevap verir</h2>
-          <p>
-            Reel TL sonucu satin alma gucunu, dolar ve euro sonuclari kur degisimini, gram altin ve gumus sonuclari
-            degerli maden fiyatlarini anlatir. Bu nedenle ayni tutar farkli olcutlerde farkli karsiliklar uretebilir.
-          </p>
-        </section>
-        <section>
-          <h2>Rehberler ve metodoloji</h2>
-          <p>
-            Sitede TUFE ile para degeri, dolar ve TUFE karsilastirmasi, gram altin hesabinin sinirlari ve asgari ucret
-            olcegi gibi konulari aciklayan rehber sayfalari bulunur. Metodoloji ve veri kaynaklari sayfalari, hesaplama
-            mantigini ve serilerin nasil yorumlanmasi gerektigini ayrica aciklar.
-          </p>
-        </section>
-        <section>
-          <h2>Kontrollu indexleme</h2>
-          <p>
-            Paylasilabilir hesaplama adresleri hash ile saklanir ve otomatik olarak binlerce benzer sayfaya
-            donusturulmez. Indexlenebilir sayfalar, kullaniciya ek aciklama ve baglam sunan secilmis rehberlerden olusur.
-          </p>
-        </section>
-      </article>
-    </div>
+    <noscript><p class="noscript-note">Sayfaları ve örnek hesapları JavaScript olmadan okuyabilirsiniz. Kendi tutarınızı hesaplamak için JavaScript'i etkinleştirin.</p></noscript>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

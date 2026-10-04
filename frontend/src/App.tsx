@@ -1,12 +1,13 @@
+import { INFO_PAGES, type InfoPageContent, type GuidePageContent, type PublisherPageContent } from '../../shared/content';
+import { ACTIVE_GUIDES as GUIDE_PAGES, ACTIVE_ARTICLES as PUBLISHER_PAGES, REDIRECTS } from '../../shared/routes';
+import { calculate, latestCommonMonth } from '../../shared/calculation';
+import { DataStatus, SourceLedger, CalculationEvidence } from './components/DataEvidence';
 ﻿import { useEffect, useMemo, useState } from 'react';
 import { Check, Copy, Loader2, Moon, Sun } from 'lucide-react';
-import type { CSSProperties } from 'react';
-import { AdSlot } from './components/AdSlot';
 import { Logo } from './components/Logo';
 import { MonthSelect } from './components/MonthSelect';
 import { MoneyValue } from './components/MoneyValue';
 import { ResultCard } from './components/ResultCard';
-import { SpotMarketBar } from './components/SpotMarketBar';
 import catalogData from '../../data/market-series.json';
 import { calculateOnBackend, fetchSeries } from './lib/api';
 import { defaultState, isDefaultState, parseStateFromUrl, stateToHash } from './lib/calculator';
@@ -20,7 +21,7 @@ const AMOUNT_FORMAT_MESSAGE = 'Örnek: 10000, 10.000 veya 10.000,50.';
 const CRITERIA: { key: SeriesKey; label: string; hint: string; group: 'purchase' | 'currency' | 'asset' }[] = [
   { key: 'cpi', label: 'Reel TL', hint: 'Alım gücü', group: 'purchase' },
   { key: 'minimumWage', label: 'Asgari ücret', hint: 'Net', group: 'purchase' },
-  { key: 'gasoline', label: 'Benzin', hint: 'Yakıt', group: 'purchase' },
+  { key: 'gasoline', label: 'Yakıt endeksi', hint: 'Endeks', group: 'purchase' },
   { key: 'usd', label: 'Dolar', hint: 'Dolar', group: 'currency' },
   { key: 'eur', label: 'Euro', hint: 'Euro', group: 'currency' },
   { key: 'gold', label: 'Altın', hint: 'Gram', group: 'asset' },
@@ -45,980 +46,41 @@ const INPUT_UNITS: { key: InputUnit; label: string }[] = [
   { key: 'silver', label: 'Gram gümüş' },
 ];
 
-type LandingPageContent = {
-  path: string;
-  title: string;
-  metaTitle: string;
-  description: string;
-  intro: string;
-  calculatorHref: string;
-  sections: { title: string; body: string }[];
-};
-
-type InfoPageContent = {
-  path: string;
-  title: string;
-  metaTitle: string;
-  description: string;
-  intro: string;
-  sections: { title: string; body: string; link?: { label: string; href: string } }[];
-};
-
-type GuidePageContent = {
-  path: string;
-  title: string;
-  metaTitle: string;
-  description: string;
-  intro: string;
-  calculatorHref: string;
-  sections: { title: string; body: string }[];
-  takeaways: string[];
-};
-
-type PublisherPageContent = {
-  path: string;
-  hub: 'atlas' | 'guncellemeler' | 'veri-defteri';
-  eyebrow: string;
-  title: string;
-  metaTitle: string;
-  description: string;
-  intro: string;
-  calculatorHref?: string;
-  calculation?: {
-    amount: number;
-    inputUnit: InputUnit;
-    startMonth: string;
-    criteria: SeriesKey[];
-  };
-  sections: { title: string; body: string }[];
-};
-
-const LANDING_PAGES: LandingPageContent[] = [
-  {
-    path: '/enflasyon-hesaplama',
-    title: 'Enflasyon hesaplama',
-    metaTitle: 'Enflasyon Hesaplama | TÜFE ile Geçmiş Para Değeri',
-    description:
-      'Geçmişteki bir TL tutarının TÜFE verilerine göre bugünkü yaklaşık satın alma gücünü hesaplayın.',
-    intro:
-      'Enflasyon hesaplama, aynı tutarın farklı tarihlerdeki alım gücünü karşılaştırmak için kullanılır. Ne Kadar Ederdi, TÜFE serisiyle geçmiş TL değerini aylık düzeyde yaklaşık olarak gösterir.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'TÜFE ile para değeri nasıl okunur?',
-        body:
-          'TÜFE, tüketici fiyatlarındaki değişimi izler. Başlangıç ve bitiş ayı arasındaki endeks farkı, geçmişteki tutarın bugünkü alım gücüne yaklaşık bir çarpan verir.',
-      },
-      {
-        title: 'Hangi sorular için kullanılır?',
-        body:
-          '“2010 yılında 10.000 TL bugün ne kadar ederdi?” veya “eski maaşım bugünkü parayla kaç TL olurdu?” gibi karşılaştırmalar için uygundur.',
-      },
-      {
-        title: 'Sonuç yatırım tavsiyesi değildir',
-        body:
-          'Hesaplama tarihsel veri karşılaştırmasıdır. Fiyat, maaş, kur ve yatırım kararları için tek başına kullanılmamalıdır.',
-      },
-    ],
-  },
-  {
-    path: '/gecmis-para-degeri',
-    title: 'Geçmiş para değeri',
-    metaTitle: 'Geçmiş Para Değeri Hesaplama | Ne Kadar Ederdi?',
-    description:
-      'Geçmişteki TL tutarlarını bugünkü değerle, enflasyon, döviz, altın, gümüş ve asgari ücret üzerinden kıyaslayın.',
-    intro:
-      'Geçmiş para değeri tek bir cevaba indirgenmez. Aynı tutar TÜFE’ye göre başka, dolara veya altına göre başka bir karşılık verebilir. Bu sayfa farklı ölçütleri birlikte okumak için hazırlanmıştır.',
-    calculatorHref: '/',
-    sections: [
-      {
-        title: 'Reel değer fiyat düzeyine bağlıdır',
-        body:
-          'Reel değer, tutarın kağıt üzerindeki sayısını değil, fiyat düzeyi karşısındaki yaklaşık alım gücünü gösterir.',
-      },
-      {
-        title: 'Tek ölçüt yerine çoklu kıyas',
-        body:
-          'TÜFE alım gücü, dolar ve euro kur etkisi, altın ve gümüş değerli maden kıyası, asgari ücret ise gelir düzeyi perspektifi sağlar.',
-      },
-      {
-        title: 'Ay bazında hesaplama',
-        body:
-          'Veriler aylık serilerle işlendiği için yıl içindeki büyük değişimler daha görünür hale gelir.',
-      },
-    ],
-  },
-  {
-    path: '/bugunun-parasiyla-ne-kadar',
-    title: 'Bugünün parasıyla ne kadar?',
-    metaTitle: 'Bugünün Parasıyla Ne Kadar? | TL Alım Gücü Hesaplama',
-    description:
-      'Eski bir fiyatın, maaşın veya borcun bugünün parasıyla yaklaşık karşılığını hesaplayın.',
-    intro:
-      '“Bugünün parasıyla ne kadar?” sorusu, geçmişteki bir tutarı bugünkü fiyat ortamına taşır. Hesaplayıcı, seçilen başlangıç ve bitiş ayına göre yaklaşık karşılığı üretir.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Fiyatları bugüne taşımak',
-        body:
-          'Eski kira, maaş, ürün fiyatı veya birikim tutarı TÜFE ile bugünkü satın alma gücü açısından okunabilir.',
-      },
-      {
-        title: 'Gelir düzeyiyle kıyaslamak',
-        body:
-          'Asgari ücret ölçütü, belirli bir tutarın farklı dönemlerdeki temel gelir seviyesine göre nasıl değiştiğini görmeye yardımcı olur.',
-      },
-      {
-        title: 'Paylaşılabilir sonuç',
-        body:
-          'Hesaplama sonrası oluşan URL, seçilen tutar ve tarihlerle paylaşılabilir.',
-      },
-    ],
-  },
-  {
-    path: '/dolar-bazinda-ne-kadar-ederdi',
-    title: 'Dolar bazında ne kadar ederdi?',
-    metaTitle: 'Dolar Bazında Ne Kadar Ederdi? | TL USD Karşılaştırma',
-    description:
-      'Geçmişteki TL tutarını dolar kuru değişimine göre bugünkü yaklaşık TL karşılığıyla kıyaslayın.',
-    intro:
-      'Dolar bazında karşılaştırma, TL’nin ABD doları karşısındaki değişimini görmek için kullanılır. Bu yaklaşım alım gücünden farklıdır; kur hareketine odaklanır.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Kur bazlı karşılaştırma nedir?',
-        body:
-          'Başlangıç ayındaki TL/USD seviyesi ile bitiş ayındaki seviye karşılaştırılır ve tutara yaklaşık bir kur çarpanı uygulanır.',
-      },
-      {
-        title: 'Enflasyonla aynı şey değildir',
-        body:
-          'Dolar bazlı sonuç, Türkiye’deki tüketici fiyatlarını değil TL’nin dolar karşısındaki değişimini gösterir.',
-      },
-      {
-        title: 'Ne zaman kullanılır?',
-        body:
-          'Dövizle ifade edilen maliyetler, ithal ürünler veya döviz bazlı birikim kıyasları için fikir verir.',
-      },
-    ],
-  },
-  {
-    path: '/altin-bazinda-ne-kadar-ederdi',
-    title: 'Altın bazında ne kadar ederdi?',
-    metaTitle: 'Altın Bazında Ne Kadar Ederdi? | Gram Altın Karşılaştırma',
-    description:
-      'Geçmişteki TL tutarını gram altın fiyatı değişimine göre bugünkü yaklaşık karşılığıyla hesaplayın.',
-    intro:
-      'Altın bazında karşılaştırma, belirli bir TL tutarının gram altın fiyatındaki değişimle nasıl farklılaşacağını gösterir. Bu sonuç yatırım getirisi değil, tarihsel fiyat kıyasıdır.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Gram altın çarpanı',
-        body:
-          'Başlangıç ve bitiş ayındaki gram altın TL fiyatları oranlanır. Böylece geçmişteki tutarın altın fiyatına göre bugünkü yaklaşık karşılığı bulunur.',
-      },
-      {
-        title: 'Gümüşle birlikte okumak',
-        body:
-          'Gümüş serisi, değerli madenler arasında farklı fiyat davranışlarını kıyaslamaya yardımcı olur.',
-      },
-      {
-        title: 'Yaklaşık tarihsel kıyas',
-        body:
-          'Vergi, makas, alış-satış farkı ve işlem maliyeti gibi detaylar hesaplamaya dahil değildir.',
-      },
-    ],
-  },
-  {
-    path: '/2010da-10000-tl-bugun-ne-kadar',
-    title: '2010’da 10.000 TL bugün ne kadar?',
-    metaTitle: '2010’da 10.000 TL Bugün Ne Kadar? | Enflasyon ve Yatırım Kıyas',
-    description:
-      '2010 yılındaki 10.000 TL tutarını bugünün parasıyla, TÜFE, dolar, altın, BIST 100 ve Bitcoin verileriyle kıyaslayın.',
-    intro:
-      '“2010’da 10.000 TL bugün ne kadar ederdi?” sorusu tek bir cevaba sahip değildir. TÜFE alım gücünü, dolar ve altın kur/fiyat etkisini, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'TÜFE ile bugünkü karşılık',
-        body:
-          'TÜFE hesabı, 2010’daki 10.000 TL’nin tüketici fiyatları karşısındaki yaklaşık bugünkü alım gücünü gösterir.',
-      },
-      {
-        title: 'Dolar ve altın farklı sonuç verir',
-        body:
-          'Döviz ve gram altın serileri fiyat hareketlerini izlediği için enflasyon hesabından farklı çarpanlar üretir.',
-      },
-      {
-        title: 'Piyasa göstergeleriyle okumak',
-        body:
-          'BIST 100 ve Bitcoin gibi seriler, aynı tutarın yatırım piyasalarıyla kıyaslandığında nasıl değişeceğini yaklaşık olarak gösterir.',
-      },
-    ],
-  },
-  {
-    path: '/eski-maas-bugun-ne-kadar',
-    title: 'Eski maaş bugün ne kadar?',
-    metaTitle: 'Eski Maaş Bugün Ne Kadar? | Maaş Enflasyon Hesaplama',
-    description:
-      'Eski maaşınızı bugünkü alım gücüyle ve asgari ücret, döviz, altın gibi farklı göstergelerle karşılaştırın.',
-    intro:
-      'Eski maaşın bugünkü karşılığını hesaplarken yalnızca nominal tutara bakmak yanıltıcıdır. Enflasyon, asgari ücret, döviz ve altın gibi ölçütler farklı ekonomik bakışlar sağlar.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Maaşın alım gücü',
-        body:
-          'TÜFE serisi, eski maaşın bugünkü fiyat düzeyindeki yaklaşık alım gücünü hesaplamak için en doğrudan ölçüttür.',
-      },
-      {
-        title: 'Asgari ücretle kıyas',
-        body:
-          'Asgari ücret karşılaştırması, maaşın temel gelir düzeylerine göre tarih içinde nasıl konumlandığını anlamaya yardım eder.',
-      },
-      {
-        title: 'Döviz ve altın perspektifi',
-        body:
-          'Dolar ve altın bazlı sonuçlar gelir alım gücünden çok kur ve değerli maden fiyatı değişimini gösterir.',
-      },
-    ],
-  },
-  {
-    path: '/kira-enflasyon-hesaplama',
-    title: 'Kira enflasyon hesaplama',
-    metaTitle: 'Kira Enflasyon Hesaplama | Eski Kira Bugün Ne Kadar?',
-    description:
-      'Geçmişteki kira tutarını TÜFE ve farklı ekonomik göstergelerle bugünkü yaklaşık değerine taşıyın.',
-    intro:
-      'Eski kira tutarlarını bugünün koşullarıyla okumak için TÜFE iyi bir başlangıç noktasıdır. Aynı tutarı döviz, altın veya asgari ücret gibi ölçütlerle kıyaslamak ise farklı yorumlar sağlar.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Kira tutarını bugüne taşımak',
-        body:
-          'Başlangıç ayındaki kira, seçilen bitiş ayına TÜFE çarpanıyla taşınarak yaklaşık bugünkü alım gücü bulunur.',
-      },
-      {
-        title: 'Gelire göre kira yükü',
-        body:
-          'Asgari ücret karşılaştırması, bir kira tutarının temel gelir seviyesine göre ne kadar ağırlaştığını veya hafiflediğini gösterir.',
-      },
-      {
-        title: 'Yaklaşık karşılaştırma',
-        body:
-          'Hesaplama kira artış mevzuatı ya da bölgesel konut piyasası yerine genel ekonomik serileri kullanır.',
-      },
-    ],
-  },
-  {
-    path: '/bist-bitcoin-altin-karsilastirma',
-    title: 'BIST, Bitcoin ve altın karşılaştırma',
-    metaTitle: 'BIST, Bitcoin ve Altın Karşılaştırma | Ne Kadar Ederdi?',
-    description:
-      'Bir TL tutarını BIST 100, Bitcoin, gram altın ve gümüş fiyatlarındaki tarihsel değişimle karşılaştırın.',
-    intro:
-      'Aynı TL tutarı enflasyon, döviz, altın, BIST 100 ve Bitcoin gibi farklı serilerle bambaşka sonuçlar verebilir. Bu sayfa yatırım tavsiyesi değil, tarihsel kıyaslama çerçevesi sunar.',
-    calculatorHref: '/#hesapla',
-    sections: [
-      {
-        title: 'Fiyat serileri aynı şeyi ölçmez',
-        body:
-          'Altın, BIST 100 ve Bitcoin farklı risk, oynaklık ve piyasa dinamiklerine sahiptir; sonuçlar birlikte okunmalıdır.',
-      },
-      {
-        title: 'Tarih aralığı sonucu belirler',
-        body:
-          'Başlangıç ve bitiş ayı değiştikçe çarpanlar büyük ölçüde farklılaşabilir. Bu yüzden ay bazlı seçim önemlidir.',
-      },
-      {
-        title: 'Yaklaşık ve brüt karşılaştırma',
-        body:
-          'Vergi, işlem maliyeti, temettü, saklama maliyeti veya alım-satım makası gibi detaylar dahil değildir.',
-      },
-    ],
-  },
-];
-
-const INFO_PAGES: InfoPageContent[] = [
-  {
-    path: '/hakkinda',
-    title: 'Hakkında',
-    metaTitle: 'Hakkında | Ne Kadar Ederdi?',
-    description:
-      "Ne Kadar Ederdi'nin amacı, kullandığı veri türleri ve hesaplama yaklaşımı hakkında bilgi.",
-    intro:
-      'Ne Kadar Ederdi, geçmişteki veya bugünkü bir tutarı farklı ekonomik göstergelerle ay bazında karşılaştırmak için hazırlanmış bağımsız bir hesaplama aracıdır.',
-    sections: [
-      {
-        title: 'Ne işe yarar?',
-        body:
-          'Araç; TÜFE, döviz, gram altın, gümüş, asgari ücret, BIST 100, Bitcoin ve benzeri tarihsel serilerle yaklaşık karşılaştırma yapar. Amaç tek bir kesin cevap vermek değil, farklı ölçütleri birlikte okunur hale getirmektir.',
-      },
-      {
-        title: 'Veri yaklaşımı',
-        body:
-          'Hesaplamalar aylık veri noktalarına dayanır. Kaynak notları sonuç kartlarında gösterilir; seri güncellemeleri otomatik veri toplama süreciyle yenilenir ve eksik kaynaklarda mevcut son veri korunur.',
-      },
-      {
-        title: 'Tavsiye değildir',
-        body:
-          'Sonuçlar bilgilendirme amaçlıdır. Yatırım, kredi, kira, maaş veya hukuki kararlar için tek başına kullanılmamalıdır.',
-      },
-    ],
-  },
-  {
-    path: '/metodoloji',
-    title: 'Metodoloji',
-    metaTitle: 'Metodoloji | Ne Kadar Ederdi?',
-    description:
-      'Ne Kadar Ederdi hesaplamalarının hangi yöntemle üretildiğini, aylık veri yaklaşımını ve sonuçların nasıl yorumlanması gerektiğini açıklar.',
-    intro:
-      'Bu sayfa, araçtaki karşılaştırmaların nasıl hesaplandığını ve neden her sonucun yaklaşık bir ekonomik okuma olarak değerlendirilmesi gerektiğini anlatır.',
-    sections: [
-      {
-        title: 'Oran bazlı hesaplama',
-        body:
-          'Her ölçütte başlangıç ayındaki seri değeri ile bitiş ayındaki seri değeri karşılaştırılır. Bitiş değeri başlangıç değerine bölünür ve çıkan çarpan girilen tutara uygulanır.',
-      },
-      {
-        title: 'Aylık veri kullanımı',
-        body:
-          'TÜFE, konut endeksi, asgari ücret ve birçok piyasa serisi aylık düzeyde daha tutarlı okunur. Bu nedenle gün seçimi yerine ay seçimi kullanılır; henüz yayımlanmayan aylar için son güvenilir veri beklenir.',
-      },
-      {
-        title: 'Farklı ölçütler farklı şey söyler',
-        body:
-          'Reel TL satın alma gücünü, döviz kurları yabancı para karşılığını, altın ve gümüş değerli maden fiyatını, BIST 100 ve Bitcoin ise piyasa bazlı tarihsel değişimi gösterir.',
-      },
-      {
-        title: 'Dahil olmayan kalemler',
-        body:
-          'Vergi, komisyon, alış-satış makası, temettü, saklama maliyeti, bölgesel fiyat farkı ve kişisel harcama sepeti hesaplamaya dahil değildir.',
-      },
-    ],
-  },
-  {
-    path: '/veri-kaynaklari',
-    title: 'Veri Kaynakları',
-    metaTitle: 'Veri Kaynakları | Ne Kadar Ederdi?',
-    description:
-      'Ne Kadar Ederdi üzerinde kullanılan TÜFE, döviz, altın, gümüş, asgari ücret, BIST 100, Bitcoin, konut ve yakıt veri serilerinin kaynak yaklaşımı.',
-    intro:
-      'Ne Kadar Ederdi, tek bir rakam üretmek yerine kaynakları görülebilir olan aylık serilerle karşılaştırma yapar. Kaynak notları sonuç kartlarında da gösterilir.',
-    sections: [
-      {
-        title: 'Resmi endeksler',
-        body:
-          'TÜFE ve konut gibi endekslerde resmi yayımlanan seri değerleri esas alınır. Bu veriler genellikle geriden gelir; yeni ay yayımlanmadan hesaplamaya eklenmez.',
-      },
-      {
-        title: 'Döviz ve piyasa serileri',
-        body:
-          'Dolar, euro, gram altın, gümüş, BIST 100 ve Bitcoin serileri aylık ortalama veya ay sonu değer yaklaşımıyla işlenir. Günlük oynaklıklar bu tarihsel karşılaştırmanın dışında kalır.',
-      },
-      {
-        title: 'Gelir ve maliyet serileri',
-        body:
-          'Asgari ücret, yakıt ve mevduat gibi seriler farklı ekonomik ölçekleri görünür kılmak için kullanılır. Bu seriler doğrudan yatırım getirisi ya da resmi hak ediş hesabı anlamına gelmez.',
-      },
-      {
-        title: 'Güncelleme ve kontrol',
-        body:
-          'Veri güncelleme süreci otomatik çalışacak şekilde hazırlanır. Pipeline, serilerin son ayını ve boşluklarını kontrol eder; kaynak gecikmesi varsa mevcut son güvenilir ay korunur.',
-      },
-    ],
-  },
-  {
-    path: '/iletisim',
-    title: 'İletişim',
-    metaTitle: 'İletişim | Ne Kadar Ederdi?',
-    description:
-      'Ne Kadar Ederdi ile ilgili öneri, veri kaynağı, hata bildirimi ve reklam talepleri için iletişim bilgileri.',
-    intro:
-      'Öneri, hata bildirimi, veri kaynağı düzeltmesi veya reklam ve iş birliği talepleri için iletişim kurabilirsiniz.',
-    sections: [
-      {
-        title: 'E-posta',
-        body:
-          'Siteyle ilgili geri bildirimler için e-posta gönderebilirsiniz. Mümkünse ilgili sayfa adresini, tarih aralığını ve beklediğiniz sonucu da ekleyin.',
-        link: { label: 'egemenyildiz03@gmail.com', href: 'mailto:egemenyildiz03@gmail.com' },
-      },
-      {
-        title: 'Veri ve hata bildirimi',
-        body:
-          'Bir seride eksik, gecikmeli veya hatalı görünen veri fark ederseniz kaynak önerisini ve örnek hesaplamayı paylaşmanız sorunu daha hızlı incelememizi sağlar.',
-      },
-      {
-        title: 'Reklam ve iş birliği',
-        body:
-          'Reklam yerleşimleri kullanıcı deneyimini bozmayacak şekilde sınırlı tutulur. İş birliği taleplerinde marka, kampanya ve hedef sayfa bilgisini belirtmeniz yeterlidir.',
-      },
-    ],
-  },
-  {
-    path: '/gizlilik-politikasi',
-    title: 'Gizlilik Politikası',
-    metaTitle: 'Gizlilik Politikası | Ne Kadar Ederdi?',
-    description:
-      "Ne Kadar Ederdi'nin analitik, reklam, çerez ve kullanıcı verisi yaklaşımı hakkında gizlilik bilgileri.",
-    intro:
-      'Bu sayfa, Ne Kadar Ederdi kullanılırken hangi tür verilerin işlenebileceğini ve üçüncü taraf servislerin nasıl kullanıldığını açıklar.',
-    sections: [
-      {
-        title: 'Toplanan veriler',
-        body:
-          'Sitede hesaplama yapmak için kullanıcı hesabı gerekmez. Miktar, tarih ve karşılaştırma seçimleri hesaplama amacıyla tarayıcınız ile sunucu arasında işlenir; bu bilgiler bireysel profil oluşturmak için kullanılmaz.',
-      },
-      {
-        title: 'Analitik ve reklam',
-        body:
-          'Site performansını ve ziyaret trafiğini anlamak için Cloudflare Web Analytics kullanılabilir. Reklam gösterimi için Google AdSense kullanılır; Google ve iş ortakları çerezler veya benzer teknolojilerle reklam ölçümü yapabilir.',
-        link: {
-          label: 'Google reklam verilerini nasıl kullanır?',
-          href: 'https://policies.google.com/technologies/partner-sites',
-        },
-      },
-      {
-        title: 'İletişim bilgileri',
-        body:
-          'E-posta ile bize ulaşırsanız, paylaştığınız ad, e-posta adresi ve mesaj içeriği yalnızca talebinize cevap vermek için kullanılır.',
-      },
-      {
-        title: 'Üçüncü taraf bağlantılar',
-        body:
-          'Sitede veri kaynaklarına, sosyal paylaşım servislerine veya reklam ağlarına yönlendiren bağlantılar bulunabilir. Bu servislerin kendi gizlilik politikalarını incelemeniz önerilir.',
-      },
-    ],
-  },
-  {
-    path: '/kullanim-sartlari',
-    title: 'Kullanım Şartları',
-    metaTitle: 'Kullanım Şartları | Ne Kadar Ederdi?',
-    description:
-      "Ne Kadar Ederdi hesaplama aracının kullanım koşulları, veri sınırları ve sorumluluk reddi.",
-    intro:
-      'Ne Kadar Ederdi sitesini kullanarak hesaplamaların yaklaşık ve bilgilendirme amaçlı olduğunu kabul etmiş olursunuz.',
-    sections: [
-      {
-        title: 'Yaklaşık hesaplama',
-        body:
-          'Sonuçlar aylık tarihsel serilerden üretilen yaklaşık karşılaştırmalardır. Veri kaynaklarında revizyon, gecikme, eksiklik veya metodoloji farkı olabilir.',
-      },
-      {
-        title: 'Finansal tavsiye değildir',
-        body:
-          'Sitedeki içerikler yatırım, finans, hukuk, vergi veya muhasebe tavsiyesi niteliğinde değildir. Kararlarınız için uzman görüşü almanız önerilir.',
-      },
-      {
-        title: 'Kullanım sorumluluğu',
-        body:
-          'Hesaplama sonuçlarını yorumlama ve kullanma sorumluluğu kullanıcıya aittir. Site kesintisiz, hatasız veya belirli bir amaca uygun sonuç garantisi vermez.',
-      },
-      {
-        title: 'Değişiklikler',
-        body:
-          'Veri serileri, reklam yerleşimleri, sayfa içerikleri ve kullanım şartları zaman içinde güncellenebilir.',
-      },
-    ],
-  },
-];
-
-const GUIDE_PAGES: GuidePageContent[] = [
-  {
-    path: '/rehberler/tufe-ile-para-degeri-nasil-hesaplanir',
-    title: 'TÜFE ile para değeri nasıl hesaplanır?',
-    metaTitle: 'TÜFE ile Para Değeri Nasıl Hesaplanır? | Ne Kadar Ederdi?',
-    description:
-      'Geçmişteki bir TL tutarının TÜFE endeksiyle bugünkü yaklaşık alım gücüne nasıl taşındığını örneklerle okuyun.',
-    intro:
-      'TÜFE hesabı, geçmişteki bir nominal tutarı bugünkü fiyat düzeyine taşımak için kullanılan en anlaşılır yollardan biridir. Bu rehber, Ne Kadar Ederdi içindeki reel TL sonucunun nasıl üretildiğini ve hangi durumlarda dikkatli yorumlanması gerektiğini açıklar.',
-    calculatorHref: '/#amount=10000&unit=try&start=2010-01&criteria=cpi%2CminimumWage%2Cusd',
-    sections: [
-      {
-        title: 'Endeks oranı ne anlama gelir?',
-        body:
-          'Başlangıç ayındaki TÜFE endeksi ile bitiş ayındaki TÜFE endeksi oranlanır. Oran yükseldikçe aynı nominal tutarın bugünkü fiyat düzeyinde karşılığı da artar.',
-      },
-      {
-        title: 'Alım gücü ile fiyat aynı şey değildir',
-        body:
-          'TÜFE sonucu bir yatırım getirisi değil, tüketici fiyatları karşısındaki yaklaşık alım gücü hesabıdır. Dolar veya altın sonuçlarıyla aynı şeyi ölçmez.',
-      },
-      {
-        title: 'Neden ay bazında çalışır?',
-        body:
-          'TÜFE aylık yayımlanan resmi bir seridir. Gün seçimi kullanmak sahte bir hassasiyet yaratacağı için araç, ay bazlı karşılaştırmayı tercih eder.',
-      },
-    ],
-    takeaways: [
-      'Reel TL sonucu satın alma gücünü anlatır.',
-      'TÜFE verisi yayımlanmadan yeni ay hesaplamaya dahil edilmez.',
-      'Sonuçlar resmi hak ediş veya hukuki hesap yerine geçmez.',
-    ],
-  },
-  {
-    path: '/rehberler/dolar-ve-tufe-karsilastirmasi',
-    title: 'Dolar ve TÜFE karşılaştırması nasıl okunur?',
-    metaTitle: 'Dolar ve TÜFE Karşılaştırması | Ne Kadar Ederdi?',
-    description:
-      'Aynı tutarın dolar kuru ve TÜFE ölçütleriyle neden farklı sonuçlar verdiğini, hangi sonucun neyi anlattığını öğrenin.',
-    intro:
-      'Dolar bazlı karşılaştırma ile TÜFE bazlı karşılaştırma sık sık karıştırılır. Biri TL’nin ABD doları karşısındaki değişimini, diğeri tüketici fiyatları karşısındaki alım gücünü gösterir.',
-    calculatorHref: '/#amount=10000&unit=try&start=2010-01&criteria=cpi%2Cusd%2Ceur',
-    sections: [
-      {
-        title: 'TÜFE iç fiyat düzeyini okur',
-        body:
-          'TÜFE hesabı, Türkiye’de tüketici fiyatlarının dönem boyunca nasıl değiştiğine bakar. Kira, gıda ve hizmet gibi yerel harcama kalemlerine daha yakın bir okuma sunar.',
-      },
-      {
-        title: 'Dolar kuru dış değer perspektifi verir',
-        body:
-          'Dolar sonucu, TL’nin ABD doları karşısındaki tarihsel hareketini yansıtır. İthal ürünler, dövizle borç veya döviz bazlı birikim kıyaslarında fikir verir.',
-      },
-      {
-        title: 'Farklı sonuç normaldir',
-        body:
-          'Kur ve tüketici fiyatları aynı hızda hareket etmek zorunda değildir. Bu yüzden aynı 10.000 TL, TÜFE ve dolar ölçütünde farklı karşılıklar üretebilir.',
-      },
-    ],
-    takeaways: [
-      'TÜFE alım gücünü, dolar kuru dış değer değişimini anlatır.',
-      'Euro sonucu da kur perspektifidir; enflasyon sonucu değildir.',
-      'Bir sonucu diğerinin “doğrusu” gibi okumamak gerekir.',
-    ],
-  },
-  {
-    path: '/rehberler/gram-altin-ile-alim-gucu-hesaplama',
-    title: 'Gram altın ile alım gücü hesabı aynı şey mi?',
-    metaTitle: 'Gram Altın ile Alım Gücü Hesaplama | Ne Kadar Ederdi?',
-    description:
-      'Gram altın karşılaştırmasının neyi gösterdiğini, TÜFE alım gücü hesabından neden ayrıldığını okuyun.',
-    intro:
-      'Gram altın sonucu, geçmişteki bir TL tutarını altın fiyatındaki tarihsel değişimle kıyaslar. Bu, alım gücü hesabı değildir; değerli maden fiyatı perspektifidir.',
-    calculatorHref: '/#amount=10000&unit=try&start=2010-01&criteria=cpi%2Cgold%2Csilver',
-    sections: [
-      {
-        title: 'Altın fiyatı başka bir ölçektir',
-        body:
-          'Gram altın TL fiyatı, hem ons altın hareketinden hem de döviz kurundan etkilenir. Bu yüzden TÜFE sonucundan farklı davranması beklenir.',
-      },
-      {
-        title: 'Gümüşle birlikte okumak',
-        body:
-          'Gümüş serisi, değerli madenler arasında fiyat hareketlerinin ne kadar farklılaşabileceğini gösterir. İki sonuç da brüt tarihsel kıyastır.',
-      },
-      {
-        title: 'Makas ve işlem maliyeti dahil değildir',
-        body:
-          'Alış-satış farkı, vergi, komisyon ve saklama maliyeti hesaplamaya eklenmez. Sonuçlar yatırım performansı beyanı değildir.',
-      },
-    ],
-    takeaways: [
-      'Altın sonucu değerli maden fiyatı kıyasıdır.',
-      'TÜFE sonucu ile aynı ekonomik anlamı taşımaz.',
-      'İşlem maliyetleri hesaba dahil edilmediği için sonuç yaklaşık okunmalıdır.',
-    ],
-  },
-  {
-    path: '/rehberler/asgari-ucretin-yillara-gore-alim-gucu',
-    title: 'Asgari ücretin yıllara göre alım gücü nasıl karşılaştırılır?',
-    metaTitle: 'Asgari Ücretin Yıllara Göre Alım Gücü | Ne Kadar Ederdi?',
-    description:
-      'Asgari ücret serisinin eski maaş, kira ve fiyat karşılaştırmalarında nasıl yorumlanması gerektiğini açıklayan rehber.',
-    intro:
-      'Asgari ücret ölçütü, belirli bir tutarın dönemsel temel gelir düzeyine göre nerede durduğunu anlamaya yardım eder. Bu sonuç TÜFE yerine geçmez; gelir ölçeği sunar.',
-    calculatorHref: '/#amount=10000&unit=try&start=2010-01&criteria=cpi%2CminimumWage%2Cgasoline',
-    sections: [
-      {
-        title: 'Gelir ölçeği farklı bir sorudur',
-        body:
-          'TÜFE fiyat düzeyine bakarken asgari ücret sonucu, aynı tutarın temel ücret karşısındaki ağırlığını gösterir.',
-      },
-      {
-        title: 'Eski maaş yorumunda işe yarar',
-        body:
-          'Bir maaşın bugünkü karşılığı incelenirken TÜFE alım gücünü, asgari ücret ise gelir skalasındaki göreli konumu görünür kılar.',
-      },
-      {
-        title: 'Net seri ve dönem farkları',
-        body:
-          'Asgari ücret yıl içinde değişebilir. Araç, kullanılan aylık seriye göre hesaplama yapar ve kaynak notunu sonuç kartında gösterir.',
-      },
-    ],
-    takeaways: [
-      'Asgari ücret sonucu gelir düzeyi perspektifi sağlar.',
-      'Kira veya maaş kıyaslarında TÜFE ile birlikte okunmalıdır.',
-      'Sonuç resmi bordro veya hak ediş hesabı değildir.',
-    ],
-  },
-  {
-    path: '/rehberler/2010daki-1000-tl-bugun-ne-kadar',
-    title: '2010’daki 1.000 TL bugün ne kadar ederdi?',
-    metaTitle: '2010’daki 1.000 TL Bugün Ne Kadar? | Ne Kadar Ederdi?',
-    description:
-      '2010 yılındaki 1.000 TL tutarını TÜFE, dolar, altın ve asgari ücret gibi farklı ölçütlerle yorumlama rehberi.',
-    intro:
-      '2010’daki 1.000 TL için tek bir doğru cevap yoktur. TÜFE, dolar, altın ve asgari ücret sonuçları farklı ekonomik anlamlara gelir; bu rehber sonuçları nasıl okuyacağınızı açıklar.',
-    calculatorHref: '/#amount=1000&unit=try&start=2010-01&criteria=cpi%2Cusd%2Cgold%2CminimumWage',
-    sections: [
-      {
-        title: 'Önce soruyu netleştirin',
-        body:
-          '“Bugünkü alım gücü ne?” diyorsanız reel TL sonucuna, “döviz karşılığı ne oldu?” diyorsanız dolar veya euro sonucuna bakmanız gerekir.',
-      },
-      {
-        title: 'Altın sonucu ayrı okunur',
-        body:
-          'Gram altın sonucu, 1.000 TL’nin altın fiyatına göre nasıl değişeceğini gösterir. Bu alım gücü veya maaş karşılaştırması değildir.',
-      },
-      {
-        title: 'Hesap makinesiyle ayrıntılandırın',
-        body:
-          'Rehberdeki bağlantı hesap makinesini 2010 başlangıcı ve 1.000 TL tutarıyla açar. Bitiş ayını ve ölçütleri değiştirerek sonucu yeniden yorumlayabilirsiniz.',
-      },
-    ],
-    takeaways: [
-      'Aynı tutar farklı ölçütlerde farklı sonuç verir.',
-      'Rehber sayfası yorum çerçevesi sunar; hesap makinesi güncel seriyle sonucu üretir.',
-      'Arbitrary hesaplama URL’leri hash ile paylaşılır, otomatik indexlenmez.',
-    ],
-  },
-];
-
-const PUBLISHER_PAGES: PublisherPageContent[] = [
-  {
-    path: '/atlas/2010daki-1000-tl-bugun-ne-anlatiyor',
-    hub: 'atlas',
-    eyebrow: 'Para Değeri Atlası',
-    title: '2010’daki 1.000 TL bugün ne anlatıyor?',
-    metaTitle: '2010’daki 1.000 TL Bugün Ne Anlatıyor? | Para Değeri Atlası',
-    description:
-      '2010 Ocak ayındaki 1.000 TL tutarını TÜFE, dolar, euro, gram altın, asgari ücret, benzin ve mevduat serileriyle birlikte okuyun.',
-    intro:
-      'Bu atlas notu tek bir “doğru değer” aramak yerine aynı tutarı farklı ekonomik ölçeklerde yan yana okur. TÜFE alım gücünü, döviz dış değer değişimini, altın ve mevduat ise farklı fiyat/getiri perspektiflerini gösterir.',
-    calculatorHref: '/#amount=1000&unit=try&start=2010-01&criteria=cpi%2Cusd%2Ceur%2Cgold%2CminimumWage%2Cgasoline%2Cdeposit',
-    calculation: {
-      amount: 1000,
-      inputUnit: 'try',
-      startMonth: '2010-01',
-      criteria: ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'gasoline', 'deposit'],
-    },
-    sections: [
-      {
-        title: 'TÜFE sonucu temel alım gücü okumasıdır',
-        body:
-          'Geçmişteki TL tutarını bugünkü fiyat düzeyine taşırken en doğrudan başlangıç noktası TÜFE’dir. Bu sonuç yatırım getirisi değil, tüketici fiyatları karşısındaki yaklaşık satın alma gücü karşılığıdır.',
-      },
-      {
-        title: 'Döviz ve altın farklı hikaye anlatır',
-        body:
-          'Dolar, euro ve gram altın sonuçları yerel fiyat sepetini değil, TL’nin farklı piyasa serileri karşısındaki hareketini gösterir. Bu yüzden TÜFE sonucundan ayrışmaları normaldir.',
-      },
-      {
-        title: 'Benzin ve ücret gündelik hissi tamamlar',
-        body:
-          'Benzin serisi gündelik maliyet hissi, asgari ücret ise gelir ölçeği sağlar. Aynı tutar günlük yaşam, ücret ve piyasa açısından farklı ağırlık taşıyabilir.',
-      },
-    ],
-  },
-  {
-    path: '/atlas/eski-maaslarin-alim-gucu',
-    hub: 'atlas',
-    eyebrow: 'Para Değeri Atlası',
-    title: 'Eski maaşların alım gücü nasıl okunmalı?',
-    metaTitle: 'Eski Maaşların Alım Gücü | Para Değeri Atlası',
-    description:
-      '2015’teki 5.000 TL maaşı TÜFE, asgari ücret, dolar, gram altın ve benzin ölçütleriyle karşılaştıran veri notu.',
-    intro:
-      'Maaş karşılaştırması yalnızca enflasyon çarpanı değildir. Aynı maaş tüketici fiyatlarına, asgari ücrete, dövize ve gündelik maliyetlere göre ayrı ayrı değerlendirilmelidir.',
-    calculatorHref: '/#amount=5000&unit=try&start=2015-01&criteria=cpi%2CminimumWage%2Cusd%2Cgold%2Cgasoline',
-    calculation: {
-      amount: 5000,
-      inputUnit: 'try',
-      startMonth: '2015-01',
-      criteria: ['cpi', 'minimumWage', 'usd', 'gold', 'gasoline'],
-    },
-    sections: [
-      {
-        title: 'TÜFE maaşın fiyat düzeyindeki karşılığını verir',
-        body:
-          'Eski maaşı bugüne taşırken TÜFE sonucu, benzer bir tüketim sepetini korumak için gereken yaklaşık TL tutarını gösterir.',
-      },
-      {
-        title: 'Asgari ücret gelir skalasını gösterir',
-        body:
-          'Asgari ücret kıyası, maaşın temel gelir düzeyine göre konumunun nasıl değiştiğini anlamaya yardım eder. Bu resmi bordro hesabı değildir.',
-      },
-      {
-        title: 'Döviz ve altın maaş yorumunu sertleştirir',
-        body:
-          'Döviz ve altın sonuçları maaşın yerel alım gücünden çok dış değer ve değerli maden fiyatları karşısındaki görünümünü anlatır.',
-      },
-    ],
-  },
-  {
-    path: '/atlas/dolar-mi-tufe-mi-altin-mi',
-    hub: 'atlas',
-    eyebrow: 'Para Değeri Atlası',
-    title: 'Dolar mı, TÜFE mi, altın mı?',
-    metaTitle: 'Dolar mı TÜFE mi Altın mı? | Para Değeri Atlası',
-    description:
-      'Aynı TL tutarının TÜFE, dolar, euro, gram altın ve gümüş ölçütlerinde neden farklı sonuç verdiğini gösteren karşılaştırma.',
-    intro:
-      'Para değeri sorusunda ölçüt seçimi sonucu belirler. Bu sayfa 2020’den bugüne 10.000 TL için üç yaygın okuma biçimini yan yana koyar.',
-    calculatorHref: '/#amount=10000&unit=try&start=2020-01&criteria=cpi%2Cusd%2Ceur%2Cgold%2Csilver',
-    calculation: {
-      amount: 10000,
-      inputUnit: 'try',
-      startMonth: '2020-01',
-      criteria: ['cpi', 'usd', 'eur', 'gold', 'silver'],
-    },
-    sections: [
-      {
-        title: 'TÜFE yerel fiyat sepetidir',
-        body:
-          'TÜFE sonucu kira, gıda, ulaşım ve hizmetlerden oluşan tüketici fiyat düzeyine daha yakın bir okuma sağlar.',
-      },
-      {
-        title: 'Dolar ve euro dış değer ölçer',
-        body:
-          'Döviz sonuçları ithal ürün, döviz borcu veya yabancı para birikimi gibi sorular için anlamlıdır; tüketici enflasyonuyla birebir aynı değildir.',
-      },
-      {
-        title: 'Altın ve gümüş piyasa serisidir',
-        body:
-          'Değerli maden sonuçları ons fiyatı, kur ve piyasa koşullarından etkilenir. Alış-satış makası ve işlem maliyetleri dahil değildir.',
-      },
-    ],
-  },
-  {
-    path: '/guncellemeler/2026-09',
-    hub: 'guncellemeler',
-    eyebrow: 'Aylık veri notu',
-    title: 'Eylül 2026 veri durumu',
-    metaTitle: 'Eylül 2026 Veri Durumu | Ne Kadar Ederdi?',
-    description:
-      'Ne Kadar Ederdi veri setindeki serilerin son ayları, geciken resmi veriler ve hesaplama davranışı hakkında Eylül 2026 notu.',
-    intro:
-      'Bu not, sitenin kullandığı veri setinde hangi serilerin hangi aya kadar geldiğini ve gecikmeli yayımlanan serilerde hesaplayıcının neden son güvenilir aya döndüğünü açıklar.',
-    sections: [
-      {
-        title: 'Resmi seriler gecikmeli gelir',
-        body:
-          'TÜFE, konut endeksi ve bazı maliyet serileri kaynak kurumların yayımlama takvimine bağlıdır. Bir ay seçilebilir olsa bile hesaplama, ilgili ölçütlerin mevcut son ortak ayına göre yapılır.',
-      },
-      {
-        title: 'Piyasa serileri daha hızlı güncellenir',
-        body:
-          'Döviz, altın, Bitcoin ve BIST gibi piyasa serileri daha sık değişir. Aylık kıyaslama yapısında seri değerleri güncellenirken yöntem aynı kalır.',
-      },
-      {
-        title: 'Kullanıcıya gösterilen uyarı bilinçlidir',
-        body:
-          'Seçili ölçütlerde son ortak veri ayı daha gerideyse hesaplayıcı bunu form içinde belirtir. Amaç boş ya da uydurma veriyle sonuç üretmemektir.',
-      },
-    ],
-  },
-  {
-    path: '/guncellemeler/2026-08',
-    hub: 'guncellemeler',
-    eyebrow: 'Aylık veri notu',
-    title: 'Ağustos 2026 veri durumu',
-    metaTitle: 'Ağustos 2026 Veri Durumu | Ne Kadar Ederdi?',
-    description:
-      'Ağustos 2026 itibarıyla para değeri hesaplamalarında kullanılan aylık veri yaklaşımı, ortak ay mantığı ve kaynak gecikmeleri.',
-    intro:
-      'Ne Kadar Ederdi, farklı kaynaklardan gelen serileri tek bir ekranda okutur. Bu yüzden her seri için “son veri ayı” aynı olmayabilir.',
-    sections: [
-      {
-        title: 'Ortak ay yaklaşımı hatalı karşılaştırmayı önler',
-        body:
-          'Birden fazla ölçüt seçildiğinde araç, tüm seçili serilerde güvenilir veri bulunan son ortak aya döner. Böylece bir seri güncel, diğeri eksik haldeyken yanıltıcı sonuç gösterilmez.',
-      },
-      {
-        title: 'Kaynak notları sonuç kartlarında tutulur',
-        body:
-          'Her sonuç kartı başlangıç ve bitiş verisini, çarpanı ve kaynak notunu ayrıca gösterir. Bu notlar kullanıcının sonucu nasıl okuyacağını anlaması için önemlidir.',
-      },
-      {
-        title: 'Güncelleme düzeni sitenin parçasıdır',
-        body:
-          'Veri seti düzenli kontrol edilir. Yeni seri yayımlandığında hesaplama motoru aynı oran yöntemini kullanarak sonuçları günceller.',
-      },
-    ],
-  },
-  {
-    path: '/veri-defteri/tufe',
-    hub: 'veri-defteri',
-    eyebrow: 'Veri Defteri',
-    title: 'TÜFE serisi',
-    metaTitle: 'TÜFE Serisi | Veri Defteri',
-    description:
-      'TÜFE serisinin Ne Kadar Ederdi içinde neyi ölçtüğü, nasıl kullanıldığı, hangi sınırlara sahip olduğu ve son veri ayı.',
-    sections: [
-      {
-        title: 'Ne anlatır?',
-        body:
-          'TÜFE serisi geçmişteki TL tutarının tüketici fiyatları karşısındaki yaklaşık bugünkü alım gücünü hesaplamak için kullanılır.',
-      },
-      {
-        title: 'Ne anlatmaz?',
-        body:
-          'TÜFE kişisel harcama sepetini, bölgesel fiyat farkını, yatırım getirisini veya resmi hak ediş hesabını tek başına temsil etmez.',
-      },
-      {
-        title: 'Hesaplama yöntemi',
-        body:
-          'Bitiş ayındaki endeks başlangıç ayındaki endekse bölünür; çıkan çarpan girilen TL tutarına uygulanır.',
-      },
-    ],
-    intro:
-      'TÜFE, sitenin reel TL sonucunun temelidir. En çok “geçmişteki para bugünün alım gücüyle ne ederdi?” sorusunda kullanılır.',
-  },
-  {
-    path: '/veri-defteri/dolar',
-    hub: 'veri-defteri',
-    eyebrow: 'Veri Defteri',
-    title: 'Dolar serisi',
-    metaTitle: 'Dolar Serisi | Veri Defteri',
-    description:
-      'Dolar serisinin TL karşılaştırmalarında nasıl kullanıldığı, kur bazlı sonucun ne anlattığı ve hangi sınırlara sahip olduğu.',
-    intro:
-      'Dolar serisi, TL’nin ABD doları karşısındaki tarihsel değişimini okumak için kullanılır. Bu sonuç enflasyon hesabı değildir.',
-    sections: [
-      {
-        title: 'Ne anlatır?',
-        body:
-          'Dolar sonucu, seçilen TL tutarının kur değişimine göre bugün yaklaşık hangi TL karşılığa denk geleceğini gösterir.',
-      },
-      {
-        title: 'Ne anlatmaz?',
-        body:
-          'Dolar kuru yerel tüketici fiyatlarıyla aynı şey değildir. İthal ürün etkisi için fikir verse de genel alım gücünün tek ölçütü değildir.',
-      },
-      {
-        title: 'Nasıl okunur?',
-        body:
-          'Kur çarpanı büyüdükçe aynı TL tutarının dolar bazlı bugünkü karşılığı artar. Sonuç alış-satış makası ve işlem maliyeti içermez.',
-      },
-    ],
-  },
-  {
-    path: '/veri-defteri/gram-altin',
-    hub: 'veri-defteri',
-    eyebrow: 'Veri Defteri',
-    title: 'Gram altın serisi',
-    metaTitle: 'Gram Altın Serisi | Veri Defteri',
-    description:
-      'Gram altın fiyat serisinin geçmiş para değeri karşılaştırmalarında nasıl yorumlandığı ve TÜFE’den neden farklı sonuç verdiği.',
-    intro:
-      'Gram altın serisi, TL tutarlarını değerli maden fiyatı üzerinden okumak için kullanılır. Ons altın ve kur hareketleri sonucu etkiler.',
-    sections: [
-      {
-        title: 'Ne anlatır?',
-        body:
-          'Geçmişteki bir TL tutarının gram altın fiyatındaki değişime göre bugünkü yaklaşık TL karşılığını gösterir.',
-      },
-      {
-        title: 'Ne anlatmaz?',
-        body:
-          'Bu sonuç kişisel yatırım getirisi garantisi değildir; vergi, makas, komisyon ve saklama maliyeti dahil değildir.',
-      },
-      {
-        title: 'Nasıl kullanılır?',
-        body:
-          'TÜFE sonucu ile yan yana okunması, alım gücü ve değerli maden fiyatı perspektiflerinin ayrılmasına yardım eder.',
-      },
-    ],
-  },
-  {
-    path: '/veri-defteri/asgari-ucret',
-    hub: 'veri-defteri',
-    eyebrow: 'Veri Defteri',
-    title: 'Asgari ücret serisi',
-    metaTitle: 'Asgari Ücret Serisi | Veri Defteri',
-    description:
-      'Asgari ücret serisinin eski maaş, kira ve fiyat karşılaştırmalarında nasıl kullanıldığı ve hangi sınırlara sahip olduğu.',
-    intro:
-      'Asgari ücret serisi, belirli bir tutarın dönemsel temel gelir düzeyi karşısındaki ağırlığını okumak için kullanılır.',
-    sections: [
-      {
-        title: 'Ne anlatır?',
-        body:
-          'Aynı tutarın farklı dönemlerdeki net asgari ücret düzeyine göre nasıl konumlandığını gösterir.',
-      },
-      {
-        title: 'Ne anlatmaz?',
-        body:
-          'Resmi bordro, kıdem, tazminat veya hukuki hak ediş hesabı değildir. Gelir ölçeği olarak yaklaşık karşılaştırma sunar.',
-      },
-      {
-        title: 'Nerede işe yarar?',
-        body:
-          'Eski maaş, kira ve temel gider karşılaştırmalarında TÜFE sonucunu tamamlayan gelir perspektifi sağlar.',
-      },
-    ],
-  },
-];
-
 const FOOTER_LINKS = [
   { href: '/atlas', label: 'Atlas' },
   { href: '/rehberler', label: 'Rehberler' },
-  { href: '/veri-defteri', label: 'Veri Defteri' },
-  { href: '/guncellemeler', label: 'Güncellemeler' },
+  { href: '/veri-kaynaklari', label: 'Veri Kaynakları' },
+  { href: '/veri-durumu', label: 'Veri Durumu' },
   { href: '/hakkinda', label: 'Hakkında' },
   { href: '/metodoloji', label: 'Metodoloji' },
-  { href: '/veri-kaynaklari', label: 'Veri Kaynakları' },
   { href: '/iletisim', label: 'İletişim' },
   { href: '/gizlilik-politikasi', label: 'Gizlilik Politikası' },
   { href: '/kullanim-sartlari', label: 'Kullanım Şartları' },
 ];
 
-function App() {
-  const landingPage = LANDING_PAGES.find((page) => page.path === window.location.pathname);
-  const infoPage = INFO_PAGES.find((page) => page.path === window.location.pathname);
-  const guidePage = GUIDE_PAGES.find((page) => page.path === window.location.pathname);
-  const publisherPage = PUBLISHER_PAGES.find((page) => page.path === window.location.pathname);
+function App({ pathname = typeof window === 'undefined' ? '/' : window.location.pathname }: { pathname?: string }) {
+  pathname = (REDIRECTS[pathname] ?? pathname).split('#')[0];
+  const infoPage = INFO_PAGES.find(page => page.path === pathname);
+  const guidePage = GUIDE_PAGES.find(page => page.path === pathname);
+  const publisherPage = PUBLISHER_PAGES.find(page => page.path === pathname);
+  if (pathname === '/rehberler') return <GuideIndexPage />;
+  if (pathname === '/atlas') return <PublisherIndexPage hub="atlas" />;
+  if (pathname === '/veri-durumu') return <main className="page-shell min-h-screen"><div className="mx-auto max-w-5xl px-4 py-5"><PageHeader /><DataStatus /><SiteFooter /></div></main>;
+  if (infoPage) return <InfoPage page={infoPage} />;
+  if (guidePage) return <GuidePage page={guidePage} />;
+  if (publisherPage) return <PublisherPage page={publisherPage} />;
+  if (pathname !== '/') return <main className="page-shell min-h-screen"><div className="mx-auto max-w-5xl px-4 py-5"><PageHeader /><h1>Sayfa bulunamadı</h1><p>Bu adres artık kullanılmıyor veya yanlış yazılmış olabilir.</p><a href="/">Hesaplayıcıya dön</a><SiteFooter /></div></main>;
+  return <Calculator />;
+}
 
-  if (window.location.pathname === '/rehberler') {
-    return <GuideIndexPage />;
-  }
-
-  if (window.location.pathname === '/atlas') {
-    return <PublisherIndexPage hub="atlas" />;
-  }
-
-  if (window.location.pathname === '/guncellemeler') {
-    return <PublisherIndexPage hub="guncellemeler" />;
-  }
-
-  if (window.location.pathname === '/veri-defteri') {
-    return <PublisherIndexPage hub="veri-defteri" />;
-  }
-
-  if (landingPage) {
-    return <LandingPage page={landingPage} />;
-  }
-
-  if (infoPage) {
-    return <InfoPage page={infoPage} />;
-  }
-
-  if (guidePage) {
-    return <GuidePage page={guidePage} />;
-  }
-
-  if (publisherPage) {
-    return <PublisherPage page={publisherPage} />;
-  }
-
+function Calculator() {
   const [state, setState] = useState<CalculatorState>(() => {
-    const initialState = parseStateFromUrl(window.location.search, window.location.hash);
-    return { ...initialState, amount: Math.min(initialState.amount, MAX_INPUT_AMOUNT) };
+    const initialState = parseStateFromUrl(typeof window === 'undefined' ? '' : window.location.search, typeof window === 'undefined' ? '' : window.location.hash);
+    const lastMonth = latestCommonMonth(catalogData as MarketCatalog, initialState.criteria);
+    return { ...initialState, amount: Math.min(initialState.amount, MAX_INPUT_AMOUNT), endMonth: lastMonth && initialState.endMonth > lastMonth ? lastMonth : initialState.endMonth };
   });
-  const [results, setResults] = useState<CalculationResult[]>([]);
-  const [catalog, setCatalog] = useState<MarketCatalog | null>(null);
+  const [results, setResults] = useState<CalculationResult[]>(() => { try { return calculate(catalogData as MarketCatalog, state); } catch { return []; } });
+  const [catalog, setCatalog] = useState<MarketCatalog | null>(catalogData as MarketCatalog);
   const [debouncedState, setDebouncedState] = useState(state);
   const [amountText, setAmountText] = useState(() => formatEditableNumber(state.amount));
   const [copied, setCopied] = useState(false);
@@ -1026,8 +88,22 @@ function App() {
   const [error, setError] = useState('');
   const [amountWarning, setAmountWarning] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
-    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+    typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   );
+
+  useEffect(() => {
+    function readSharedCalculation() {
+      const next = parseStateFromUrl(window.location.search, window.location.hash);
+      next.amount = Math.min(next.amount, MAX_INPUT_AMOUNT);
+      const last = latestCommonMonth(catalogData as MarketCatalog, next.criteria);
+      if (last && next.endMonth > last) next.endMonth = last;
+      setState(next);
+      setAmountText(formatEditableNumber(next.amount));
+      setAmountWarning('');
+    }
+    window.addEventListener('hashchange', readSharedCalculation);
+    return () => window.removeEventListener('hashchange', readSharedCalculation);
+  }, []);
 
   useEffect(() => {
     fetchSeries()
@@ -1070,19 +146,23 @@ function App() {
         ? { ...debouncedState, endMonth: commonEndMonth }
         : debouncedState;
 
+    let cancelled = false;
+    setLoading(true);
+    setResults([]);
     calculateOnBackend(requestState)
       .then((nextResults) => {
+        if (cancelled) return;
         setResults(nextResults);
         setError('');
       })
       .catch((apiError: unknown) => {
+        if (cancelled) return;
         const message = apiError instanceof Error ? apiError.message : 'Hesaplama yapılamadı.';
         setError(message);
-        if (results.length === 0) {
-          setResults([]);
-        }
+        setResults([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [catalog, debouncedState]);
 
   const yearRange = useMemo(() => {
@@ -1115,7 +195,7 @@ function App() {
   const resultEndMonth = getResultEndMonth(results) ?? state.endMonth;
   const inputTryAmount = results[0]?.normalizedAmount;
   const shareText = `Ne Kadar Ederdi? ${formatInputAmount(state.amount, state.inputUnit)}: ${formatMonth(state.startMonth)} → ${formatMonth(resultEndMonth)}`;
-  const shareUrl = window.location.href;
+  const shareUrl = typeof window === 'undefined' ? 'https://nekadarederdi.com/' : window.location.href;
 
   function updateState(partial: Partial<CalculatorState>) {
     setState((current) => ({ ...current, ...partial }));
@@ -1208,9 +288,7 @@ function App() {
           </button>
         </header>
 
-        <aside className="market-stack">
-          <SpotMarketBar />
-        </aside>
+        <nav className="primary-links" aria-label="Ana gezinme"><a href="/rehberler">Rehberler</a><a href="/atlas">Örnek hesaplar</a><a href="/veri-kaynaklari">Veri kaynakları</a><a href="/veri-durumu">Veri durumu</a></nav>
 
         <section id="hesapla" className="workbench [overflow-anchor:none]">
           <form
@@ -1327,7 +405,7 @@ function App() {
 
               {state.startMonth < '2005-01' && (
                 <p className="inline-note inline-note--strong">
-                  2005 öncesi girişlerde eski TL yeni TL'ye çevrilir; başlangıç tutarı 1.000.000'a bölünerek hesaplanır.
+                  Veri seti 2005 öncesini kapsamıyor. Eski TL’den sıfır atmak, o dönemin fiyat verisinin yerini tutmaz. 2005 veya sonrasını seçin.
                 </p>
               )}
             </div>
@@ -1376,7 +454,7 @@ function App() {
               </div>
             </div>
 
-            {error && <p className="error-state">{error}</p>}
+            {error && <p className="error-state" role="alert">{error}</p>}
 
             {loading && !error && results.length === 0 && (
               <div className="loading-state">
@@ -1398,158 +476,24 @@ function App() {
                 ))}
               </div>
             )}
+            {results.length > 0 && <CalculationEvidence results={results} />}
           </section>
         </section>
 
         <p className="disclaimer">
-          Bu araç resmi ve güvenilir tarihsel kaynaklardan derlenen aylık verilerle yaklaşık kıyaslama sunar; yatırım tavsiyesi değildir.
+          Aylık tarihsel verilerle yaklaşık karşılaştırma. Her serinin son ayı farklı olabilir; sonuçlar güncel piyasa fiyatı veya yatırım tavsiyesi değildir.
         </p>
 
-        <section aria-labelledby="seo-heading" className="guide-section">
-          <div className="guide-section__intro">
-            <p className="eyebrow">Okuma rehberi</p>
-            <h2 id="seo-heading">Geçmişteki para değerini karşılaştırma</h2>
-            <p>
-              Aynı tutarı tek bir cevapla okumak yanıltıcı olabilir. Bu üç bakış, sonucu daha doğru yorumlamanıza yardımcı olur.
-            </p>
-          </div>
-          <div className="guide-section__items">
-            <article style={{ '--guide-index': '"01"' } as CSSProperties}>
-              <h3>Enflasyona göre TL değeri</h3>
-              <p>TÜFE serisi, geçmişteki bir TL tutarının bugünkü yaklaşık satın alma gücünü görmek için kullanılır.</p>
-            </article>
-            <article style={{ '--guide-index': '"02"' } as CSSProperties}>
-              <h3>Döviz ve değerli maden kıyası</h3>
-              <p>Dolar, euro, gram altın ve gümüş karşılaştırmaları aylık veri serileri üzerinden yaklaşık çarpan üretir.</p>
-            </article>
-            <article style={{ '--guide-index': '"03"' } as CSSProperties}>
-              <h3>Asgari ücretle karşılaştırma</h3>
-              <p>Net asgari ücret serisi, belirli bir tutarın dönemsel gelir düzeyleriyle kıyaslanmasına yardımcı olur.</p>
-            </article>
-            <article style={{ '--guide-index': '"04"' } as CSSProperties}>
-              <h3>Sonucun yaklaşık olmasının nedeni</h3>
-              <p>Seriler aylık kapanış, aylık ortalama veya resmi endeks değerleriyle tutulur. Gün içi fiyat, makas, vergi, komisyon ve kaynak revizyonları sonuca dahil edilmez.</p>
-            </article>
-            <article style={{ '--guide-index': '"05"' } as CSSProperties}>
-              <h3>Veri kaynakları nasıl okunur?</h3>
-              <p>Her sonuç kartında kullanılan seri, başlangıç değeri, bitiş değeri ve kaynak notu ayrı gösterilir. Kaynaklar yenilendikçe hesaplama aynı yöntemle güncellenir.</p>
-            </article>
-            <article style={{ '--guide-index': '"06"' } as CSSProperties}>
-              <h3>Hangi karşılaştırma ne anlatır?</h3>
-              <p>Reel TL alım gücünü, döviz yabancı para karşılığını, altın ve gümüş değer saklama kıyasını, asgari ücret ise dönemsel gelir ölçeğini anlatır.</p>
-            </article>
-          </div>
-          <div className="guide-faq" aria-label="Sık sorulan sorular">
-            <details>
-              <summary>Bu araç resmi enflasyon hesaplayıcı mı?</summary>
-              <p>Hayır. Resmi kaynaklardan derlenen tarihsel serilerle yaklaşık karşılaştırma yapar; tek başına resmi işlem veya karar dayanağı değildir.</p>
-            </details>
-            <details>
-              <summary>Neden ay seçiliyor, gün seçilmiyor?</summary>
-              <p>Kullanılan birçok seri aylık yayımlanır. Ay bazlı seçim, TÜFE, asgari ücret, konut endeksi ve piyasa serilerini aynı ekranda tutarlı karşılaştırmayı sağlar.</p>
-            </details>
-            <details>
-              <summary>Son veri neden bazen bir önceki ay olur?</summary>
-              <p>Resmi endeksler ve bazı piyasa özetleri gecikmeli yayımlanır. Araç, seçili ölçütlerde ortak ve güvenilir son ayı kullanır.</p>
-            </details>
-          </div>
-          <section className="method-section" aria-labelledby="method-heading">
-            <div className="guide-section__intro">
-              <p className="eyebrow">Yöntem</p>
-              <h2 id="method-heading">Hesaplama nasıl yapılır?</h2>
-              <p>
-                Ne Kadar Ederdi tek bir fiyat tahmini üretmez. Seçtiğiniz tutarı, başlangıç ve bitiş aylarındaki
-                güvenilir seri değerlerini oranlayarak farklı ekonomik ölçeklerde yeniden okur.
-              </p>
-            </div>
-            <div className="method-grid">
-              <article>
-                <h3>1. Başlangıç değeri bulunur</h3>
-                <p>
-                  Seçilen ay için ilgili serinin değeri alınır. Örneğin TÜFE hesabında başlangıç ayının endeks değeri,
-                  dolar hesabında aynı ayın TL/USD seviyesi kullanılır.
-                </p>
-              </article>
-              <article>
-                <h3>2. Bitiş değeriyle oranlanır</h3>
-                <p>
-                  Bitiş ayındaki değer başlangıç değerine bölünür. Bu oran, seçilen ölçütün dönem boyunca kaç kat
-                  değiştiğini gösteren yaklaşık çarpandır.
-                </p>
-              </article>
-              <article>
-                <h3>3. Tutarla çarpılır</h3>
-                <p>
-                  Girilen miktar bu çarpanla çoğaltılır. Sonuç kartlarındaki ayrıntılar, kullanılan başlangıç ve bitiş
-                  verilerini ayrıca gösterir.
-                </p>
-              </article>
-            </div>
-          </section>
-          <section className="source-section" aria-labelledby="source-heading">
-            <div className="guide-section__intro">
-              <p className="eyebrow">Veri kapsamı</p>
-              <h2 id="source-heading">Hangi veri neyi anlatır?</h2>
-              <p>
-                Her seri aynı ekonomik soruya cevap vermez. Bu yüzden sonuçları yan yana göstermek, tek bir rakama
-                sıkışmadan daha dürüst bir karşılaştırma sağlar.
-              </p>
-            </div>
-            <div className="source-list">
-              <article>
-                <h3>TÜFE ve konut endeksi</h3>
-                <p>Fiyat düzeyi ve alım gücü perspektifi sağlar. Resmi endeksler yayımlandıkça güncellenir.</p>
-              </article>
-              <article>
-                <h3>Dolar, euro ve değerli madenler</h3>
-                <p>TL'nin döviz ve maden fiyatları karşısındaki tarihsel değişimini gösterir; tüketici enflasyonu değildir.</p>
-              </article>
-              <article>
-                <h3>Asgari ücret ve benzin</h3>
-                <p>Gelir ölçeği ve gündelik maliyet hissini anlamaya yardım eder; resmi hak ediş hesabı yerine geçmez.</p>
-              </article>
-              <article>
-                <h3>BIST 100, Bitcoin ve mevduat</h3>
-                <p>Piyasa serilerini brüt tarihsel kıyas olarak okutur; vergi, komisyon ve işlem maliyetleri dahil değildir.</p>
-              </article>
-            </div>
-          </section>
-          <section className="example-section" aria-labelledby="example-heading">
-            <div className="guide-section__intro">
-              <p className="eyebrow">Örnek yorumlama</p>
-              <h2 id="example-heading">Sonuçlar nasıl okunmalı?</h2>
-            </div>
-            <div className="example-panel">
-              <p>
-                Eski bir maaşı değerlendirirken önce TÜFE sonucuna bakmak, o maaşın bugünkü yaklaşık alım gücünü
-                anlamaya yardımcı olur. Ardından asgari ücret sonucuyla aynı tutarın dönemsel gelir düzeyindeki yerini
-                görebilirsiniz.
-              </p>
-              <p>
-                Bir ürün fiyatını veya birikimi incelerken döviz, gram altın ve gümüş sonuçları farklı bir hikaye
-                anlatır. Bu ölçütler fiyat seviyesini değil, ilgili piyasa serisinin TL karşısındaki değişimini okutur.
-              </p>
-              <p>
-                Bir ayda veri yoksa araç hesaplamayı bozmamak için seçili ölçütlerde güvenilir ortak son aya döner.
-                Bu davranış özellikle TÜFE ve konut gibi gecikmeli yayımlanan resmi serilerde normaldir.
-              </p>
-            </div>
-          </section>
-          <div className="guide-link-panel">
-            <p className="eyebrow">Popüler hesaplamalar</p>
-            <nav className="guide-links" aria-label="İlgili rehberler">
-              {LANDING_PAGES.map((page) => (
-                <a href={page.path} key={page.path}>
-                  {page.title}
-                </a>
-              ))}
-            </nav>
+        <section className="guide-section" aria-labelledby="reading-heading">
+          <div className="guide-section__intro"><p className="eyebrow">Sorunuza uygun ölçüt</p><h2 id="reading-heading">Bu sonuç ne anlama geliyor?</h2><p>Eski bir fiyat, maaş ve birikim aynı yöntemle yorumlanmaz. Aşağıdaki rehberler hangi hesabın hangi soruya cevap verdiğini örneklerle açıklar.</p></div>
+          <div className="guide-card-grid">{GUIDE_PAGES.map(page => <a className="guide-card" href={page.path} key={page.path}><h3>{page.title}</h3><p>{page.description}</p></a>)}</div>
+          <div className="guide-faq">
+            <details><summary>“Bugün” neden son takvim ayı değil?</summary><p>TÜFE ve diğer endeksler gecikmeli yayımlanır. Seçtiğiniz serilerin tamamında bulunan son ay kullanılır ve formda gösterilir. Yeni veri yayımlanmadan tahmin yapılmaz. <a href="/veri-durumu">Her serinin son ayını görün.</a></p></details>
+            <details><summary>2005 öncesindeki eski TL tutarını hesaplayabilir miyim?</summary><p>Bu veri seti 2005 öncesini kapsamıyor. Altı sıfır atmak yalnızca para birimini değiştirir; enflasyon hesabı için o dönemin endeks verisi de gerekir. Araç bu tarihlerde sonuç üretmez.</p></details>
+            <details><summary>Neden banka veya kuyumcu fiyatından farklı?</summary><p>Döviz aylık ortalamadır. Gram altın ve gümüş, aylık ons fiyatı ile aylık kurdan türetilir. Günlük fiyat, alış-satış makası, işçilik ve komisyonlar dahil değildir. <a href="/veri-kaynaklari">Seri yöntemlerini inceleyin.</a></p></details>
           </div>
         </section>
-
-        <section className="sponsor-stack sponsor-stack--after-content" aria-label="Reklam alanı">
-          <AdSlot label="Reklam alanı" placement="wide" />
-        </section>
+        <section className="guide-link-panel"><p className="eyebrow">Veriyle açıklanan örnekler</p><nav className="guide-links" aria-label="Örnek hesaplar">{PUBLISHER_PAGES.map(page => <a href={page.path} key={page.path}>{page.title}</a>)}</nav></section>
 
         <SiteFooter />
       </div>
@@ -1571,91 +515,6 @@ function WhatsAppIcon() {
     <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
       <path d="M20.52 3.48A11.83 11.83 0 0 0 12.1 0C5.54 0 .21 5.33.2 11.89c0 2.1.55 4.15 1.6 5.96L.1 24l6.3-1.65a11.9 11.9 0 0 0 5.69 1.45h.01c6.56 0 11.9-5.33 11.9-11.9 0-3.18-1.24-6.17-3.48-8.42ZM12.1 21.79h-.01a9.88 9.88 0 0 1-5.04-1.38l-.36-.21-3.74.98 1-3.64-.24-.37a9.86 9.86 0 0 1-1.51-5.28c0-5.45 4.44-9.89 9.9-9.89a9.82 9.82 0 0 1 6.99 2.9 9.83 9.83 0 0 1 2.9 7c0 5.46-4.44 9.89-9.89 9.89Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z" />
     </svg>
-  );
-}
-
-function LandingPage({ page }: { page: LandingPageContent }) {
-  const relatedPages = LANDING_PAGES.filter((item) => item.path !== page.path);
-
-  useEffect(() => {
-    document.title = `${page.metaTitle} | Ne Kadar Ederdi?`;
-    setMetaContent('description', page.description);
-    setMetaProperty('og:title', `${page.metaTitle} | Ne Kadar Ederdi?`);
-    setMetaProperty('og:description', page.description);
-    setMetaProperty('og:url', `https://nekadarederdi.com${page.path}`);
-    setMetaContent('twitter:title', `${page.metaTitle} | Ne Kadar Ederdi?`);
-    setMetaContent('twitter:description', page.description);
-    setCanonical(`https://nekadarederdi.com${page.path}`);
-  }, [page]);
-
-  return (
-    <main className="min-h-screen bg-paper-50 text-ink-950">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
-        <header className="grid gap-4 border-b border-ink-100 pb-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-          <a className="w-fit" href="/" aria-label="Ana hesaplayıcıya git">
-            <Logo />
-          </a>
-          <nav className="flex flex-wrap gap-2 text-sm sm:justify-self-end" aria-label="SEO sayfaları">
-            <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/">
-              Hesaplayıcı
-            </a>
-            <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/rehberler">
-              Rehberler
-            </a>
-            <a
-              className="rounded-md border border-oxide-200 bg-oxide-50 px-3 py-2 text-oxide-800 hover:border-oxide-700"
-              href={page.calculatorHref}
-            >
-              Hemen hesapla
-            </a>
-          </nav>
-        </header>
-
-        <article className="grid gap-6">
-          <section className="grid gap-4 border-b border-ink-100 pb-6">
-            <p className="font-data text-xs font-semibold uppercase text-oxide-700">Rehber</p>
-            <h1 className="max-w-3xl font-display text-4xl font-black leading-tight text-ink-950 sm:text-5xl">
-              {page.title}
-            </h1>
-            <p className="max-w-3xl text-base leading-7 text-ink-600 sm:text-lg">{page.intro}</p>
-            <div>
-              <a
-                className="inline-flex min-h-12 items-center justify-center rounded-md bg-ink-950 px-5 text-base font-bold text-white transition hover:bg-ink-800"
-                href={page.calculatorHref}
-              >
-                Hesaplayıcıyı aç
-              </a>
-            </div>
-          </section>
-
-          <section className="grid gap-4 md:grid-cols-3">
-            {page.sections.map((section) => (
-              <article className="rounded-md border border-ink-100 bg-white p-5 shadow-soft" key={section.title}>
-                <h2 className="font-display text-xl font-black leading-tight text-ink-950">{section.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-ink-600">{section.body}</p>
-              </article>
-            ))}
-          </section>
-
-          <section className="grid gap-3 border-t border-ink-100 pt-6">
-            <h2 className="font-display text-2xl font-black text-ink-950">İlgili hesaplama sayfaları</h2>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {relatedPages.map((relatedPage) => (
-                <a
-                  className="rounded-md border border-ink-100 bg-white p-4 text-sm font-semibold text-ink-800 transition hover:border-oxide-700 hover:text-oxide-800"
-                  href={relatedPage.path}
-                  key={relatedPage.path}
-                >
-                  {relatedPage.title}
-                </a>
-              ))}
-            </div>
-          </section>
-        </article>
-
-        <SiteFooter />
-      </div>
-    </main>
   );
 }
 
@@ -1685,15 +544,7 @@ function InfoPage({ page }: { page: InfoPageContent }) {
             <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/rehberler">
               Rehberler
             </a>
-            {LANDING_PAGES.slice(0, 2).map((landingPage) => (
-              <a
-                className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500"
-                href={landingPage.path}
-                key={landingPage.path}
-              >
-                {landingPage.title}
-              </a>
-            ))}
+            <a href="/veri-durumu">Veri durumu</a>
           </nav>
         </header>
 
@@ -1707,7 +558,7 @@ function InfoPage({ page }: { page: InfoPageContent }) {
           </section>
 
           <section className="grid gap-4 md:grid-cols-2">
-            {page.sections.map((section) => (
+            {(page.path === '/veri-kaynaklari' ? [] : page.sections).map((section) => (
               <article className="ledger-card rounded-md border border-ink-100 p-5 shadow-soft" key={section.title}>
                 <h2 className="font-display text-xl font-black leading-tight text-ink-950">{section.title}</h2>
                 <p className="mt-3 text-sm leading-6 text-ink-600">{section.body}</p>
@@ -1722,6 +573,7 @@ function InfoPage({ page }: { page: InfoPageContent }) {
               </article>
             ))}
           </section>
+          {page.path === '/veri-kaynaklari' && <SourceLedger />}
         </article>
 
         <SiteFooter />
@@ -1756,8 +608,7 @@ function GuideIndexPage() {
               Para değeri hesaplamalarını doğru okumak
             </h1>
             <p className="max-w-3xl text-base leading-7 text-ink-600 sm:text-lg">
-              Bu rehberler, hesap makinesindeki sonuçların ne anlattığını açıklar. Amaç çok sayıda benzer sayfa üretmek
-              değil; TÜFE, döviz, altın, asgari ücret ve piyasa serilerini daha doğru yorumlamaya yardımcı olmaktır.
+              Eski bir fiyatı bugüne taşımak, dövizle kıyaslamak ve maaşı gelir ölçeğinde okumak farklı hesaplardır. Sorunuza uygun yöntemi seçin ve örneklerle adım adım uygulayın.
             </p>
           </section>
           <section className="guide-card-grid" aria-label="Rehber yazıları">
@@ -1921,7 +772,7 @@ function PublisherPage({ page }: { page: PublisherPageContent }) {
             <h1>{page.title}</h1>
             <p>{page.intro}</p>
             {page.calculatorHref ? (
-              <a className="publisher-cta" href={page.calculatorHref}>
+              <a className="publisher-cta" href={results[0] ? `${page.calculatorHref}&end=${results[0].endObservation.date.slice(0, 7)}` : page.calculatorHref}>
                 Hesap makinesinde aç
               </a>
             ) : null}
@@ -1961,6 +812,7 @@ function PublisherPage({ page }: { page: PublisherPageContent }) {
                   </div>
                 ))}
               </div>
+              <CalculationEvidence results={results} />
             </section>
           ) : null}
 
@@ -1969,7 +821,7 @@ function PublisherPage({ page }: { page: PublisherPageContent }) {
               <div>
                 <p className="eyebrow">Seri kapsamı</p>
                 <h2 id="series-ledger-heading">Bu sayfada kullanılan veri durumu</h2>
-                <p>Kaynak gecikmesi olan serilerde hesap makinesi boş değer üretmek yerine son güvenilir gözleme döner.</p>
+                <p>Aşağıda her serinin mevcut son gözlemi yer alır. Örnek hesapta ise bütün ölçütler aynı ortak ayda karşılaştırılır.</p>
               </div>
               <div className="publisher-table publisher-table--compact" role="table" aria-label="Veri serisi durumu">
                 <div className="publisher-table__row publisher-table__row--head" role="row">
@@ -2039,7 +891,7 @@ function getPublisherHubConfig(hub: PublisherPageContent['hub']) {
       description:
         'Geçmiş para değerini TÜFE, döviz, altın, ücret ve piyasa serileriyle açıklayan veri tabanlı analizler.',
       note:
-        'Atlas sayfaları otomatik çoğaltılmış hesaplama sayfaları değildir. Her not, seçilmiş bir ekonomik soruyu sitenin kendi veri setinden üretilen tablo ve yorumlarla açıklar.',
+        'Her örnekte tutarı, başlangıç ayını ve kullanılan gözlemleri görebilirsiniz. Aynı hesabı kendi tutarınızla yeniden açarak sonuçların nasıl değiştiğini karşılaştırın.',
     },
     guncellemeler: {
       path: '/guncellemeler',
@@ -2053,13 +905,13 @@ function getPublisherHubConfig(hub: PublisherPageContent['hub']) {
     },
     'veri-defteri': {
       path: '/veri-defteri',
-      eyebrow: 'Veri Defteri',
-      title: 'Veri Defteri',
-      metaTitle: 'Veri Defteri | Ne Kadar Ederdi?',
+      eyebrow: 'Veri kaynakları',
+      title: 'Veri kaynakları',
+      metaTitle: 'Veri kaynakları | Ne Kadar Ederdi?',
       description:
         'TÜFE, dolar, gram altın, asgari ücret ve diğer serilerin hesaplamada nasıl kullanıldığını açıklayan kaynak defteri.',
       note:
-        'Veri Defteri, her serinin neyi anlattığını ve neyi anlatmadığını açıklar. Amaç hesaplama sonucunu kaynak ve yöntem bağlamından koparmamaktır.',
+        'Veri kaynakları, her serinin neyi anlattığını ve neyi anlatmadığını açıklar. Amaç hesaplama sonucunu kaynak ve yöntem bağlamından koparmamaktır.',
     },
   } as const;
 
@@ -2068,47 +920,9 @@ function getPublisherHubConfig(hub: PublisherPageContent['hub']) {
 
 function calculatePublishedResults(calculation: NonNullable<PublisherPageContent['calculation']>): CalculationResult[] {
   const catalog = catalogData as MarketCatalog;
-  const endMonth = getLatestCommonEndMonth(catalog, calculation.criteria) ?? currentCatalogMonth();
-  const request = {
-    amount: calculation.amount,
-    inputUnit: calculation.inputUnit,
-    startMonth: calculation.startMonth,
-    endMonth,
-    criteria: calculation.criteria,
-  };
-  const normalizedAmount = inputAmountToTryForPage(request.amount, request.inputUnit, request.startMonth);
-
-  return request.criteria
-    .map((key) => {
-      const series = catalog.series.find((item) => item.key === key);
-
-      if (!series) {
-        return null;
-      }
-
-      const startObservation = pickObservationForPage(series.observations, request.startMonth);
-      const endObservation = pickObservationForPage(series.observations, request.endMonth);
-      const multiplier = endObservation.value / startObservation.value;
-
-      return {
-        series: {
-          key: series.key,
-          name: series.name,
-          shortName: series.shortName,
-          description: series.description,
-          unit: series.unit,
-          sourceNote: series.sourceNote,
-        },
-        originalAmount: request.amount,
-        normalizedAmount,
-        resultAmount: normalizedAmount * multiplier,
-        multiplier,
-        startObservation,
-        endObservation,
-        appliedPre2005Conversion: request.inputUnit === 'try' && request.startMonth < '2005-01',
-      } satisfies CalculationResult;
-    })
-    .filter((result): result is CalculationResult => Boolean(result));
+  const criteria = calculation.criteria.filter(key => catalog.series.some(series => series.key === key));
+  const endMonth = latestCommonMonth(catalog, criteria);
+  return endMonth ? calculate(catalog, { ...calculation, criteria, endMonth }) : [];
 }
 
 function getSeriesLedgerRows(page: PublisherPageContent) {
@@ -2145,56 +959,12 @@ function getHubSeriesKeys(hub: PublisherPageContent['hub']): SeriesKey[] {
   return ['cpi', 'usd', 'eur', 'gold', 'minimumWage', 'gasoline'];
 }
 
-function inputAmountToTryForPage(amount: number, inputUnit: InputUnit, startMonth: string) {
-  if (inputUnit === 'try') {
-    return startMonth < '2005-01' ? amount / 1_000_000 : amount;
-  }
-
-  const catalog = catalogData as MarketCatalog;
-  const series = catalog.series.find((item) => item.key === inputUnit);
-
-  return series ? amount * pickObservationForPage(series.observations, startMonth).value : amount;
-}
-
-function pickObservationForPage(observations: MarketSeries['observations'], month: string) {
-  const monthDate = `${month}-01`;
-  const previous = observations
-    .filter((item) => item.date <= monthDate)
-    .sort((first, second) => second.date.localeCompare(first.date))[0];
-
-  return previous ?? [...observations].sort((first, second) => first.date.localeCompare(second.date))[0];
-}
-
-function currentCatalogMonth() {
-  const catalog = catalogData as MarketCatalog;
-  const months = catalog.series
-    .flatMap((series) => series.observations.map((observation) => observation.date.slice(0, 7)))
-    .sort();
-
-  return months[months.length - 1] ?? new Date().toISOString().slice(0, 7);
-}
-
 function formatTryNumberForPage(value: number) {
   return numberFormatter.format(value);
 }
 
 function getLatestCommonEndMonth(catalog: MarketCatalog | null, criteria: SeriesKey[]): string | null {
-  if (!catalog || criteria.length === 0) {
-    return null;
-  }
-
-  const latestMonths = criteria
-    .map((key) => catalog.series.find((series) => series.key === key))
-    .filter((series): series is MarketSeries => Boolean(series))
-    .map((series) =>
-      series.observations
-        .filter((observation) => Number.isFinite(observation.value))
-        .map((observation) => observation.date.slice(0, 7))
-        .sort((first, second) => second.localeCompare(first))[0],
-    )
-    .filter((month): month is string => Boolean(month));
-
-  return latestMonths.length ? latestMonths.sort()[0] : null;
+  return catalog ? latestCommonMonth(catalog, criteria) : null;
 }
 
 function getResultEndMonth(results: CalculationResult[]) {
@@ -2222,14 +992,14 @@ function PageHeader() {
         <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/atlas">
           Atlas
         </a>
-        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/veri-defteri">
-          Veri Defteri
+        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/veri-kaynaklari">
+          Veri kaynakları
         </a>
         <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/metodoloji">
           Metodoloji
         </a>
-        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/veri-kaynaklari">
-          Veri Kaynakları
+        <a className="rounded-md border border-ink-200 bg-white px-3 py-2 text-ink-700 hover:border-ink-500" href="/veri-durumu">
+          Veri durumu
         </a>
       </nav>
     </header>

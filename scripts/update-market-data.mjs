@@ -1,13 +1,23 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, rename, unlink } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { verifyCatalog } from './verify-market-data.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const dataPath = resolve(root, 'data', 'market-series.json');
 const troyOunceGram = 31.1034768;
 const startYear = Number(process.env.DATA_START_YEAR ?? 2005);
-const end = process.env.DATA_END_MONTH ?? new Date().toISOString().slice(0, 7);
+const now = new Date();
+const lastCompletedMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0)).toISOString().slice(0, 7);
+const end = process.env.DATA_END_MONTH ?? lastCompletedMonth;
+if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(end) || end > lastCompletedMonth) {
+  throw new Error('DATA_END_MONTH must be a completed calendar month.');
+}
+if (!Number.isInteger(startYear) || startYear < 2005 || `${startYear}-01` > end) {
+  throw new Error('DATA_START_YEAR must be 2005 or later and no later than the end month.');
+}
 
 const sources = {
   cpi: 'Hakedis.org ve OSKA üzerinde yayımlanan TÜİK TÜFE 2003=100 endeks tabloları',
@@ -17,12 +27,12 @@ const sources = {
     'DataHub gold-prices / World Bank Pink Sheet altın ons USD aylık fiyatı ve TCMB USD/TL ortalamasından türetilen gram TL',
   silver:
     'Eco3min / World Bank Pink Sheet gümüş ons USD aylık fiyatı ve TCMB USD/TL ortalamasından türetilen gram TL',
-  minimumWage: 'Resmi Gazete referanslı net ücret satırları',
+  minimumWage: 'Öcal Hukuk tarihsel net ücret tablosu; 2024 değeri ÇSGB resmi net/brüt ücret tablosuyla 17.002,12 TL olarak doğrulanmıştır',
   bist100: 'Yahoo Finance XU100.IS aylık kapanış verileri',
   bitcoin: 'Yahoo Finance BTC-USD aylık kapanış verileri ve TCMB USD/TL ortalamasından türetilen TL fiyatı',
   housing: 'TCMB EVDS Konut Fiyat Endeksi; Altınla üzerinde yayımlanan gömülü TCMB/EVDS tarihsel seri',
   gasoline:
-    'FRED / Eurostat Türkiye yakıt ve yağlayıcılar HICP endeksi; veri yoksa konfigüre edilen benzin fiyatı CSV kaynağı',
+    'FRED / Eurostat Türkiye yakıt ve yağlayıcılar HICP endeksi (2025=100); benzin litre fiyatı değildir',
   deposit:
     'TCMB EVDS TL mevduat faiz oranı serisinden aylık bileşik getiri endeksi; EVDS_API_KEY ve EVDS_DEPOSIT_SERIES ile güncellenir',
 };
@@ -40,7 +50,7 @@ const [cpi, rates, goldUsd, silverUsd, minimumWage, bist100, btcUsd, housing, ga
   fetchGasolineIndex(),
   fetchDepositIndex(),
 ]);
-const bitcoin = deriveBitcoinTry(btcUsd, rates.usd);
+const bitcoin = btcUsd === null ? getExistingSeries('bitcoin') : deriveBitcoinTry(btcUsd, rates.usd);
 
 setSeries('cpi', {
   name: 'Reel TL',
@@ -117,9 +127,9 @@ setSeries('housing', {
 
 if (gasoline.length > 0) {
   setSeries('gasoline', {
-    name: 'Benzin',
-    shortName: 'Benzin',
-    description: 'Yakıt fiyat endeksi ya da benzin fiyatı serisine göre yaklaşık karşılık.',
+    name: 'Yakıt ve Yağlayıcı Endeksi',
+    shortName: 'Yakıt Endeksi',
+    description: 'Yakıt ve yağlayıcılar tüketici fiyat endeksi; benzin litre fiyatı değildir.',
     unit: 'yakıt endeksi',
     sourceNote: sources.gasoline,
     observations: gasoline,
@@ -146,10 +156,24 @@ catalog.meta = {
   sources,
 };
 
-await writeFile(dataPath, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
+const validationErrors = verifyCatalog(catalog, { referenceMonth: end, checkFreshness: false });
+if (validationErrors.length) throw new Error(validationErrors.join('\n'));
+const temporaryPath = `${dataPath}.${process.pid}.tmp`;
+try {
+  await writeFile(temporaryPath, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
+  await rename(temporaryPath, dataPath);
+} finally {
+  await unlink(temporaryPath).catch(() => {});
+}
 console.log(`Gerçek veri dosyası güncellendi: ${dataPath}`);
 
 function setSeries(key, nextSeries) {
+  if (!nextSeries.observations.length) throw new Error(`${key}: empty source response; catalog was not written.`);
+  const previous = getExistingSeries(key);
+  const incomingDates = new Set(nextSeries.observations.map((item) => item.date));
+  if (previous.some((item) => !incomingDates.has(item.date))) {
+    throw new Error(`${key}: source response lost existing months; catalog was not written.`);
+  }
   const index = catalog.series.findIndex((item) => item.key === key);
 
   if (index >= 0) {
@@ -167,6 +191,7 @@ async function fetchCpi() {
     fetchText('https://www.oska.com.tr/tufe-ve-yi-ufe-endeksleri/', { optional: true }),
   ]);
   const byMonth = new Map();
+  const secondaryMonths = new Map();
 
   for (const match of hakedisHtml.matchAll(/<tr><td>(\d{4})<\/td>([\s\S]*?)<\/tr>/g)) {
     const year = Number(match[1]);
@@ -188,9 +213,7 @@ async function fetchCpi() {
     if (date && Number.isFinite(value)) {
       const month = date.slice(0, 7);
 
-      if (!byMonth.has(month)) {
-        byMonth.set(month, value);
-      }
+      if (!secondaryMonths.has(month)) secondaryMonths.set(month, value);
     }
   }
 
@@ -201,11 +224,17 @@ async function fetchCpi() {
     if (date && Number.isFinite(value)) {
       const month = date.slice(0, 7);
 
-      if (!byMonth.has(month)) {
-        byMonth.set(month, value);
-      }
+      if (!secondaryMonths.has(month)) secondaryMonths.set(month, value);
     }
   }
+
+  if (byMonth.size && secondaryMonths.size) {
+    const overlap = [...secondaryMonths].filter(([month]) => byMonth.has(month));
+    if (!overlap.length || overlap.some(([month, value]) => Math.abs(value / byMonth.get(month) - 1) > 0.01)) {
+      throw new Error('CPI sources disagree on their index basis; refusing to join the series.');
+    }
+  }
+  for (const [month, value] of secondaryMonths) if (!byMonth.has(month)) byMonth.set(month, value);
 
   const rows = [...byMonth.entries()]
     .map((match) => ({
@@ -226,6 +255,12 @@ async function fetchCpi() {
     throw new Error('TÜFE tablosundan veri çıkarılamadı.');
   }
 
+  const existing = getExistingSeries('cpi');
+  const incomingDates = new Set(rows.map((row) => row.date));
+  if (existing.some((row) => !incomingDates.has(row.date))) {
+    console.warn('CPI source returned a truncated history; preserving the complete previous CPI snapshot without merging.');
+    return existing;
+  }
   return rows.map((row) => ({
     date: row.date,
     value: round(row.value, 6),
@@ -236,15 +271,24 @@ async function fetchTcmbRates() {
   const months = listMonths(`${startYear}-01`, end);
   const usd = [];
   const eur = [];
+  const existingUsd = new Map(getExistingSeries('usd').map((item) => [item.date.slice(0, 7), item]));
+  const existingEur = new Map(getExistingSeries('eur').map((item) => [item.date.slice(0, 7), item]));
+  // Re-fetch the last stored month: it may have been captured before month-end.
+  const refreshFrom = [...existingUsd.keys()].sort().at(-1) ?? `${startYear}-01`;
 
   for (const month of months) {
+    if (month < refreshFrom && existingUsd.has(month) && existingEur.has(month) && process.env.DATA_FULL_REFRESH !== '1') {
+      usd.push(existingUsd.get(month));
+      eur.push(existingEur.get(month));
+      continue;
+    }
     const rates = await fetchMonthRates(month);
 
     if (rates.usd.length > 0 && rates.eur.length > 0) {
       usd.push({ date: `${month}-01`, value: round(average(rates.usd), 6) });
       eur.push({ date: `${month}-01`, value: round(average(rates.eur), 6) });
       console.log(`${month}: TCMB kur ortalaması alındı (${rates.usd.length} gün).`);
-    }
+    } else throw new Error(`${month}: no complete TCMB monthly data; catalog was not written.`);
   }
 
   if (usd.length === 0 || eur.length === 0) {
@@ -277,6 +321,9 @@ async function fetchMonthRates(month) {
   }
 
   const settled = await runLimited(requests, 8);
+  if (settled.filter(Boolean).length < 15) {
+    throw new Error(`${month}: fewer than 15 published TCMB trading days; refusing a partial monthly average.`);
+  }
 
   for (const item of settled.filter(Boolean)) {
     usd.push(item.usd);
@@ -300,9 +347,12 @@ async function fetchRateDay(year, month, day) {
 
     const usd = parseCurrency(xml, 'USD');
     const eur = parseCurrency(xml, 'EUR');
-    return usd && eur ? { usd, eur } : null;
-  } catch {
-    return null;
+    if (!Number.isFinite(usd) || usd <= 0 || !Number.isFinite(eur) || eur <= 0) {
+      throw new Error('Published XML does not contain valid positive USD and EUR rates.');
+    }
+    return { usd, eur };
+  } catch (error) {
+    throw new Error(`TCMB daily source failed for ${year}-${monthText}-${dayText}: ${error.message}`);
   }
 }
 
@@ -330,9 +380,11 @@ async function fetchSilverUsd() {
 
 async function fetchYahooMonthly(symbol, startMonth) {
   const period1 = Math.floor(Date.parse(`${startMonth}-01T00:00:00Z`) / 1000);
-  const period2 = Math.floor(Date.parse(`${end}-28T00:00:00Z`) / 1000);
+  const [endYear, endMonth] = end.split('-').map(Number);
+  const period2 = Math.floor(Date.UTC(endYear, endMonth, 1) / 1000);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?period1=${period1}&period2=${period2}&interval=1mo`;
-  const payload = JSON.parse(await fetchText(url));
+  const response = await fetchText(url, { optional: true });
+  const payload = response ? JSON.parse(response) : {};
   const result = payload.chart?.result?.[0];
   const timestamps = result?.timestamp ?? [];
   const close = result?.indicators?.quote?.[0]?.close ?? [];
@@ -341,9 +393,9 @@ async function fetchYahooMonthly(symbol, startMonth) {
     .map((timestamp, index) => {
       const date = new Date(timestamp * 1000);
       const month = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
-      const value = Number(close[index]);
+      const value = close[index] == null ? Number.NaN : Number(close[index]);
 
-      return Number.isFinite(value) ? { date: `${month}-01`, value: round(value, 6) } : null;
+      return Number.isFinite(value) && value > 0 ? { date: `${month}-01`, value: round(value, 6) } : null;
     })
     .filter(Boolean)
     .filter((item) => item.date >= `${startYear}-01-01` && item.date <= `${end}-01`)
@@ -355,7 +407,8 @@ async function fetchYahooMonthly(symbol, startMonth) {
 
     if (existing.length > 0) {
       console.warn(`${symbol} için Yahoo Finance verisi alınamadı; mevcut ${fallbackKey} serisi korundu.`);
-      return existing;
+      // Existing bitcoin observations are already TRY, not USD.
+      return symbol === 'BTC-USD' ? null : existing;
     }
 
     throw new Error(`${symbol} için Yahoo Finance verisi alınamadı.`);
@@ -407,17 +460,6 @@ async function fetchHousingIndex() {
 }
 
 async function fetchGasolineIndex() {
-  const configuredUrl = process.env.GASOLINE_CSV_URL;
-
-  if (configuredUrl) {
-    const csv = await fetchText(configuredUrl);
-    return parseCsv(csv)
-      .slice(1)
-      .map(([date, value]) => ({ date: normalizeDate(date), value: parseTrNumber(value) }))
-      .filter((item) => item.date && item.date >= `${startYear}-01-01` && item.date <= `${end}-01` && Number.isFinite(item.value))
-      .map((item) => ({ date: item.date, value: round(item.value, 6) }));
-  }
-
   try {
     const csv = await fetchText('https://fred.stlouisfed.org/graph/fredgraph.csv?id=CP0722TRM086NEST');
     return parseCsv(csv)
@@ -453,8 +495,15 @@ async function fetchDepositIndex() {
     .filter((item) => item.date && Number.isFinite(item.rate))
     .sort((first, second) => first.date.localeCompare(second.date));
 
+  const monthlyRates = new Map();
+  for (const row of rows) {
+    const rates = monthlyRates.get(row.date) ?? [];
+    rates.push(row.rate);
+    monthlyRates.set(row.date, rates);
+  }
   let index = 1;
-  return rows.map((item) => {
+  return [...monthlyRates].map(([date, rates]) => {
+    const item = { date, rate: average(rates) };
     index *= 1 + item.rate / 100 / 12;
     return { date: item.date, value: round(index, 8) };
   });
@@ -497,9 +546,12 @@ async function fetchMinimumWage() {
   const rows = [...html.matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>\s*<td[^>]*>([^<]+)<\/td>/g)]
     .flatMap((match) => {
       const [start, endDate] = match[1].split('-').map((part) => part.trim());
-      const value = parseTrNumber(match[2]);
+      let value = parseTrNumber(match[2]);
       const startMonth = toMonth(start);
       const endMonth = toMonth(endDate);
+      // The secondary table rounds 2024 to 17,002. Official ÇSGB table: 17,002.12.
+      // https://www.csgb.gov.tr/Media/t2qlvwrg/asgari-%C3%BCcret-net-br%C3%BCt-i%C5%9Fverene-maliyet.pdf
+      if (startMonth === '2024-01' && endMonth === '2024-12') value = 17002.12;
 
       if (!startMonth || !endMonth || !Number.isFinite(value)) {
         return [];
@@ -548,6 +600,7 @@ async function fetchText(url, options = {}) {
 
   try {
     response = await fetch(url, {
+      signal: AbortSignal.timeout(30_000),
       headers: {
         'user-agent': 'nekadarederdi-data-updater/1.0',
       },

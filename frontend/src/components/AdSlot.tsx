@@ -33,7 +33,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
   const wrapperClassName = `sponsor-frame sponsor-frame--${placement} sponsor-frame--${adStatus}`;
 
   useEffect(() => {
-    if (!clientId || !adSlot) {
+    if (!isConfigured) {
       return;
     }
 
@@ -46,7 +46,7 @@ export function AdSlot({ label, placement }: AdSlotProps) {
     } catch {
       // Ad blockers and pending AdSense approval can throw here; the reserved slot stays in place.
     }
-  }, [clientId, adSlot]);
+  }, [clientId, adSlot, isConfigured]);
 
   useEffect(() => {
     if (!isConfigured || !adRef.current) {

@@ -8,18 +8,21 @@
   "scripts": {
     "build": "npm run build -w frontend",
     "build:cloudflare": "npm run build -w frontend",
-    "check": "npm audit --omit=dev && npm run check:worker && npm run build",
+    "check": "npm audit --omit=dev && npm run check:worker && npm test && npm run build",
+    "test": "node scripts/test-calculation.mjs && node scripts/test-market-data.mjs && node scripts/verify-market-data.mjs --integrity-only",
+    "test:site": "node scripts/verify-site.mjs",
     "check:worker": "tsc -p worker/tsconfig.json --noEmit",
-    "cf:dev": "npm run build:cloudflare && wrangler dev",
+    "cf:dev": "npm run build:cloudflare && wrangler dev --local-upstream 127.0.0.1",
     "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "data:update": "node scripts/update-market-data.mjs",
     "data:verify": "node scripts/verify-market-data.mjs",
-    "dev:worker": "wrangler dev",
+    "dev:worker": "wrangler dev --local-upstream 127.0.0.1",
     "dev:frontend": "npm run dev -w frontend -- --port 7573",
     "preview:frontend": "npm run preview -w frontend -- --port 7180"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260816.1",
+    "esbuild": "^0.28.2",
     "wrangler": "^4.29.1"
   }
 }
